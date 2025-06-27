@@ -31,14 +31,17 @@ void Animator::Update()
 {
 	// アニメーションの再生
 	UpdateAnim(GetBlendingAnim());
-	if (_existAnimName != _blendingAnimName) {
-		// 同じアニメーションでないなら再生
-		//UpdateAnim(GetExistAnim());
+	// 同じアニメーションでないかつ
+	// 再生終了フラグが立っていないなら
+	if (_currentAnimName != _blendingAnimName &&
+		!GetExistAnim().isEnd) {
+		// 再生
+		UpdateAnim(GetExistAnim());
 	}
 	UpdateAnimBlend();
 
 	int y = 16 * 9;
-	DrawFormatString(0, y, 0xffffff, L"ExistState = %s", _existAnimName.c_str());
+	DrawFormatString(0, y, 0xffffff, L"ExistState = %s", _currentAnimName.c_str());
 	y += 16;
 	DrawFormatString(0, y, 0xffffff, L"BlendState = %s", _blendingAnimName.c_str());
 	y += 16;
@@ -55,7 +58,7 @@ void Animator::SetStartAnim(const std::wstring animName, const bool isLoop)
 	AttachAnim(animName, isLoop);
 	// _blendingAnimのみを使用するため
 	_blendRate = 1.0f;
-	_existAnimName = _blendingAnimName;
+	_currentAnimName = _blendingAnimName;
 }
 
 void Animator::SetAnimData(const std::wstring animName, const bool isLoop)
@@ -90,6 +93,7 @@ void Animator::AttachAnim(const std::wstring animName, const bool isLoop)
 	animData.frame = 0.0f;
 	animData.isLoop = isLoop;
 	animData.isEnd = false;
+	MV1SetAttachAnimBlendRate(_model, animData.attachNo, 0.0f);
 }
 
 void Animator::UpdateAnim(AnimData& data)
@@ -141,11 +145,15 @@ void Animator::UpdateAnimBlend()
 
 void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
 {
-	// ひとつ前のアニメーションはデタッチ
-	MV1DetachAnim(_model, FindAnimData(_existAnimName).attachNo);
+	// すでに目的のアニメーションへブレンド中ならreturn
+	if (animName == _blendingAnimName) return;
+
+	// ブレンドに使用しない古いアニメーションの初期化
+	GetExistAnim().frame = 0.0f;
+	MV1SetAttachAnimBlendRate(_model, GetExistAnim().attachNo, 0.0f);
 	
 	// 現在メインで再生中のアニメーションを切り替える
-	_existAnimName = _blendingAnimName;
+	_currentAnimName = _blendingAnimName;
 	_blendingAnimName = animName;
 
 	// 新たにアニメーションをアタッチする
@@ -179,7 +187,7 @@ Animator::AnimData& Animator::GetBlendingAnim()
 
 Animator::AnimData& Animator::GetExistAnim()
 {
-	return FindAnimData(_existAnimName);
+	return FindAnimData(_currentAnimName);
 }
 
 bool Animator::GetBlendingAnimFinishState()

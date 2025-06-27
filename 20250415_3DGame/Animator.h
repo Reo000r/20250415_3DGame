@@ -64,7 +64,7 @@ private:
 	std::vector<AnimData> _animDataList;
 
 	// 現在再生中のアニメーション名
-	std::wstring _existAnimName;
+	std::wstring _currentAnimName;
 	// 次にメインとなるブレンド中のアニメーション名
 	std::wstring _blendingAnimName;
 

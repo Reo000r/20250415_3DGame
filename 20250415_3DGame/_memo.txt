@@ -17,14 +17,13 @@ http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 
 やること
 
-アニメーションのバグ取り
-
 敵の作成
 
 プレイヤーの攻撃
 
 プレイヤーアニメーション(攻撃x3)
 
+ジャンプから着地したときの空気に乗ってる感を消す
 
 
 
@@ -42,7 +41,12 @@ Animatorのブレンドが行われた時に古いアニメーションのframeを止めて
 ->
 変わらず上手くいっていない
 ステートのつなぎ目の理解が曖昧なのでステートパターンの理解が浅いかも
-
+->
+GeminiCLIを使ってデバッグしたら一瞬だった
+Animator::ChangeAnimの
+// ひとつ前のアニメーションはデタッチ
+MV1DetachAnim(_model, FindAnimData(_existAnimName).attachNo);
+これが問題だった
 
 
 

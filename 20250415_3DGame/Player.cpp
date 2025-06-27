@@ -74,6 +74,10 @@ void Player::Init(std::weak_ptr<Camera> camera) {
 
 void Player::Update() {
 	_animator->Update();
+
+	// 状態遷移
+	CheckStateTransition();
+
 	// 現在のステートに応じたUpdateが行われる
 	(this->*_nowUpdateState)();
 }
@@ -100,29 +104,85 @@ void Player::OnCollide(const std::weak_ptr<Collider> colider)
 	// coliderと衝突
 }
 
+void Player::CheckStateTransition()
+{
+	Input& input = Input::GetInstance();
+	Vector3 stick = input.GetPadLeftSitck();
+
+	// 地上にいて、
+	// ジャンプボタンが押されたら
+	// ジャンプ状態へ
+	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
+		_nowUpdateState = &Player::UpdateJump;
+		_animator->ChangeAnim(kAnimNameJump, true); // アニメーションもここで変更
+
+		// ジャンプ初速を与える処理などもここに書く
+		Vector3 vel = GetVel();
+		vel.y += kJumpForce;
+		rigidbody->SetVel(vel);
+		return; // 状態が変わったので、以降の判定はしない
+	}
+
+	// 地上にいて、
+	// スティック入力があり、
+	// ダッシュボタンが押されていたら
+	// ダッシュ状態へ
+	if (GetPos().y <= kGround && 
+		(stick.x != 0.0f || stick.z != 0.0f) && 
+		input.IsPress("dash")) {
+		if (_nowUpdateState != &Player::UpdateDash) { // 現在ダッシュでなければ
+			_nowUpdateState = &Player::UpdateDash;
+			_animator->ChangeAnim(kAnimNameRun, true);
+		}
+		return;
+	}
+
+	// 地上にいて、
+	// ジャンプ状態でないかつ
+	// スティック入力があれば
+	// 歩き状態へ
+	if (GetPos().y <= kGround && 
+		(stick.x != 0.0f || stick.z != 0.0f)) {
+		if (_nowUpdateState != &Player::UpdateWalk) { // 現在歩きでなければ
+			_nowUpdateState = &Player::UpdateWalk;
+			_animator->ChangeAnim(kAnimNameWalk, true);
+		}
+		return;
+	}
+
+	// 上記のいずれでもなければ待機状態へ
+	if (GetPos().y <= kGround) {
+		if (_nowUpdateState != &Player::UpdateIdle) {
+			_nowUpdateState = &Player::UpdateIdle;
+			_animator->ChangeAnim(kAnimNameIdle, true);
+		}
+		return;
+	}
+}
+
 void Player::UpdateIdle()
 {
 	Input& input = Input::GetInstance();
 	Vector3 stick = input.GetPadLeftSitck();
-	// 入力があればステートを変更する
-	if ((int)stick.x != 0 || (int)stick.z != 0) {
-		// 追加の入力があればダッシュ
-		if (input.IsPress("dash")) {
-			_animator->ChangeAnim(kAnimNameRun, true);
-			_nowUpdateState = &Player::UpdateDash;
-		}
-		else {
-			_animator->ChangeAnim(kAnimNameWalk, true);
-			_nowUpdateState = &Player::UpdateWalk;
-		}
-	}
+	//// 入力があればステートを変更する
+	//if ((int)stick.x != 0 || (int)stick.z != 0) {
+	//	// 追加の入力があればダッシュ
+	//	if (input.IsPress("dash")) {
+	//		_animator->ChangeAnim(kAnimNameRun, true);
+	//		_nowUpdateState = &Player::UpdateDash;
+	//	}
+	//	else {
+	//		_animator->ChangeAnim(kAnimNameWalk, true);
+	//		_nowUpdateState = &Player::UpdateWalk;
+	//	}
+	//}
 	Vector3 vel = GetVel();
 	// ジャンプ処理
-	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
-		vel.y += kJumpForce;
-		_animator->ChangeAnim(kAnimNameJump, true);
-		_nowUpdateState = &Player::UpdateJump;
-	}
+	//if (input.IsTrigger("jump") && GetPos().y <= kGround) {
+	//	vel.y += kJumpForce;
+	//	_animator->ChangeAnim(kAnimNameJump, true);
+	//	_nowUpdateState = &Player::UpdateJump;
+	//}
 	const float cameraRot = _camera.lock()->GetRotAngleX();
 	
 	// カメラから見た移動に変換する
@@ -152,26 +212,26 @@ void Player::UpdateDash()
 
 void Player::UpdateJump()
 {
-	if (GetPos().y <= kGround) {
-		Input& input = Input::GetInstance();
-		Vector3 stick = input.GetPadLeftSitck();
-		// 入力があればステートを変更する
-		if ((int)stick.x != 0 || (int)stick.z != 0) {
-			// 追加の入力があればダッシュ
-			if (input.IsPress("dash")) {
-				_animator->ChangeAnim(kAnimNameRun, true);
-				_nowUpdateState = &Player::UpdateDash;
-			}
-			else {
-				_animator->ChangeAnim(kAnimNameWalk, true);
-				_nowUpdateState = &Player::UpdateWalk;
-			}
-		}
-		else {
-			_animator->ChangeAnim(kAnimNameIdle, true);
-			_nowUpdateState = &Player::UpdateIdle;
-		}
-	}
+	//if (GetPos().y <= kGround) {
+	//	Input& input = Input::GetInstance();
+	//	Vector3 stick = input.GetPadLeftSitck();
+	//	// 入力があればステートを変更する
+	//	if ((int)stick.x != 0 || (int)stick.z != 0) {
+	//		// 追加の入力があればダッシュ
+	//		if (input.IsPress("dash")) {
+	//			_animator->ChangeAnim(kAnimNameRun, true);
+	//			_nowUpdateState = &Player::UpdateDash;
+	//		}
+	//		else {
+	//			_animator->ChangeAnim(kAnimNameWalk, true);
+	//			_nowUpdateState = &Player::UpdateWalk;
+	//		}
+	//	}
+	//	else {
+	//		_animator->ChangeAnim(kAnimNameIdle, true);
+	//		_nowUpdateState = &Player::UpdateIdle;
+	//	}
+	//}
 	Move(kDashSpeed);
 
 //	_animator->Update();
@@ -198,38 +258,38 @@ void Player::Walk(const float speed) {
 	// スティックによる平面移動
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
 	
-	if (GetPos().y <= kGround) {
-		// もし入力がないかつ移動量もないなら
-		if (((int)stick.x == 0 && (int)stick.z == 0) &&
-			vel.SqrMagnitude() < PhysicsData::sleepThreshold) {
-			_animator->ChangeAnim(kAnimNameIdle, true);
-			_nowUpdateState = &Player::UpdateIdle;
-			return;
-		}
-		else if (input.IsPress("dash") &&
-			_nowUpdateState != &Player::UpdateDash) {
-			_animator->ChangeAnim(kAnimNameRun, true);
-			_nowUpdateState = &Player::UpdateDash;
-			return;
-		}
-		else if (!input.IsPress("dash") &&
-			_nowUpdateState != &Player::UpdateWalk) {
-			_animator->ChangeAnim(kAnimNameWalk, true);
-			_nowUpdateState = &Player::UpdateWalk;
-			return;
-		}
-	}
+	//if (GetPos().y <= kGround) {
+	//	// もし入力がないかつ移動量もないなら
+	//	if (((int)stick.x == 0 && (int)stick.z == 0) &&
+	//		vel.SqrMagnitude() < PhysicsData::sleepThreshold) {
+	//		_animator->ChangeAnim(kAnimNameIdle, true);
+	//		_nowUpdateState = &Player::UpdateIdle;
+	//		return;
+	//	}
+	//	else if (input.IsPress("dash") &&
+	//		_nowUpdateState != &Player::UpdateDash) {
+	//		_animator->ChangeAnim(kAnimNameRun, true);
+	//		_nowUpdateState = &Player::UpdateDash;
+	//		return;
+	//	}
+	//	else if (!input.IsPress("dash") &&
+	//		_nowUpdateState != &Player::UpdateWalk) {
+	//		_animator->ChangeAnim(kAnimNameWalk, true);
+	//		_nowUpdateState = &Player::UpdateWalk;
+	//		return;
+	//	}
+	//}
 
 	// 入力が入っていない時でもxに-0.0fが入っている
 	dir.x = -stick.x;
 	dir.z = stick.z;
 
-	// ジャンプ処理
-	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
-		vel.y += kJumpForce;
-		_animator->ChangeAnim(kAnimNameJump, true);
-		_nowUpdateState = &Player::UpdateJump;
-	}
+	//// ジャンプ処理
+	//if (input.IsTrigger("jump") && GetPos().y <= kGround) {
+	//	vel.y += kJumpForce;
+	//	_animator->ChangeAnim(kAnimNameJump, true);
+	//	_nowUpdateState = &Player::UpdateJump;
+	//}
 
 	dir.Normalized();
 

@@ -30,6 +30,11 @@ private:
 	UpdateFunc_t _nowUpdateState;
 
 private:
+	/// <summary>
+	/// ステートの遷移条件を確認し、変更可能なステートがあればそれに遷移する
+	/// </summary>
+	void CheckStateTransition();
+
 	void UpdateIdle();
 	void UpdateWalk();
 	void UpdateDash();
