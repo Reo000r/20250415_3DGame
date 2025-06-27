@@ -49,15 +49,13 @@ Vector3 Collider::GetDir() const
 
 std::shared_ptr<ColliderData> Collider::CreateColliderData(PhysicsData::ColliderKind kind, bool isTrigger)
 {
-	if (colliderData != nullptr)
-	{
+	if (colliderData != nullptr) {
 		assert(false && "colliderData‚ÍŠù‚Éì‚ç‚ê‚Ä‚¢‚é");
 		return colliderData;
 	}
 
 	// kind‚É‰‚¶‚½Collider‚ğì¬
-	switch (kind)
-	{
+	switch (kind) {
 	case PhysicsData::ColliderKind::Cube:
 		// Cube—p‚Ì‰Šú‰»
 		break;

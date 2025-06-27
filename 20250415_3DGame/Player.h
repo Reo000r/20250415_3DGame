@@ -5,8 +5,14 @@
 
 class Camera;
 class Animator;
+class PlayerState;
 
-class Player final : public Collider {
+/// <summary>
+/// 
+/// </summary>
+class Player final : public Collider , public std::enable_shared_from_this<Player> {
+	// ステートの基底クラスに自分のアクセス権を渡す
+	friend class PlayerState;
 public:
 	Player();
 	~Player();

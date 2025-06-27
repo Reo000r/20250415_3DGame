@@ -25,6 +25,8 @@ http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 
 ジャンプから着地したときの空気に乗ってる感を消す
 
+プレイヤーのステートをクラス化する
+
 
 
 
@@ -47,6 +49,11 @@ Animator::ChangeAnimの
 // ひとつ前のアニメーションはデタッチ
 MV1DetachAnim(_model, FindAnimData(_existAnimName).attachNo);
 これが問題だった
+
+
+PlayerStateクラスのprotectedを減らす方法ないかな
+なるべくPlayerのFriendも増やしたくない
+
 
 
 

@@ -51,4 +51,7 @@ namespace PhysicsData {
 	// “–‚½‚è”»’è‚É‰Ÿ‚µ–ß‚·’Ç‰Á•â³—Ê
 	// (‚»‚Ì‚Ü‚Ü–ß‚·‚Æ‚¿‚å‚¤‚Ç“–‚½‚Á‚Ä‚µ‚Ü‚¤ˆÊ’u‚É‚È‚é‚½‚ß)
 	constexpr float kFixPositionOffset = 0.00001f;
+
+	// ‰¼‚Ì’n–Ê‚Ì‚‚³
+	constexpr float kTempGroundHeight = 0.0f;
 }

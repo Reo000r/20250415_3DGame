@@ -42,8 +42,7 @@ void Physics::Release(std::shared_ptr<Collider> collider)
 void Physics::Update()
 {
 	// 移動
-	for (auto& collider : _colliders)
-	{
+	for (auto& collider : _colliders) {
 		// 位置に移動量を足す
 		Position3 pos = collider->rigidbody->GetPos();
 		Vector3 vel = collider->rigidbody->GetVel();
@@ -53,14 +52,12 @@ void Physics::Update()
 		vel.z *= PhysicsData::decelerationRate * 0.5f;
 
 		// 重力を利用するなら重力を与える
-		if (collider->rigidbody->UseGravity())
-		{
+		if (collider->rigidbody->UseGravity()) {
 			vel += PhysicsData::Gravity;
 
 			// 最大重力加速度より小さかったら補正
 			// (重力はマイナスのため)
-			if (vel.y < PhysicsData::MaxGravityAccel.y)
-			{
+			if (vel.y < PhysicsData::MaxGravityAccel.y) {
 				vel.y = PhysicsData::MaxGravityAccel.y;
 			}
 		}
@@ -102,22 +99,17 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 	// 衝突通知、ポジション補正
 	bool doCheck = true;
 	int	checkCount = 0;	// チェック回数
-	while (doCheck)
-	{
+	while (doCheck) {
 		doCheck = false;
 		++checkCount;
 
 		// 2重ループで全オブジェクト当たり判定
 		// 重いので近いオブジェクト同士のみ当たり判定するなど工夫がいる
-		for (auto& objA : _colliders)
-		{
-			for (auto& objB : _colliders)
-			{
-				if (objA != objB)
-				{
+		for (auto& objA : _colliders) {
+			for (auto& objB : _colliders) {
+				if (objA != objB) {
 					// ぶつかっていれば
-					if (false/*IsCollide(objA, objB)*/)
-					{
+					if (false/*IsCollide(objA, objB)*/) {
 						auto priorityA = objA->GetPriority();
 						auto priorityB = objB->GetPriority();
 
@@ -126,11 +118,9 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 
 						// どちらもトリガーでなければ次目標位置修正
 						bool isTriggerAorB = objA->colliderData->IsTrigger() || objB->colliderData->IsTrigger();
-						if (!isTriggerAorB)
-						{
+						if (!isTriggerAorB) {
 							// 移動優先度を数字に直したときに高い方を移動
-							if (priorityA > priorityB)
-							{
+							if (priorityA > priorityB) {
 								primary = objB;
 								secondary = objA;
 							}
@@ -140,46 +130,38 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 						// 衝突通知情報の更新
 						bool hasPrimaryInfo = false;
 						bool hasSecondaryInfo = false;
-						for (const auto& item : onCollideInfo)
-						{
+						for (const auto& item : onCollideInfo) {
 							// 既に通知リストに含まれていたら呼ばない
-							if (item.owner == primary)
-							{
+							if (item.owner == primary) {
 								hasPrimaryInfo = true;
 							}
-							if (item.owner == secondary)
-							{
+							if (item.owner == secondary) {
 								hasSecondaryInfo = true;
 							}
 						}
-						if (!hasPrimaryInfo)
-						{
+						if (!hasPrimaryInfo) {
 							// 実体作って入れるよりこっちの方が速そう
 							onCollideInfo.push_back({ primary, secondary });
 						}
-						if (!hasSecondaryInfo)
-						{
+						if (!hasSecondaryInfo) {
 							onCollideInfo.push_back({ secondary, primary });
 						}
 
 						// 一度でもヒット+補正したら衝突判定と補正やりなおし
-						if (!isTriggerAorB)	// 片方がトリガーならヒットとりなおさない
-						{
+						if (!isTriggerAorB) {	// 片方がトリガーならヒットとりなおさない
 							doCheck = true;
 						}
 						break;
 					}
 				}
 			}
-			if (doCheck)
-			{
+			if (doCheck) {
 				break;
 			}
 		}
 
 		// 無限ループ避け
-		if (checkCount > PhysicsData::kCheckCollideMaxCount && doCheck)
-		{
+		if (checkCount > PhysicsData::kCheckCollideMaxCount && doCheck) {
 #if _DEBUG
 			//printfDx("当たり判定チェック回数が最大数(%d)を超えた\n",
 			//	PhysicsData::kCheckCollideMaxCount);
@@ -206,8 +188,7 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 
 void Physics::FixPosition()
 {
-	for (auto& collider : _colliders)
-	{
+	for (auto& collider : _colliders) {
 		Vector3 toFixedPos;
 		if (true) {
 			// 床判定を無理やり作る

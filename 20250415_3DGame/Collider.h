@@ -6,6 +6,7 @@
 class Rigidbody;
 class Physics;
 class ColliderData;
+class PlayerState;
 
 /// <summary>
 /// 当たり判定を持たせたいオブジェクトに継承させる基底クラス
