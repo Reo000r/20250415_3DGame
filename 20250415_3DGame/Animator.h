@@ -1,20 +1,17 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <forward_list>
 
 class Animator
 {
-private:
-	// プロトタイプ宣言
-	typedef wchar_t TCHAR;
-
 public:
 	struct AnimData
 	{
 		int animIndex = -1;			// アニメーション番号(元データにおける)
 		int attachNo = -1;			// アタッチ番号
 		std::wstring animName = L"";	// アニメーションの名前
+		float animSpeed = 1.0f;		// アニメーションの再生速度
 		float frame = 0.0f;			// アニメーションの再生時間
 		float totalFrame = 0.0f;	// アニメーションの総再生時間
 		bool  isLoop = false;		// ループするか
@@ -46,22 +43,37 @@ public:
 	/// <param name="animName"></param>
 	/// <param name="isLoop"></param>
 	void AttachAnim(const std::wstring animName, const bool isLoop = false);
+
+	/// <summary>
+	/// 指定されたアニメーションの更新
+	/// </summary>
+	/// <param name="data"></param>
 	void UpdateAnim(AnimData& data);
-	void UpdateAnimBlend();
+
+	/// <summary>
+	/// ブレンド比率の更新
+	/// </summary>
+	void UpdateAnimBlendRate();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="animName"></param>
+	/// <param name="isLoop"></param>
 	void ChangeAnim(const std::wstring animName, bool isLoop);
 
 	AnimData& FindAnimData(const std::wstring animName);
 
 	int GetModelHandle() const{ return _model; }
-	AnimData& GetBlendingAnim();
-	AnimData& GetExistAnim();
-	bool GetBlendingAnimFinishState();
 
 private:
 	// モデルハンドル
 	int _model;
 	
-	std::vector<AnimData> _animDataList;
+	// アニメーションのforward_list(list)
+	// 順番を気にする必要がないかつ
+	// メモリの効率化のためforward_list
+	std::forward_list<AnimData> _animDataList;
 
 	// 現在再生中のアニメーション名
 	std::wstring _currentAnimName;
@@ -69,6 +81,7 @@ private:
 	std::wstring _blendingAnimName;
 
 	// アニメーションのブレンド比率
+	// current->blending
 	// 0.0->1.0
 	float _blendRate;
 };

@@ -25,8 +25,16 @@ http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 
 ジャンプから着地したときの空気に乗ってる感を消す
 
-プレイヤーのステートをクラス化する
-
+Mixamo     https://www.mixamo.com/#/
+ アニメーション
+Sketchfab  https://sketchfab.com/search?category=characters-creatures&features=downloadable&licenses=7c23a1ba438d4306920229c12afcb5f9&licenses=72eb2b1960364637901eacce19283624&type=models
+ キャラモデル、武器  Downloadableフィルター
+itch.io    https://itch.io/game-assets/free/tag-3d
+ キャラモデル、武器
+Unity Asset Store / Unreal Engine Marketplace  
+ キャラモデル、武器、アニメーション
+BOOTH      
+ キャラモデル、武器  アニメ調
 
 
 
@@ -35,6 +43,7 @@ http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 Animatorで使ってるTCHAR、どうにかしてstringかwstringに置き換えれないかな
 ->
 .c_str()使えばよかった
+Unicode文字セットを使っているとwstringがデフォルトになるらしい
 
 
 あのメーションのブレンドが上手くいっていないので
@@ -53,299 +62,37 @@ MV1DetachAnim(_model, FindAnimData(_existAnimName).attachNo);
 
 PlayerStateクラスのprotectedを減らす方法ないかな
 なるべくPlayerのFriendも増やしたくない
+->
+いったん放置
 
 
+2025/06/30
+PlayerとColliderにenable_shared_form_thisを継承したら例外が出た
+->
+どちらかのみ継承させるべき(今回ならColliderのみ)
+この場合はshared_from_this()はColliderを指す
+Playerで自身のsharedを使用したい場合はstatic_castを使用して使うべき
+使用例 : std::static_pointer_cast<Player>(shared_from_this());
 
 
 
-#include "Animator.h"
-
-#include <DxLib.h>
-#include <cassert>
-
-Animator::Animator() :
-	_model(-1),
-	_blendRate(0.0f)
-{
-}
-
-Animator::~Animator()
-{
-	MV1DeleteModel(_model);
-}
-
-void Animator::Init(int model)
-{
-	assert(_model >= 0 && "モデルが正しく読み込まれていない");
-	_model = model;
-}
-
-void Animator::Update()
-{
-	// アニメーションの再生
-
-	// アニメーションのブレンドが終わっていないなら
-	// UpdateAnimBlend
-
-	// 終わっているなら
-	// 移行処理を行いUpdateAnim
-
-	UpdateAnim(_existAnim);
-}
-
-void Animator::SetAnimData(const int attachNo, const std::wstring animName, const bool isLoop)
-{
-	// すでに同じアニメーションが登録されていないか確認
-	for (const auto& anim : _animDataList) {
-		if (animName == anim.animName) {
-			assert(false && "同一のアニメーションを登録しようとしている");
-			return;
-		}
-	}
-	AnimData animData;
-	animData.animIndex = MV1GetAnimIndex(_model, animName.c_str());
-	animData.attachNo = -1;		// 実際に使う際に更新する
-	animData.animName = animName;
-	animData.frame = 0.0f;
-	animData.totalFrame = MV1GetAnimTotalTime(_model, animData.animIndex);
-	animData.isLoop = isLoop;
-	animData.isEnd = false;
-
-	_animDataList.emplace_back(animData);
-}
-
-void Animator::AttachAnim(const std::wstring animName, const bool isLoop = false)
-{
-	AnimData animData = FindAnimData(animName);
-
-	// モデルにアニメーションをアタッチ
-	animData.attachNo = MV1AttachAnim(_model, animData.animIndex, -1, false);
-	animData.frame = 0.0f;
-	animData.isLoop = isLoop;
-	animData.isEnd = false;
-}
-
-void Animator::UpdateAnim(AnimData& data)
-{
-	// アニメーションがアタッチされていない場合return
-	if (data.attachNo == -1) return;
-	// アニメーションを進める(60fで1.0)
-	data.frame += 1.0f;
-
-	// 現在再生中のアニメーションの総時間を取得する
-	const float totalTime = MV1GetAttachAnimTotalTime(_model, data.attachNo);
-	
-	// アニメーションの設定によってループさせるか最後のフレームで止めるかを判定
-	if (data.isLoop)
-	{
-		// アニメーションをループさせる
-		while (data.frame > totalTime)
-		{
-			data.frame -= totalTime;
-		}
-	}
-	else
-	{
-		// 最後のフレームで停止させる
-		if (data.frame > totalTime)
-		{
-			data.frame = totalTime;
-			data.isEnd = true;
-		}
-	}
-
-	// 進行させたアニメーションをモデルに適用する
-	MV1SetAttachAnimTime(_model, data.attachNo, data.frame);
-}
 
-void Animator::UpdateAnimBlend()
-{
-	// 両方にアニメーションが設定されていない場合は変化させない
-	if (GetBlendingAnim().attachNo == -1) return;
-	if (GetExistAnim().attachNo == -1) return;
 
-	// m_blendRateを0.0f -> 1.0fに変化させる
-	_blendRate += 1.0f / 8.0f;
-	if (_blendRate > 1.0f) _blendRate = 1.0f;
 
-	MV1SetAttachAnimBlendRate(_model, GetExistAnim().attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, GetBlendingAnim().attachNo, _blendRate);
-}
 
-void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
-{
-	AnimData& blendingAnimData = FindAnimData(animName);
-	AnimData& existAnimData = FindAnimData(_existAnimName);
 
-	if (FindAnimData(_existAnimName).attachNo != -1) {
-		// ひとつ前のアニメーションはデタッチ
-		MV1DetachAnim(_model, FindAnimData(_existAnimName).attachNo);
-	}
-	
-	// 現在メインで再生中のアニメーションを切り替える
-	_existAnimName = _blendingAnimName;
 
-	blendingAnimData = FindAnimData(_blendingAnimName);
-	existAnimData = FindAnimData(_existAnimName);
 
-	// 新たにアニメーションをアタッチする
-	AttachAnim(animName, isLoop);
 
-	// 新しくアニメーションをブレンドするため比率を初期化
-	_blendRate = 0.0f;
 
-	// ブレンド比率をアニメーションに適用
-	MV1SetAttachAnimBlendRate(_model, GetExistAnim().attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, GetBlendingAnim().attachNo, _blendRate);
-}
 
-Animator::AnimData& Animator::FindAnimData(const std::wstring animName)
-{
-	for (auto& data : _animDataList) {
-		if (animName == data.animName) {
-			return data;
-		}
-	}
-
-	assert(false && "指定の名前のアニメーションが登録されていなかった");
-	return;
-}
-
-Animator::AnimData& Animator::GetBlendingAnim()
-{
-	return FindAnimData(_blendingAnimName);
-}
-
-Animator::AnimData& Animator::GetExistAnim()
-{
-	return FindAnimData(_existAnimName);
-}
-
-bool Animator::GetBlendingAnimFinishState()
-{
-	return FindAnimData(_blendingAnimName).isEnd;
-}
-
-
-
-
-
-
-
-
-
-
-#include "Animator.h"
-
-#include <DxLib.h>
-#include <cassert>
-
-Animator::Animator() :
-	_model(-1),
-	_blendRate(0.0f)
-{
-}
-
-Animator::~Animator()
-{
-	MV1DeleteModel(_model);
-}
-
-void Animator::Init(int model)
-{
-	assert(_model >= 0 && "モデルが正しく読み込まれていない");
-	_model = model;
-}
-
-void Animator::Update()
-{
-	// アニメーションの再生
-
-	// アニメーションのブレンドが終わっていないなら
-	// UpdateAnimBlend
-
-	// 終わっているなら
-	// 移行処理を行いUpdateAnim
-
-	UpdateAnim(_existAnim);
-}
-
-void Animator::AttachAnim(AnimData& data, const TCHAR* animName, bool isLoop)
-{
-	// アタッチしたいアニメの番号を取得
-	int index = MV1GetAnimIndex(_model, animName);
-	// モデルにアニメーションをアタッチ
-	data.attachNo = MV1AttachAnim(_model, index, -1, false);
-	// アニメカウンタ初期化
-	data.frame = 0.0f;
-	// アニメーションのループ設定
-	data.isLoop = isLoop;
-	// 非ループアニメの終了フラグを落としておく
-	data.isEnd = false;
-}
-
-void Animator::UpdateAnim(AnimData& data)
-{
-	// アニメーションがアタッチされていない場合return
-	if (data.attachNo == -1) return;
-	// アニメーションを進める(60fで1.0)
-	data.frame += 1.0f;
-
-	// 現在再生中のアニメーションの総時間を取得する
-	const float totalTime = MV1GetAttachAnimTotalTime(_model, data.attachNo);
-
-	// アニメーションの設定によってループさせるか最後のフレームで止めるかを判定
-	if (data.isLoop)
-	{
-		// アニメーションをループさせる
-		while (data.frame > totalTime)
-		{
-			data.frame -= totalTime;
-		}
-	}
-	else
-	{
-		// 最後のフレームで停止させる
-		if (data.frame > totalTime)
-		{
-			data.frame = totalTime;
-			data.isEnd = true;
-		}
-	}
-
-	// 進行させたアニメーションをモデルに適用する
-	MV1SetAttachAnimTime(_model, data.attachNo, data.frame);
-}
-
-void Animator::UpdateAnimBlend()
-{
-	// 両方にアニメーションが設定されていない場合は変化させない
-	if (_blendingAnim.attachNo == -1) return;
-	if (_existAnim.attachNo == -1) return;
-
-	// m_blendRateを0.0f -> 1.0fに変化させる
-	_blendRate += 1.0f / 8.0f;
-	if (_blendRate > 1.0f) _blendRate = 1.0f;
-
-	MV1SetAttachAnimBlendRate(_model, _existAnim.attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, _blendingAnim.attachNo, _blendRate);
-}
-
-void Animator::ChangeAnim(const TCHAR* animName, bool isLoop)
-{
-	// ひとつ前のアニメーションはデタッチ
-	MV1DetachAnim(_model, _existAnim.attachNo);
-
-	// 現在メインで再生中のアニメーションを切り替える
-	_existAnim = _blendingAnim;
-
-	// 新たにアニメーションをアタッチする
-	AttachAnim(_blendingAnim, animName, isLoop);
-
-	// 新しくアニメーションをブレンドするため比率を初期化
-	_blendRate = 0.0f;
-
-	// ブレンド比率をアニメーションに適用
-	MV1SetAttachAnimBlendRate(_model, _existAnim.attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, _blendingAnim.attachNo, _blendRate);
-}
+
+
+
+
+
+
+
+
+
+

@@ -23,23 +23,25 @@ Animator::~Animator()
 
 void Animator::Init(int model)
 {
-	assert(model >= 0 && "モデルが正しく読み込まれていない");
+	assert(model >= 0 && "モデルハンドル正しくない");
 	_model = model;
 }
 
 void Animator::Update()
 {
 	// アニメーションの再生
-	UpdateAnim(GetBlendingAnim());
+	UpdateAnim(FindAnimData(_blendingAnimName));
 	// 同じアニメーションでないかつ
 	// 再生終了フラグが立っていないなら
 	if (_currentAnimName != _blendingAnimName &&
-		!GetExistAnim().isEnd) {
+		!FindAnimData(_currentAnimName).isEnd) {
 		// 再生
-		UpdateAnim(GetExistAnim());
+		UpdateAnim(FindAnimData(_currentAnimName));
 	}
-	UpdateAnimBlend();
+	// ブレンド比率更新
+	UpdateAnimBlendRate();
 
+#ifdef _DEBUG	// 複数所持は対応していない
 	int y = 16 * 9;
 	DrawFormatString(0, y, 0xffffff, L"ExistState = %s", _currentAnimName.c_str());
 	y += 16;
@@ -51,6 +53,7 @@ void Animator::Update()
 		y += 16;
 		DrawFormatString(0, y, 0xffffff, L"name:%s frame:%.2f", data.animName.c_str(), data.frame);
 	}
+#endif
 }
 
 void Animator::SetStartAnim(const std::wstring animName, const bool isLoop)
@@ -79,7 +82,8 @@ void Animator::SetAnimData(const std::wstring animName, const bool isLoop)
 	animData.isLoop = isLoop;
 	animData.isEnd = false;
 
-	_animDataList.emplace_back(animData);
+	//_animDataList.emplace_back(animData);
+	_animDataList.emplace_front(animData);
 }
 
 void Animator::AttachAnim(const std::wstring animName, const bool isLoop)
@@ -129,18 +133,18 @@ void Animator::UpdateAnim(AnimData& data)
 	MV1SetAttachAnimTime(_model, data.attachNo, data.frame);
 }
 
-void Animator::UpdateAnimBlend()
+void Animator::UpdateAnimBlendRate()
 {
 	// 両方にアニメーションが設定されていない場合は変化させない
-	if (GetBlendingAnim().attachNo == -1) return;
-	if (GetExistAnim().attachNo == -1) return;
+	if (FindAnimData(_blendingAnimName).attachNo == -1) return;
+	if (FindAnimData(_currentAnimName).attachNo == -1) return;
 
 	// _blendRateを0.0f -> 1.0fに変化させる
 	_blendRate += 1.0f / kAnimBlendFrame;
 	if (_blendRate > 1.0f) _blendRate = 1.0f;
 
-	MV1SetAttachAnimBlendRate(_model, GetExistAnim().attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, GetBlendingAnim().attachNo, _blendRate);
+	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 1.0f - _blendRate);
+	MV1SetAttachAnimBlendRate(_model, FindAnimData(_blendingAnimName).attachNo, _blendRate);
 }
 
 void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
@@ -149,8 +153,8 @@ void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
 	if (animName == _blendingAnimName) return;
 
 	// ブレンドに使用しない古いアニメーションの初期化
-	GetExistAnim().frame = 0.0f;
-	MV1SetAttachAnimBlendRate(_model, GetExistAnim().attachNo, 0.0f);
+	FindAnimData(_currentAnimName).frame = 0.0f;
+	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 0.0f);
 	
 	// 現在メインで再生中のアニメーションを切り替える
 	_currentAnimName = _blendingAnimName;
@@ -163,12 +167,13 @@ void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
 	_blendRate = 0.0f;
 
 	// ブレンド比率をアニメーションに適用
-	MV1SetAttachAnimBlendRate(_model, GetExistAnim().attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, GetBlendingAnim().attachNo, _blendRate);
+	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 1.0f - _blendRate);
+	MV1SetAttachAnimBlendRate(_model, FindAnimData(_blendingAnimName).attachNo, _blendRate);
 }
 
 Animator::AnimData& Animator::FindAnimData(const std::wstring animName)
 {
+	// アニメーション名で検索
 	for (auto& data : _animDataList) {
 		if (animName == data.animName) {
 			return data;
@@ -178,19 +183,4 @@ Animator::AnimData& Animator::FindAnimData(const std::wstring animName)
 	assert(false && "指定の名前のアニメーションが登録されていなかった");
 	AnimData animData;
 	return animData;
-}
-
-Animator::AnimData& Animator::GetBlendingAnim()
-{
-	return FindAnimData(_blendingAnimName);
-}
-
-Animator::AnimData& Animator::GetExistAnim()
-{
-	return FindAnimData(_currentAnimName);
-}
-
-bool Animator::GetBlendingAnimFinishState()
-{
-	return FindAnimData(_blendingAnimName).isEnd;
 }

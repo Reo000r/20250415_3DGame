@@ -10,9 +10,7 @@ class PlayerState;
 /// <summary>
 /// 
 /// </summary>
-class Player final : public Collider , public std::enable_shared_from_this<Player> {
-	// ステートの基底クラスに自分のアクセス権を渡す
-	friend class PlayerState;
+class Player final : public Collider {
 public:
 	Player();
 	~Player();
