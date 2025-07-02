@@ -46,13 +46,9 @@ private:
 	void UpdateAttack();
 
 	/// <summary>
-	/// ˆÚ“®ŠÖ˜Aˆ—
-	/// </summary>
-	void Move(const float speed);
-	/// <summary>
 	/// ˆÚ“®ˆ—
 	/// </summary>
-	void Walk(const float speed);
+	void Move(const float speed);
 	/// <summary>
 	/// is•ûŒü‚Ö‚Ì•ûŒü“]Š·ˆ—
 	/// </summary>
@@ -64,5 +60,6 @@ private:
 
 	float _rotAngle;
 	Matrix4x4 _rotMtx;
+	Quaternion _quaternion;
 };
 

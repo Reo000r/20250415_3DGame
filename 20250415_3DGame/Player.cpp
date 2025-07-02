@@ -9,6 +9,10 @@
 #include <DxLib.h>
 
 #define ANIMATION_TEST
+// Quaternionを使用した回転
+#define USE_QUATERNION
+// 
+//#define OLD_STATETRANSITION
 
 namespace {
 	constexpr float kWalkSpeed = 20.0f;
@@ -75,8 +79,10 @@ void Player::Init(std::weak_ptr<Camera> camera) {
 void Player::Update() {
 	_animator->Update();
 
+#ifndef OLD_STATETRANSITION
 	// 状態遷移
 	CheckStateTransition();
+#endif
 
 	// 現在のステートに応じたUpdateが行われる
 	(this->*_nowUpdateState)();
@@ -164,30 +170,45 @@ void Player::UpdateIdle()
 {
 	Input& input = Input::GetInstance();
 	Vector3 stick = input.GetPadLeftSitck();
-	//// 入力があればステートを変更する
-	//if ((int)stick.x != 0 || (int)stick.z != 0) {
-	//	// 追加の入力があればダッシュ
-	//	if (input.IsPress("dash")) {
-	//		_animator->ChangeAnim(kAnimNameRun, true);
-	//		_nowUpdateState = &Player::UpdateDash;
-	//	}
-	//	else {
-	//		_animator->ChangeAnim(kAnimNameWalk, true);
-	//		_nowUpdateState = &Player::UpdateWalk;
-	//	}
-	//}
+
+#ifdef OLD_STATETRANSITION
+	// 入力があればステートを変更する
+	if ((int)stick.x != 0 || (int)stick.z != 0) {
+		// 追加の入力があればダッシュ
+		if (input.IsPress("dash")) {
+			_animator->ChangeAnim(kAnimNameRun, true);
+			_nowUpdateState = &Player::UpdateDash;
+		}
+		else {
+			_animator->ChangeAnim(kAnimNameWalk, true);
+			_nowUpdateState = &Player::UpdateWalk;
+		}
+	}
+#endif // OLD_STATETRANSITION
+
 	Vector3 vel = GetVel();
+
+#ifdef OLD_STATETRANSITION
 	// ジャンプ処理
-	//if (input.IsTrigger("jump") && GetPos().y <= kGround) {
-	//	vel.y += kJumpForce;
-	//	_animator->ChangeAnim(kAnimNameJump, true);
-	//	_nowUpdateState = &Player::UpdateJump;
-	//}
+	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
+		vel.y += kJumpForce;
+		_animator->ChangeAnim(kAnimNameJump, true);
+		_nowUpdateState = &Player::UpdateJump;
+	}
+#endif // OLD_STATETRANSITION
+
+
 	const float cameraRot = _camera.lock()->GetRotAngleX();
-	
+
+#ifndef USE_QUATERNION
 	// カメラから見た移動に変換する
 	_rotMtx = MatRotateY(cameraRot);
 	vel = VecMultiple(_rotMtx, vel);
+#else
+	_quaternion = AngleAxis(Vector3(0, 1, 0), _rotAngle);
+	_rotMtx = ConvQuaternionToMatrix4x4(_quaternion);
+	vel = VecMultiple(_rotMtx, vel);
+#endif
 
 	// rigidbodyに編集した移動量を代入
 	rigidbody->SetVel(vel);
@@ -198,57 +219,61 @@ void Player::UpdateIdle()
 
 void Player::UpdateWalk()
 {
-	// 移動関連処理
+	// 移動処理
 	Move(kWalkSpeed);
-//	_animator->Update();
+	// 進行方向への方向転換処理
+	Rotate();
 }
 
 void Player::UpdateDash()
 {
-	// 移動関連処理
+	// 移動処理
 	Move(kDashSpeed);
-//	_animator->Update();
+	// 進行方向への方向転換処理
+	Rotate();
 }
 
 void Player::UpdateJump()
 {
-	//if (GetPos().y <= kGround) {
-	//	Input& input = Input::GetInstance();
-	//	Vector3 stick = input.GetPadLeftSitck();
-	//	// 入力があればステートを変更する
-	//	if ((int)stick.x != 0 || (int)stick.z != 0) {
-	//		// 追加の入力があればダッシュ
-	//		if (input.IsPress("dash")) {
-	//			_animator->ChangeAnim(kAnimNameRun, true);
-	//			_nowUpdateState = &Player::UpdateDash;
-	//		}
-	//		else {
-	//			_animator->ChangeAnim(kAnimNameWalk, true);
-	//			_nowUpdateState = &Player::UpdateWalk;
-	//		}
-	//	}
-	//	else {
-	//		_animator->ChangeAnim(kAnimNameIdle, true);
-	//		_nowUpdateState = &Player::UpdateIdle;
-	//	}
-	//}
+#ifdef OLD_STATETRANSITION
+	if (GetPos().y <= kGround) {
+		Input& input = Input::GetInstance();
+		Vector3 stick = input.GetPadLeftSitck();
+		// 入力があればステートを変更する
+		if ((int)stick.x != 0 || (int)stick.z != 0) {
+			// 追加の入力があればダッシュ
+			if (input.IsPress("dash")) {
+				_animator->ChangeAnim(kAnimNameRun, true);
+				_nowUpdateState = &Player::UpdateDash;
+			}
+			else {
+				_animator->ChangeAnim(kAnimNameWalk, true);
+				_nowUpdateState = &Player::UpdateWalk;
+			}
+		}
+		else {
+			_animator->ChangeAnim(kAnimNameIdle, true);
+			_nowUpdateState = &Player::UpdateIdle;
+		}
+	}
+#endif // OLD_STATETRANSITION
+
+	
+	// 移動処理
 	Move(kDashSpeed);
+	// 進行方向への方向転換処理
+	Rotate();
 
 //	_animator->Update();
 }
 
 void Player::UpdateAttack()
 {
+	// 攻撃処理
 }
 
-void Player::Move(const float speed) {
-	// 移動処理
-	Walk(speed);
-	// 進行方向への方向転換処理
-	Rotate();
-}
-
-void Player::Walk(const float speed) {
+void Player::Move(const float speed)
+{
 	Vector3 dir = GetDir();
 	Vector3 vel = GetVel();
 	Position3 pos = GetPos();	// 移動予定位置
@@ -258,39 +283,47 @@ void Player::Walk(const float speed) {
 	// スティックによる平面移動
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
 	
-	//if (GetPos().y <= kGround) {
-	//	// もし入力がないかつ移動量もないなら
-	//	if (((int)stick.x == 0 && (int)stick.z == 0) &&
-	//		vel.SqrMagnitude() < PhysicsData::sleepThreshold) {
-	//		_animator->ChangeAnim(kAnimNameIdle, true);
-	//		_nowUpdateState = &Player::UpdateIdle;
-	//		return;
-	//	}
-	//	else if (input.IsPress("dash") &&
-	//		_nowUpdateState != &Player::UpdateDash) {
-	//		_animator->ChangeAnim(kAnimNameRun, true);
-	//		_nowUpdateState = &Player::UpdateDash;
-	//		return;
-	//	}
-	//	else if (!input.IsPress("dash") &&
-	//		_nowUpdateState != &Player::UpdateWalk) {
-	//		_animator->ChangeAnim(kAnimNameWalk, true);
-	//		_nowUpdateState = &Player::UpdateWalk;
-	//		return;
-	//	}
-	//}
+
+#ifdef OLD_STATETRANSITION
+	if (GetPos().y <= kGround) {
+		// もし入力がないかつ移動量もないなら
+		if (((int)stick.x == 0 && (int)stick.z == 0) &&
+			vel.SqrMagnitude() < PhysicsData::sleepThreshold) {
+			_animator->ChangeAnim(kAnimNameIdle, true);
+			_nowUpdateState = &Player::UpdateIdle;
+			return;
+		}
+		else if (input.IsPress("dash") &&
+			_nowUpdateState != &Player::UpdateDash) {
+			_animator->ChangeAnim(kAnimNameRun, true);
+			_nowUpdateState = &Player::UpdateDash;
+			return;
+		}
+		else if (!input.IsPress("dash") &&
+			_nowUpdateState != &Player::UpdateWalk) {
+			_animator->ChangeAnim(kAnimNameWalk, true);
+			_nowUpdateState = &Player::UpdateWalk;
+			return;
+		}
+	}
+#endif // OLD_STATETRANSITION
+
 
 	// 入力が入っていない時でもxに-0.0fが入っている
 	dir.x = -stick.x;
 	dir.z = stick.z;
 
-	//// ジャンプ処理
-	//if (input.IsTrigger("jump") && GetPos().y <= kGround) {
-	//	vel.y += kJumpForce;
-	//	_animator->ChangeAnim(kAnimNameJump, true);
-	//	_nowUpdateState = &Player::UpdateJump;
-	//}
 
+#ifdef OLD_STATETRANSITION
+	// ジャンプ処理
+	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
+		vel.y += kJumpForce;
+		_animator->ChangeAnim(kAnimNameJump, true);
+		_nowUpdateState = &Player::UpdateJump;
+	}
+#endif // OLD_STATETRANSITION
+
+	
 	dir.Normalized();
 
 	vel.x += dir.x * speed;

@@ -3,26 +3,26 @@
 #include "Collider.h"
 #include <memory>
 
-class Camera;
+class Player;
 class Animator;
 
-class EnemyBase : public Collider
+/*
+
+class EnemyBase abstract : public Collider
 {
 public:
 	EnemyBase();
-	~EnemyBase();
+	virtual ~EnemyBase();
 
-	void Init(/*int modelHandle, */std::weak_ptr<Camera> camera);
-	void Update();
-	void Draw();
-
-	/// <summary>
-	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
-	/// </summary>
-	/// <param name="colider"></param>
-	void OnCollide(const std::weak_ptr<Collider> colider) override;
+	virtual void Init(std::weak_ptr<Player> player) abstract;
+	virtual void Update() abstract;
+	virtual void Draw() abstract;
 
 	Matrix4x4 GetRotMtx() const { return _rotMtx; }
+
+private:
+	using UpdateFunc_t = void(EnemyBase::*)();
+	UpdateFunc_t _nowUpdateState;
 
 private:
 	void UpdateIdle();
@@ -31,23 +31,12 @@ private:
 	void UpdateJump();
 	void UpdateAttack();
 
-	/// <summary>
-	/// ˆÚ“®ŠÖ˜Aˆ—
-	/// </summary>
-	void Move(const float speed);
-	/// <summary>
-	/// ˆÚ“®ˆ—
-	/// </summary>
-	void Walk(const float speed);
-	/// <summary>
-	/// is•ûŒü‚Ö‚Ì•ûŒü“]Š·ˆ—
-	/// </summary>
-	void Rotate();
-
 	std::shared_ptr<Animator> _animator;
 
-	std::weak_ptr<Camera> _camera;
+	std::weak_ptr<Player> _player;
 
 	float _rotAngle;
 	Matrix4x4 _rotMtx;
 };
+
+*/

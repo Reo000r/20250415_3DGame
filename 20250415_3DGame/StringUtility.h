@@ -12,6 +12,7 @@ namespace StringUtility {
 
 	/// <summary>
 	/// wstring‚©‚çstring‚Ö•ÏŠ·‚·‚é
+	/// “®ì–¢Šm”F
 	/// </summary>
 	/// <param name="str"></param>
 	/// <returns></returns>

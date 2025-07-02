@@ -54,9 +54,8 @@ void Camera::Update() {
 #endif // USE_STICK
 
 	// プレイヤーの移動に合わせて移動を行う
-	Vector3 playerPos = _player.lock()->GetPos();		// とりあえず原点
-	//// プレイヤーの回転情報から常に後ろから見たカメラにする
-	Matrix4x4 playerRotMtx = MatIdentity();//_player.lock()->GetRotMtx();
+	Vector3 playerPos = _player.lock()->GetPos();
+	Matrix4x4 playerRotMtx = MatIdentity();
 	// さらにカメラが持つ回転情報を加える
 	Matrix4x4 cameraRotMtx = MatRotateY(_rotAngle.x);
 	// プレイヤーが持つ回転情報とカメラが持つ回転情報を合わせ

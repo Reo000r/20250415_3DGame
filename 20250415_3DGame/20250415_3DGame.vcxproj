@@ -26,6 +26,7 @@
     <ClCompile Include="ColliderData.cpp" />
     <ClCompile Include="ColliderDataSphere.cpp" />
     <ClCompile Include="EnemyBase.cpp" />
+    <ClCompile Include="EnemyNormal.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="ColliderData.h" />
     <ClInclude Include="ColliderDataSphere.h" />
     <ClInclude Include="EnemyBase.h" />
+    <ClInclude Include="EnemyNormal.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Input.h" />
