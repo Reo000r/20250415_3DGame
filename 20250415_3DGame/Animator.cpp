@@ -141,7 +141,14 @@ void Animator::UpdateAnimBlendRate()
 
 	// _blendRateを0.0f -> 1.0fに変化させる
 	_blendRate += 1.0f / kAnimBlendFrame;
-	if (_blendRate > 1.0f) _blendRate = 1.0f;
+	
+	// ブレンドが終了したら
+	if (_blendRate >= 1.0f) {
+		// 現在のアニメーションをブレンド中のアニメーションに置き換える
+		//_currentAnimName = _blendingAnimName;
+
+		_blendRate = 1.0f;
+	}
 
 	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 1.0f - _blendRate);
 	MV1SetAttachAnimBlendRate(_model, FindAnimData(_blendingAnimName).attachNo, _blendRate);

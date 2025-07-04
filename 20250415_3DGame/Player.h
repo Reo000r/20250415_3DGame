@@ -23,9 +23,9 @@ public:
 	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
 	/// </summary>
 	/// <param name="colider"></param>
-	void OnCollide(const std::weak_ptr<Collider> colider) override;
+	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
-	Matrix4x4 GetRotMtx() const { return _rotMtx; }
+	//Matrix4x4 GetRotMtx() const { return _rotMtx; }
 
 private:
 	// Update‚ÌStateƒpƒ^[ƒ“
@@ -43,7 +43,11 @@ private:
 	void UpdateWalk();
 	void UpdateDash();
 	void UpdateJump();
-	void UpdateAttack();
+	void UpdateAttackFirst();
+	void UpdateAttackSecond();
+	void UpdateAttackThird();
+	void UpdateDamage();
+	void UpdateDead();
 
 	/// <summary>
 	/// ˆÚ“®ˆ—
@@ -59,7 +63,7 @@ private:
 	std::weak_ptr<Camera> _camera;
 
 	float _rotAngle;
-	Matrix4x4 _rotMtx;
+	//Matrix4x4 _rotMtx;
 	Quaternion _quaternion;
 };
 

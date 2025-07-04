@@ -7,11 +7,11 @@
 
 
 Vector3::operator DxLib::tagVECTOR() {
-	return { x, y, z };
+	return Vector3(x, y, z);
 }
 
 Vector3::operator DxLib::tagVECTOR() const {
-	return { x, y, z };
+	return Vector3(x, y, z);
 }
 
 Vector3::Vector3(const DxLib::tagVECTOR vector) :
@@ -168,10 +168,10 @@ float Dot(const Vector3& va, const Vector3& vb) {
 }
 
 Vector3 Cross(const Vector3& va, const Vector3& vb) {
-	Vector3 ret = {
+	Vector3 ret = Vector3(
 		va.y * vb.z - va.z * vb.y,
 		va.z * vb.x - va.x * vb.z,
-		va.x * vb.y - va.y * vb.x };
+		va.x * vb.y - va.y * vb.x);
 	return ret;
 }
 
@@ -183,9 +183,40 @@ Vector3 operator%(const Vector3& va, const Vector3& vb) {
 	return Cross(va, vb);
 }
 
-//Vector3 Reflect(const Vector3 v, Vector3 normal)
-//{
-//	normal.Normalized();
-//	Vector3 ret = ;
-//	return Vector3();
-//}
+Vector3 Reflect(const Vector3 v, Vector3 normal)
+{
+	// 法線ベクトルが正規化されていない場合に備えて正規化する
+	normal.Normalized();
+	// 反射ベクトルを計算
+	return v - normal * 2.0f * Dot(v, normal);
+}
+
+Vector3 Vector3Right()
+{
+	return Vector3(1.0f, 0.0f, 0.0f);
+}
+
+Vector3 Vector3Left()
+{
+	return Vector3(-1.0f, 0.0f, 0.0f);
+}
+
+Vector3 Vector3Up()
+{
+	return Vector3(0.0f, 1.0f, 0.0f);
+}
+
+Vector3 Vector3Down()
+{
+	return Vector3(0.0f, -1.0f, 0.0f);
+}
+
+Vector3 Vector3Front()
+{
+	return Vector3(0.0f, 0.0f, 1.0f);
+}
+
+Vector3 Vector3Back()
+{
+	return Vector3(0.0f, 0.0f, -1.0f);
+}

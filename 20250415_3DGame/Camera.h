@@ -17,20 +17,19 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// ‰¡²‚Ì‰ñ“]î•ñ
+	/// Y²‚Ì‰ñ“]î•ñ
 	/// </summary>
 	/// <returns></returns>
-	float GetRotAngleX() const { return _rotAngle.x; }
+	float GetRotAngleY() const { return ConvQuaternionToEuler(_quaternion).y; }
 
 private:
-	Vector3 _pos;
-	Vector3 _vec;
+	Position3 _pos;
 	// Player‚ÌˆÊ’u‚¾‚¯Œ©‚½‚¢
 	std::weak_ptr<Player> _player;
 	Vector3 _targetPos;
 
-	// x‚Å‰¡Ay‚Åc‰ñ“]‚ğ•\‚·
-	Vector3 _rotAngle;
+	// ‚»‚ê‚¼‚ê‚ÌÀ•W²‚Å‚Ì‰ñ“]—Ê‚ğ•\‚·
+	Quaternion _quaternion;
 	float _near;
 	float _far;
 	float _viewAngle;

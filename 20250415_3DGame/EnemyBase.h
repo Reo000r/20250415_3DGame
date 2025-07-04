@@ -6,12 +6,16 @@
 class Player;
 class Animator;
 
-/*
-
 class EnemyBase abstract : public Collider
 {
 public:
-	EnemyBase();
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="hitPoint">HP</param>
+	/// <param name="transferAttackRad">攻撃移行範囲</param>
+	/// <param name="attackMul">攻撃力補正値(武器に掛ける値)</param>
+	EnemyBase(float hitPoint, float transferAttackRad, float attackMul);
 	virtual ~EnemyBase();
 
 	virtual void Init(std::weak_ptr<Player> player) abstract;
@@ -20,16 +24,11 @@ public:
 
 	Matrix4x4 GetRotMtx() const { return _rotMtx; }
 
-private:
-	using UpdateFunc_t = void(EnemyBase::*)();
-	UpdateFunc_t _nowUpdateState;
-
-private:
-	void UpdateIdle();
-	void UpdateWalk();
-	void UpdateDash();
-	void UpdateJump();
-	void UpdateAttack();
+protected:
+	/// <summary>
+	/// ステートの遷移条件を確認し、変更可能なステートがあればそれに遷移する
+	/// </summary>
+	virtual void CheckStateTransition() abstract;
 
 	std::shared_ptr<Animator> _animator;
 
@@ -37,6 +36,13 @@ private:
 
 	float _rotAngle;
 	Matrix4x4 _rotMtx;
-};
+	Quaternion _quaternion;
 
-*/
+	// HP
+	float _hitPoint;
+
+	// 攻撃移行範囲
+	float _transferAttackRad;
+	// 攻撃力補正値(武器に掛ける値)
+	float _attackMul;
+};

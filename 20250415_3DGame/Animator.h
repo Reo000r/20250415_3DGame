@@ -66,6 +66,16 @@ public:
 
 	int GetModelHandle() const{ return _model; }
 
+	std::wstring GetCurrentAnimName() const{ return _currentAnimName; }
+	std::wstring GetBlendingAnimName() const{ return _blendingAnimName; }
+
+	/// <summary>
+	/// 指定のアニメーションが終了しているか
+	/// </summary>
+	/// <param name="animName"></param>
+	/// <returns></returns>
+	bool IsEnd(const std::wstring animName) { return FindAnimData(animName).isEnd; }
+
 private:
 	// モデルハンドル
 	int _model;

@@ -171,7 +171,15 @@ Vector3 operator%(const Vector3& va, const Vector3& vb);
 /// <summary>
 /// 反射ベクトルを求める
 /// </summary>
-/// <param name="v">反射させるベクトル</param>
-/// <param name="normal">法線ベクトルなど</param>
+/// <param name="v">入射ベクトル</param>
+/// <param name="normal">法線ベクトル</param>
 /// <returns></returns>
-//Vector3 Reflect(const Vector3 v, Vector3 normal);
+Vector3 Reflect(const Vector3 v, Vector3 normal);
+
+
+Vector3 Vector3Right();
+Vector3 Vector3Left();
+Vector3 Vector3Up();
+Vector3 Vector3Down();
+Vector3 Vector3Front();
+Vector3 Vector3Back();

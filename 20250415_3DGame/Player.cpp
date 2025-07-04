@@ -15,8 +15,8 @@
 //#define OLD_STATETRANSITION
 
 namespace {
-	constexpr float kWalkSpeed = 20.0f;
-	constexpr float kDashSpeed = 40.0f;
+	constexpr float kWalkSpeed = 7.0f;
+	constexpr float kDashSpeed = 14.0f;
 	constexpr float kJumpForce = 20.0f;
 	constexpr float kGround = 0.0f;
 
@@ -29,6 +29,11 @@ namespace {
 	const std::wstring kAnimNameWalk	= kAnimName + L"Walk";
 	const std::wstring kAnimNameRun		= kAnimName + L"Run";
 	const std::wstring kAnimNameJump	= kAnimName + L"Jump_Idle";
+	const std::wstring kAnimNameAttackFirst		= kAnimName + L"Attack_First";
+	const std::wstring kAnimNameAttackSecond	= kAnimName + L"Attack_Second";
+	const std::wstring kAnimNameAttackThird		= kAnimName + L"Attack_Third";
+	const std::wstring kAnimNameDamage	= kAnimName + L"Damage";
+	const std::wstring kAnimNameDead	= kAnimName + L"Dead";
 #endif
 }
 
@@ -62,6 +67,13 @@ Player::Player() :
 	_animator->SetAnimData(kAnimNameWalk, true);
 	_animator->SetAnimData(kAnimNameRun, true);
 	_animator->SetAnimData(kAnimNameJump, true);
+
+	_animator->SetAnimData(kAnimNameAttackFirst, false);
+	_animator->SetAnimData(kAnimNameAttackSecond, false);
+	_animator->SetAnimData(kAnimNameAttackThird, false);
+	_animator->SetAnimData(kAnimNameDamage, false);
+	_animator->SetAnimData(kAnimNameDead, false);
+	
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameIdle);
 #endif
@@ -80,7 +92,7 @@ void Player::Update() {
 	_animator->Update();
 
 #ifndef OLD_STATETRANSITION
-	// 状態遷移
+	// 状態遷移確認
 	CheckStateTransition();
 #endif
 
@@ -105,15 +117,37 @@ void Player::Draw() {
 #endif
 }
 
-void Player::OnCollide(const std::weak_ptr<Collider> colider)
+void Player::OnCollide(const std::weak_ptr<Collider> collider)
 {
 	// coliderと衝突
+
+	// 特定のタグではない場合return
+	if (collider.lock()->GetTag() != PhysicsData::GameObjectTag::PlayerAttack) return;
+
+	// (ダメージを受け)
+	// 被弾状態へ
+	if (_nowUpdateState != &Player::UpdateDamage) {
+		_nowUpdateState = &Player::UpdateDamage;
+		_animator->ChangeAnim(kAnimNameDamage, false);
+		// ダメージを受ける
+
+		return;
+	}
 }
 
 void Player::CheckStateTransition()
 {
 	Input& input = Input::GetInstance();
 	Vector3 stick = input.GetPadLeftSitck();
+	// 現在のアニメーションが終わっているかつ現在のステートが攻撃関連ならtrue
+	bool isEndAttack = (
+		_animator->IsEnd(_animator->GetCurrentAnimName()) &&
+		(_nowUpdateState == &Player::UpdateAttackFirst ||
+		_nowUpdateState == &Player::UpdateAttackSecond ||
+		_nowUpdateState == &Player::UpdateAttackThird)
+		);
+	// 攻撃予約が入っているか
+
 
 	// 地上にいて、
 	// ジャンプボタンが押されたら
@@ -197,24 +231,19 @@ void Player::UpdateIdle()
 	}
 #endif // OLD_STATETRANSITION
 
-
-	const float cameraRot = _camera.lock()->GetRotAngleX();
+	const float cameraRot = _camera.lock()->GetRotAngleY();
 
 #ifndef USE_QUATERNION
 	// カメラから見た移動に変換する
 	_rotMtx = MatRotateY(cameraRot);
 	vel = VecMultiple(_rotMtx, vel);
 #else
-	_quaternion = AngleAxis(Vector3(0, 1, 0), _rotAngle);
-	_rotMtx = ConvQuaternionToMatrix4x4(_quaternion);
-	vel = VecMultiple(_rotMtx, vel);
+	_quaternion = AngleAxis(Vector3Up(), _rotAngle);
+	vel = VecMultiple(ConvQuaternionToMatrix4x4(_quaternion), vel);
 #endif
 
 	// rigidbodyに編集した移動量を代入
 	rigidbody->SetVel(vel);
-
-
-//	_animator->Update();
 }
 
 void Player::UpdateWalk()
@@ -263,22 +292,39 @@ void Player::UpdateJump()
 	Move(kDashSpeed);
 	// 進行方向への方向転換処理
 	Rotate();
-
-//	_animator->Update();
 }
 
-void Player::UpdateAttack()
+void Player::UpdateAttackFirst()
 {
 	// 攻撃処理
+
+	// 入力受付範囲内で攻撃入力が入れば
+	// 攻撃secondを予約する
+}
+
+void Player::UpdateAttackSecond()
+{
+}
+
+void Player::UpdateAttackThird()
+{
+}
+
+void Player::UpdateDamage()
+{
+}
+
+void Player::UpdateDead()
+{
 }
 
 void Player::Move(const float speed)
 {
-	Vector3 dir = GetDir();
+	Vector3 dir = {};
 	Vector3 vel = GetVel();
 	Position3 pos = GetPos();	// 移動予定位置
 	Input& input = Input::GetInstance();
-	const float cameraRot = _camera.lock()->GetRotAngleX();
+	const float cameraRot = _camera.lock()->GetRotAngleY();
 
 	// スティックによる平面移動
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
@@ -326,12 +372,14 @@ void Player::Move(const float speed)
 	
 	dir.Normalized();
 
+	// カメラから見た移動方向に変換する
+	_quaternion = AngleAxis(Vector3Up(), cameraRot);	// Y軸回転Qを作成
+	dir = RotateVector3(_quaternion, dir);				// 回転Qを適用
+	//_quaternion = ConvMatrix4x4ToQuaternion(MatRotateY(cameraRot));
+	//dir = VecMultiple(ConvQuaternionToMatrix4x4(_quaternion), dir);
+
 	vel.x += dir.x * speed;
 	vel.z += dir.z * speed;
-
-	// カメラから見た移動に変換する
-	_rotMtx = MatRotateY(cameraRot);
-	vel = VecMultiple(_rotMtx, vel);
 
 	pos += vel;
 	if (pos.y < kGround) {
@@ -349,7 +397,7 @@ void Player::Rotate() {
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
 	// 入力があった場合のみキャラクターの向きを変更
 	if (stick.x != 0.0f || stick.z != 0.0f) {
-		const float cameraRot = _camera.lock()->GetRotAngleX();
+		const float cameraRot = _camera.lock()->GetRotAngleY();
 		float a = atan2f(stick.z, stick.x) + -cameraRot + DX_PI_F * 0.5f;
 		MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, a, 0));
 	}

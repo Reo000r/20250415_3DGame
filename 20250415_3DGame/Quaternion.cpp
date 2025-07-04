@@ -61,7 +61,7 @@ Quaternion Quaternion::Inverse() const
     return Quaternion(w, -x, -y, -z);
 }
 
-Quaternion operator*(Quaternion lQ, Quaternion rQ)
+Quaternion operator*(const Quaternion lQ, const Quaternion rQ)
 {
 	Quaternion ret;
 
@@ -74,12 +74,12 @@ Quaternion operator*(Quaternion lQ, Quaternion rQ)
 	return ret;
 }
 
-Vector3 operator*(Quaternion qRot, Vector3 right)
+Vector3 operator*(const Quaternion qRot, const Vector3 right)
 {
     return RotateVector3(qRot, right);
 }
 
-Vector3 RotateVector3(Quaternion qRot, Vector3 right)
+Vector3 RotateVector3(const Quaternion qRot, const Vector3 right)
 {
     Quaternion qPos, qInv;
 
@@ -163,7 +163,7 @@ Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t)
     ).Normalize();
 }
 
-Quaternion ConvMatrix4x4ToQuaternion(Matrix4x4 mat)
+Quaternion ConvMatrix4x4ToQuaternion(const Matrix4x4 mat)
 {
     // 各成分ごとにクォータニオンのx, y, z, wを求めるための値を計算
     float elem[4];  // 0:x, 1:y, 2:z, 3:w
@@ -227,7 +227,7 @@ Quaternion ConvMatrix4x4ToQuaternion(Matrix4x4 mat)
     return ret;
 }
 
-Matrix4x4 ConvQuaternionToMatrix4x4(Quaternion q)
+Matrix4x4 ConvQuaternionToMatrix4x4(const Quaternion q)
 {
     Matrix4x4 ret = MatIdentity();
 

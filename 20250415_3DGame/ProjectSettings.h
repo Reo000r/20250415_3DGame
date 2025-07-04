@@ -9,7 +9,9 @@ namespace PhysicsData {
 	{
 		None,			// タグなし
 		Player,			// プレイヤー
+		PlayerAttack,
 		Enemy,			// 敵
+		EnemyAttack,
 		SystemWall,		// システム壁
 		StepGround,		// 足場の地面
 	};

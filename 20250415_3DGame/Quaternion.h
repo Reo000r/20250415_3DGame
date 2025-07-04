@@ -41,7 +41,7 @@ public:
 /// <param name="lQ"></param>
 /// <param name="rQ"></param>
 /// <returns></returns>
-Quaternion operator*(Quaternion lQ, Quaternion rQ);
+Quaternion operator*(const Quaternion lQ, const Quaternion rQ);
 
 /// <summary>
 /// ベクトルに対しクォータニオンの回転を適用する
@@ -50,7 +50,7 @@ Quaternion operator*(Quaternion lQ, Quaternion rQ);
 /// <param name="qRot"></param>
 /// <param name="right"></param>
 /// <returns>回転後のベクトル</returns>
-Vector3 operator*(Quaternion qRot, Vector3 right);
+Vector3 operator*(const Quaternion qRot, const Vector3 right);
 
 /// <summary>
 /// ベクトルに対しクォータニオンの回転を適用する
@@ -58,7 +58,7 @@ Vector3 operator*(Quaternion qRot, Vector3 right);
 /// <param name="qRot"></param>
 /// <param name="right"></param>
 /// <returns>回転後のベクトル</returns>
-Vector3 RotateVector3(Quaternion qRot, Vector3 right);
+Vector3 RotateVector3(const Quaternion qRot, const Vector3 right);
 
 /// <summary>
 /// 回転軸と回転角から回転クォータニオンを返す
@@ -82,14 +82,14 @@ Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t);
 /// 純粋な回転行列を渡さないと不具合が出る
 /// </summary>
 /// <returns></returns>
-Quaternion ConvMatrix4x4ToQuaternion(Matrix4x4 mat);
+Quaternion ConvMatrix4x4ToQuaternion(const Matrix4x4 mat);
 
 /// <summary>
 /// クォータニオンから行列の変換
 /// 参考:http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 /// </summary>
 /// <returns></returns>
-Matrix4x4 ConvQuaternionToMatrix4x4(Quaternion q);
+Matrix4x4 ConvQuaternionToMatrix4x4(const Quaternion q);
 
 /// <summary>
 /// クォータニオンからオイラー角(Vector3)への変換を行う

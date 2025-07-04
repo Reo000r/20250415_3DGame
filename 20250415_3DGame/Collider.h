@@ -23,7 +23,7 @@ public:
 	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
 	/// </summary>
 	/// <param name="colider"></param>
-	virtual void OnCollide(const std::weak_ptr<Collider> colider) abstract;
+	virtual void OnCollide(const std::weak_ptr<Collider> collider) abstract;
 
 	PhysicsData::GameObjectTag GetTag() const	{ return tag; }
 	// ˆÊ’u•â³—Dæ“xî•ñ‚ğ•Ô‚·
