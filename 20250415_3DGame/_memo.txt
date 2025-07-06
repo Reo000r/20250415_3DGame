@@ -1,7 +1,29 @@
+タイトル
+
+FatalArena
+
+
+
+
+
 使用素材
 
 キャラクターモデル
 https://www.mixamo.com/
+
+剣
+https://sketchfab.com/3d-models/procedural-sword-test-12-15fdf4f6b6ef44d2982261fa0e0cca94
+
+騎士
+https://sketchfab.com/3d-models/medieval-knight-f7dab670155a4ada9facffd2335f16d8
+骨
+https://sketchfab.com/3d-models/skeleton-pre-cut-c6aae66fa4674394beda981f46eee415
+
+アニメーション
+https://assetstore.unity.com/packages/3d/animations/free-32-rpg-animations-215058#content
+https://assetstore.unity.com/packages/3d/animations/human-melee-animations-free-165785
+https://assetstore.unity.com/packages/3d/animations/sword-animation-314514
+
 
 
 
@@ -26,6 +48,8 @@ http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 ジャンプから着地したときの空気に乗ってる感を消す
 
 ガントチャート調べて作成
+
+カプセルの当たり判定
 
 Mixamo     https://www.mixamo.com/#/
  アニメーション
@@ -62,14 +86,14 @@ dir = RotateVector3(_quaternion, dir);					// 回転Qを適用
 
 テンプレート
 GeminiCLI
-"C:\Users\中川 怜皇\Documents\GitHub\20250415_3DGame\20250415_3DGame"
+"Documents\GitHub\20250415_3DGame\20250415_3DGame"
 現在このプロジェクトで作業を行っています。
 (内容)
 どのような問題が考えられますか？
 必要であれば検索やほかのファイルの参照を行ってください。
 修正内容はファイルを直接編集するのではなく、コンソール上に表示してください。
 
-"C:\Users\中川 怜皇\Documents\GitHub\20250415_3DGame\20250415_3DGame"
+"Documents\GitHub\20250415_3DGame\20250415_3DGame"
 現在このプロジェクトで作業を行っています。
 Camera.cpp内のカメラの回転では、行列を用いて回転を行っています。
 これをQuaternion.hのQuaternionを用いて回転を行うコードを表示してください。
@@ -149,8 +173,10 @@ exeを大きくしたくないから
 DxLibはlibもDLLどちらも対応している
 
 
-
-
+07/06
+モデルとアニメーションはなるべく同じサイトから取ってきたほうが良い
+違うサイトだとボーンの名前が違ってアニメーションが
+スムーズに充てられない事がほとんど
 
 
 

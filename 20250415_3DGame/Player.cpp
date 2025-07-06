@@ -21,8 +21,9 @@ namespace {
 	constexpr float kGround = 0.0f;
 
 #ifndef ANIMATION_TEST
-	const std::wstring kAnimName = L"Armature|Animation";
+	const std::wstring kAnimName = L"Armature|Animation_";
 	const std::wstring kAnimNameJump = kAnimName + L"Jump";
+	const std::wstring kAnimNameJump = kAnimName + L"Attack360High";
 #else
 	const std::wstring kAnimName		= L"CharacterArmature|";
 	const std::wstring kAnimNameIdle	= kAnimName + L"Idle";
