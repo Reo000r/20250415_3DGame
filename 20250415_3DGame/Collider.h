@@ -13,7 +13,13 @@ class PlayerState;
 /// </summary>
 class Collider abstract : public std::enable_shared_from_this<Collider> {
 public:
-	// コンストラクタ
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="priority">位置補正の優先度</param>
+	/// <param name="tag">タグ</param>
+	/// <param name="colliderKind">当たり判定種別</param>
+	/// <param name="isTrigger"></param>
 	Collider(PhysicsData::Priority priority, PhysicsData::GameObjectTag tag, PhysicsData::ColliderKind colliderKind, bool isTrigger);
 	virtual ~Collider();
 	void EntryPhysics(std::weak_ptr<Physics> physics_);
@@ -40,8 +46,16 @@ protected:
 	std::weak_ptr<Physics> physics;
 
 private:
-	std::shared_ptr<ColliderData> CreateColliderData(PhysicsData::ColliderKind kind, bool isTrigger);
+	std::shared_ptr<ColliderData> CreateColliderData(
+		PhysicsData::ColliderKind kind, bool isTrigger, 
+		float rad = 0.0f, Vector3 start = Vector3(), Vector3 end = Vector3());
 	
+protected:	// それぞれのオブジェクトから呼びたいため
+	void SetColliderData(
+		PhysicsData::ColliderKind kind, bool isTrigger, 
+		float rad = 0.0f, Vector3 start = Vector3(), Vector3 end = Vector3());
+
+private:
 	PhysicsData::GameObjectTag	tag;
 	// 位置補正優先度情報
 	PhysicsData::Priority priority;

@@ -21,13 +21,19 @@ public:
 	void AddThroughTag(PhysicsData::GameObjectTag tag);
 	void RemoveThroughTag(PhysicsData::GameObjectTag tag);
 
-	// 当たり判定を無視するタグかどうか
+	/// <summary>
+	/// 当たり判定を無視するタグかどうか
+	/// </summary>
+	/// <param name="target">タグ</param>
+	/// <returns>無視する場合はtrue</returns>
 	bool IsThroughTarget(const PhysicsData::GameObjectTag target) const;
 
 	// 当たり判定を無視するタグのリスト
 	std::list<PhysicsData::GameObjectTag>	throughTags;
 
-private:
+	// MEMO:ここpublicにしたら問題あるかな
+public:
+
 	PhysicsData::ColliderKind	kind;
 	bool	isTrigger;
 

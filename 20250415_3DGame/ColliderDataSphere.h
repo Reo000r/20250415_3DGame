@@ -3,7 +3,7 @@
 
 class ColliderDataSphere : public ColliderData{
 public:
-	ColliderDataSphere(bool isTrigger);
+	ColliderDataSphere(bool isTrigger, float rad);
 	// ”¼Œa
 	float radius;
 };

@@ -23,7 +23,7 @@ Animator::~Animator()
 
 void Animator::Init(int model)
 {
-	assert(model >= 0 && "モデルハンドル正しくない");
+	assert(model >= 0 && "モデルハンドルが正しくない");
 	_model = model;
 }
 

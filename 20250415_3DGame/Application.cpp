@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "SceneController.h"
 #include "Statistics.h"
+#include "DebugDraw.h"
 
 #include <DxLib.h>
 #include <cassert>
@@ -54,12 +55,22 @@ void Application::Run()
 
 		ClearDrawScreen();
 
+#ifdef _DEBUG
+		// デバッグ描画情報を初期化
+		DebugDraw::Clear();
+#endif // _DEBUG
+
 		// 入力更新
 		input.Update();
 
 		// ゲーム部分
 		sceneController.Update();
 		sceneController.Draw();
+
+#ifdef _DEBUG
+		// デバッグ描画
+		DebugDraw::Draw();
+#endif // _DEBUG
 
 		ScreenFlip();
 

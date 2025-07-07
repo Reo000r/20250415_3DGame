@@ -1,14 +1,16 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Animator.h"
+#include "Weapon.h"
 #include "Input.h"
 #include "Collider.h"
+#include "ColliderData.h"
 #include "Rigidbody.h"
 #include <cassert>
 
 #include <DxLib.h>
 
-#define ANIMATION_TEST
+//#define ANIMATION_TEST
 // Quaternionを使用した回転
 #define USE_QUATERNION
 // 
@@ -22,8 +24,15 @@ namespace {
 
 #ifndef ANIMATION_TEST
 	const std::wstring kAnimName = L"Armature|Animation_";
-	const std::wstring kAnimNameJump = kAnimName + L"Jump";
-	const std::wstring kAnimNameJump = kAnimName + L"Attack360High";
+	const std::wstring kAnimNameIdle = kAnimName + L"Idle";
+	const std::wstring kAnimNameWalk = kAnimName + L"Walk";
+	const std::wstring kAnimNameRun = kAnimName + L"Run";
+	const std::wstring kAnimNameAttack = kAnimName + L"Attack360High";
+	const std::wstring kAnimNameAttackCombo1 = kAnimName + L"AttackCombo1";
+	const std::wstring kAnimNameAttackCombo2 = kAnimName + L"AttackCombo2";
+	const std::wstring kAnimNameAttackCombo3 = kAnimName + L"AttackCombo3";
+	const std::wstring kAnimNameDamage = kAnimName + L"React";
+	const std::wstring kAnimNameDead = kAnimName + L"Dead";
 #else
 	const std::wstring kAnimName		= L"CharacterArmature|";
 	const std::wstring kAnimNameIdle	= kAnimName + L"Idle";
@@ -45,9 +54,13 @@ Player::Player() :
 		false),
 	_nowUpdateState(&Player::UpdateIdle),
 	_animator(std::make_shared<Animator>()),
+	_weapon(std::make_shared<Weapon>()),
 	_rotAngle(0.0f)
 {
 	rigidbody->Init(true);
+
+	// 自身の武器とは当たり判定を行わない
+	colliderData->AddThroughTag(PhysicsData::GameObjectTag::PlayerAttack);
 
 #ifndef ANIMATION_TEST
 	// モデルの読み込み
@@ -59,9 +72,14 @@ Player::Player() :
 
 #ifndef ANIMATION_TEST
 	// 使用するアニメーションを全て入れる
-	_animator->SetAnimData(kAnimNameJump, true);
+	_animator->SetAnimData(kAnimNameIdle, true);
+	_animator->SetAnimData(kAnimNameWalk, true);
+	_animator->SetAnimData(kAnimNameRun, true);
+	_animator->SetAnimData(kAnimNameAttack, false);
+	_animator->SetAnimData(kAnimNameDamage, false);
+	_animator->SetAnimData(kAnimNameDead, false);
 	// 最初のアニメーションを設定する
-	_animator->SetStartAnim(kAnimNameJump);
+	_animator->SetStartAnim(kAnimNameIdle);
 #else
 	// 使用するアニメーションを全て入れる
 	_animator->SetAnimData(kAnimNameIdle, true);
@@ -79,6 +97,9 @@ Player::Player() :
 	_animator->SetStartAnim(kAnimNameIdle);
 #endif
 	
+
+	_weapon->Init(_animator->GetModelHandle(), 100.0f, 
+		Vector3(0,0,0), Vector3(0,500,0));
 }
 
 Player::~Player() {
@@ -99,6 +120,9 @@ void Player::Update() {
 
 	// 現在のステートに応じたUpdateが行われる
 	(this->*_nowUpdateState)();
+
+	// 手の行列を入れる
+	_weapon->Update();
 }
 
 void Player::Draw() {
@@ -150,26 +174,24 @@ void Player::CheckStateTransition()
 	// 攻撃予約が入っているか
 
 
-	// 地上にいて、
-	// ジャンプボタンが押されたら
-	// ジャンプ状態へ
-	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
-		_nowUpdateState = &Player::UpdateJump;
-		_animator->ChangeAnim(kAnimNameJump, true); // アニメーションもここで変更
+	//// 地上にいて、
+	//// ジャンプボタンが押されたら
+	//// ジャンプ状態へ
+	//if (input.IsTrigger("jump") && GetPos().y <= kGround) {
+	//	_nowUpdateState = &Player::UpdateJump;
+	//	_animator->ChangeAnim(kAnimNameJump, true); // アニメーションもここで変更
+	//	// ジャンプ初速を与える処理などもここに書く
+	//	Vector3 vel = GetVel();
+	//	vel.y += kJumpForce;
+	//	rigidbody->SetVel(vel);
+	//	return; // 状態が変わったので、以降の判定はしない
+	//}
 
-		// ジャンプ初速を与える処理などもここに書く
-		Vector3 vel = GetVel();
-		vel.y += kJumpForce;
-		rigidbody->SetVel(vel);
-		return; // 状態が変わったので、以降の判定はしない
-	}
-
 	// 地上にいて、
-	// スティック入力があり、
-	// ダッシュボタンが押されていたら
+	// 一定以上のスティック入力があるなら
 	// ダッシュ状態へ
 	if (GetPos().y <= kGround && 
-		(stick.x != 0.0f || stick.z != 0.0f) && 
+		(stick.Normalize().Magnitude() >= 0.8f) &&
 		input.IsPress("dash")) {
 		if (_nowUpdateState != &Player::UpdateDash) { // 現在ダッシュでなければ
 			_nowUpdateState = &Player::UpdateDash;
@@ -183,7 +205,7 @@ void Player::CheckStateTransition()
 	// スティック入力があれば
 	// 歩き状態へ
 	if (GetPos().y <= kGround && 
-		(stick.x != 0.0f || stick.z != 0.0f)) {
+		(stick.Magnitude() != 0.0f)) {
 		if (_nowUpdateState != &Player::UpdateWalk) { // 現在歩きでなければ
 			_nowUpdateState = &Player::UpdateWalk;
 			_animator->ChangeAnim(kAnimNameWalk, true);

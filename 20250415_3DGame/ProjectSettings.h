@@ -20,7 +20,6 @@ namespace PhysicsData {
 	/// “–‚½‚è”»’èŽí•Ê
 	/// </summary>
 	enum class ColliderKind {
-		Cube,
 		Sphere,
 		Capsule,
 	};

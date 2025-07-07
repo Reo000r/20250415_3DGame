@@ -1,7 +1,10 @@
 #include "Physics.h"
 #include "Collider.h"
 #include "ColliderData.h"
+#include "ColliderDataSphere.h"
+#include "ColliderDataCapsule.h"
 #include "Rigidbody.h"
+#include "DebugDraw.h"
 
 #include <cassert>
 #include <vector>
@@ -74,6 +77,26 @@ void Physics::Update()
 			vel.x = vel.z = 0.0f;
 		}
 
+		// もともとの情報、予定情報をデバッグ表示
+#if _DEBUG
+		// 球
+		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
+		{
+			auto sphereData = std::static_pointer_cast<ColliderDataSphere>(collider->colliderData);
+			float radius = sphereData->radius;
+			DebugDraw::DrawSphere(pos, radius, 0xff00ff);
+		}
+		// カプセル
+		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule)
+		{
+			auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(collider->colliderData);
+			Vector3 start = capsuleData->start;
+			Vector3 end = capsuleData->end;
+			float radius = capsuleData->radius;
+			DebugDraw::DrawCapsule(start, end, radius, 0xff00ff);
+		}
+#endif
+
 		// 予定位置、移動量設定
 		Position3 nextPos = pos + vel;
 		collider->rigidbody->SetVel(vel);
@@ -81,16 +104,16 @@ void Physics::Update()
 	}
 
 	// 当たり判定チェック（nextPos指定）
-	//std::list<OnCollideInfo> onCollideInfo = CheckCollide();
+	std::list<OnCollideInfo> onCollideInfo = CheckCollide();
 
 	// 位置確定
 	FixPosition();
 
-	//// 当たり通知
-	//for (auto& info : onCollideInfo)
-	//{
-	//	info.owner->OnCollide(info.colider);
-	//}
+	// 当たり通知
+	for (auto& info : onCollideInfo)
+	{
+		info.owner->OnCollide(info.colider);
+	}
 }
 
 std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
@@ -109,7 +132,7 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 			for (auto& objB : _colliders) {
 				if (objA != objB) {
 					// ぶつかっていれば
-					if (false/*IsCollide(objA, objB)*/) {
+					if (IsCollide(objA, objB)) {
 						auto priorityA = objA->GetPriority();
 						auto priorityB = objB->GetPriority();
 
@@ -117,6 +140,7 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 						std::shared_ptr<Collider> secondary = objB;
 
 						// どちらもトリガーでなければ次目標位置修正
+						// (どちらかがトリガーなら補正処理を飛ばす)
 						bool isTriggerAorB = objA->colliderData->IsTrigger() || objB->colliderData->IsTrigger();
 						if (!isTriggerAorB) {
 							// 移動優先度を数字に直したときに高い方を移動
@@ -124,7 +148,9 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 								primary = objB;
 								secondary = objA;
 							}
-							FixNextPosition(primary, secondary);
+							// 位置補正を行う
+							// priorityが同じだった場合は両方押し戻す
+							FixNextPosition(primary, secondary, (priorityA == priorityB));
 						}
 
 						// 衝突通知情報の更新
@@ -140,7 +166,7 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 							}
 						}
 						if (!hasPrimaryInfo) {
-							// 実体作って入れるよりこっちの方が速そう
+							// MEMO:(実体作って入れるよりこっちの方が速そう)
 							onCollideInfo.push_back({ primary, secondary });
 						}
 						if (!hasSecondaryInfo) {
@@ -172,18 +198,89 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 	return onCollideInfo;
 }
 
-void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr<Collider> secondary) const
+bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_ptr<Collider> objB) const
 {
-	// (球の場合のみ)
-	Vector3 priToSec = primary->nextPos - secondary->nextPos;
-	Vector3 priToSecDir = priToSec.Normalize();
-	// 補正前の位置
-	Position3 oldSecPos = secondary->nextPos;
-	// (そのままだとちょうど当たる位置になるので少し補正を掛ける)
-	float  awayDist = /*secondary->radius + primary->radius +*/ PhysicsData::kFixPositionOffset;
-	Vector3 priToNewSecVel = priToSecDir * awayDist;
-	Position3 fixedPos = secondary->nextPos + priToNewSecVel;
-	secondary->nextPos = fixedPos;
+	bool isHit = false;
+
+	// collidableの種類によって、当たり判定を分ける
+	auto aKind = objA->colliderData->GetKind();
+	auto bKind = objB->colliderData->GetKind();
+
+	auto aTag = objA->GetTag();
+	auto bTag = objB->GetTag();
+
+	// どちらかのオブジェクトが相手のタグを無視する設定になっていたらreturn
+	if (objA->colliderData->IsThroughTarget(bTag) ||
+		objB->colliderData->IsThroughTarget(aTag)) return false;
+
+	// 球同士
+	if (aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Sphere)
+	{
+		auto atob = objB->nextPos - objA->nextPos;
+		auto atobLength = atob.Magnitude();
+
+		// お互いの距離が、それぞれの半径を足したものより小さければ当たる
+		auto objAColliderData = dynamic_cast<ColliderDataSphere*>(objA->colliderData.get());
+		auto objBColliderData = dynamic_cast<ColliderDataSphere*>(objB->colliderData.get());
+		isHit = (atobLength < objAColliderData->radius + objBColliderData->radius);
+	}
+	// カプセル同士
+	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
+	{
+
+	}
+	// 球とカプセル
+	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) || 
+			(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
+	{
+
+	}
+
+	return isHit;
+}
+
+void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr<Collider> secondary, bool isMutualPushback) const
+{
+	// collidableの種類によって、当たり判定を分ける
+	auto aKind = primary->colliderData->GetKind();
+	auto bKind = secondary->colliderData->GetKind();
+
+	// 球同士
+	if (aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Sphere)
+	{
+		// 当たり判定データ取得
+		auto priColliderData = dynamic_cast<ColliderDataSphere*>(primary->colliderData.get());
+		auto secColliderData = dynamic_cast<ColliderDataSphere*>(secondary->colliderData.get());
+
+		Vector3 priToSec = primary->nextPos - secondary->nextPos;
+		Vector3 priToSecDir = priToSec.Normalize();
+		// 補正前の位置
+		Position3 oldSecPos = secondary->nextPos;
+		// そのままだとちょうど当たる位置になるので少し補正を掛ける
+		float  awayDist = secColliderData->radius + priColliderData->radius + PhysicsData::kFixPositionOffset;
+		Vector3 priToNewSecVel = priToSecDir * awayDist;
+		// 両方補正する場合
+		if (isMutualPushback) {
+
+		}
+		// secのみ補正する場合
+		else {
+			Position3 fixedPos = secondary->nextPos + priToNewSecVel;
+			secondary->nextPos = fixedPos;
+		}
+	}
+	// カプセル同士
+	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
+	{
+
+	}
+	// 球とカプセル
+	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) ||
+		(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
+	{
+
+	}
+	
 }
 
 void Physics::FixPosition()

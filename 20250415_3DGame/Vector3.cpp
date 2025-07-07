@@ -185,7 +185,7 @@ Vector3 operator%(const Vector3& va, const Vector3& vb) {
 
 Vector3 Reflect(const Vector3 v, Vector3 normal)
 {
-	// 法線ベクトルが正規化されていない場合に備えて正規化する
+	// 正規化されていない場合に備えて正規化
 	normal.Normalized();
 	// 反射ベクトルを計算
 	return v - normal * 2.0f * Dot(v, normal);

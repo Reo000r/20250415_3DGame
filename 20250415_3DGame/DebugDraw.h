@@ -1,0 +1,67 @@
+#pragma once
+#include "Geometry.h"
+#include <vector>
+#include <string>
+
+/// <summary>
+/// デバッグ用の描画情報をまとめ、後で表示するクラス
+/// </summary>
+class DebugDraw
+{
+public:
+	static void Clear();
+	static void Draw();
+
+	/// <summary>
+	/// 線分描画情報登録
+	/// </summary>
+	/// <param name="start"></param>
+	/// <param name="end"></param>
+	/// <param name="color"></param>
+	static void DrawLine(const Vector3& start, const Vector3& end, int color);
+
+	/// <summary>
+	/// 球描画情報登録
+	/// </summary>
+	/// <param name="center"></param>
+	/// <param name="rad"></param>
+	/// <param name="color"></param>
+	static void DrawSphere(const Vector3& center, float rad, int color);
+	
+	/// <summary>
+	/// カプセル描画情報登録
+	/// </summary>
+	/// <param name="start"></param>
+	/// <param name="end"></param>
+	/// <param name="rad"></param>
+	/// <param name="color"></param>
+	static void DrawCapsule(const Vector3& start, const Vector3& end, float rad, int color);
+
+private:
+	// 線分情報
+	struct LineInfo
+	{
+		Vector3	start;
+		Vector3	end;
+		int		color;
+	};
+	// 球情報
+	struct SphereInfo
+	{
+		Vector3	center;
+		float	rad;
+		int		color;
+	};
+	// カプセル情報
+	struct CapsuleInfo
+	{
+		Vector3	start;
+		Vector3	end;
+		float	rad;
+		int		color;
+	};
+
+	static std::vector<LineInfo>	_lineInfo;
+	static std::vector<SphereInfo>	_sphereInfo;
+	static std::vector<CapsuleInfo>	_capsuleInfo;
+};

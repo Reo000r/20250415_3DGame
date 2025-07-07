@@ -5,12 +5,12 @@
 
 class Camera;
 class Animator;
-class PlayerState;
+class Weapon;
 
 /// <summary>
 /// 
 /// </summary>
-class Player final : public Collider {
+class Player final : public Collider, public std::enable_shared_from_this<Player> {
 public:
 	Player();
 	~Player();
@@ -61,6 +61,8 @@ private:
 	std::shared_ptr<Animator> _animator;
 
 	std::weak_ptr<Camera> _camera;
+
+	std::shared_ptr<Weapon> _weapon;
 
 	float _rotAngle;
 	//Matrix4x4 _rotMtx;

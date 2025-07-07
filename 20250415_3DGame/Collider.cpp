@@ -2,6 +2,7 @@
 #include "Physics.h"
 #include "Rigidbody.h"
 #include "ColliderDataSphere.h"
+#include "ColliderDataCapsule.h"
 
 #include <cassert>
 
@@ -47,7 +48,9 @@ Vector3 Collider::GetDir() const
 	return rigidbody->GetDir();
 }
 
-std::shared_ptr<ColliderData> Collider::CreateColliderData(PhysicsData::ColliderKind kind, bool isTrigger)
+std::shared_ptr<ColliderData> Collider::CreateColliderData(
+	PhysicsData::ColliderKind kind, bool isTrigger, 
+	float rad = 0.0f, Vector3 start = Vector3(), Vector3 end = Vector3())
 {
 	if (colliderData != nullptr) {
 		assert(false && "colliderDataは既に作られている");
@@ -56,15 +59,45 @@ std::shared_ptr<ColliderData> Collider::CreateColliderData(PhysicsData::Collider
 
 	// kindに応じたColliderを作成
 	switch (kind) {
-	case PhysicsData::ColliderKind::Cube:
-		// Cube用の初期化
+	case PhysicsData::ColliderKind::Sphere:		// Sphere用の初期化
+		colliderData = std::make_shared<ColliderDataSphere>(isTrigger, rad);
 		break;
-	case PhysicsData::ColliderKind::Sphere:
-		colliderData = std::make_shared<ColliderDataSphere>(isTrigger);
-		break;
-	case PhysicsData::ColliderKind::Capsule:
-		// Capsule用の初期化
+	case PhysicsData::ColliderKind::Capsule:	// Capsule用の初期化
+		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, rad, start, end);
 		break;
 	}
 	return colliderData;
+}
+
+void Collider::SetColliderData(
+	PhysicsData::ColliderKind kind, bool isTrigger, 
+	float rad, Vector3 start, Vector3 end)
+{
+	if (colliderData == nullptr) {
+		assert(false && "colliderDataが作られていない");
+		return;
+	}
+
+	// 共通のデータを変更
+	colliderData->isTrigger = isTrigger;
+
+	// kindに応じたColliderを編集
+	switch (kind) {
+	case PhysicsData::ColliderKind::Sphere:		// Sphere用の代入
+	{
+		auto colliderDataSphere = std::static_pointer_cast<ColliderDataSphere>(colliderData);
+		colliderDataSphere->radius = rad;
+		colliderData = (colliderDataSphere);
+		break;
+	}
+	case PhysicsData::ColliderKind::Capsule:	// Capsule用の代入
+	{
+		auto colliderDataCapsule = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
+		colliderDataCapsule->radius = rad;
+		colliderDataCapsule->start = start;
+		colliderDataCapsule->end = end;
+		break;
+	}
+	}
+	return;
 }

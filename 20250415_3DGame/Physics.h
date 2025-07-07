@@ -36,12 +36,19 @@ private:
 	std::list<OnCollideInfo> CheckCollide() const;
 
 	/// <summary>
+	/// 当たっているかどうかだけ判定
+	/// </summary>
+	bool IsCollide(const std::shared_ptr<Collider> objA, const std::shared_ptr<Collider> objB) const;
+
+	/// <summary>
 	/// 第一引数のColliderを動かないものとして、
 	/// 第二引数に入ったColliderの位置を補正する
+	/// 第三引数にtrueが入っていた場合はそれらを無視し両方を押し戻す
 	/// </summary>
-	/// <param name="primary"></param>
-	/// <param name="secondary"></param>
-	void FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr<Collider> secondary) const;
+	/// <param name="primary">動かないCollider</param>
+	/// <param name="secondary">補正を行うCollider</param>
+	/// <param name="isMutualPushback">両方を押し戻すか</param>
+	void FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr<Collider> secondary, bool isMutualPushback) const;
 	/// <summary>
 	/// 位置決定
 	/// </summary>

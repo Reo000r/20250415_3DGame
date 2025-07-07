@@ -37,6 +37,14 @@ http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 
 
 
+小言はMEMO:を付ける
+(後々消しやすくするため)
+
+
+
+
+
+
 やること
 
 敵の作成
@@ -179,8 +187,14 @@ DxLibはlibもDLLどちらも対応している
 スムーズに充てられない事がほとんど
 
 
-
-
+07/07
+円形のゲージを表示したいときはDrawCircleGaugeを使う
+DrawCircleGauge(int CenterX, int CenterY, double Percent, int GrHandle);
+CenterX, CenterY	円を描画したい座標の中心
+Percent				どのくらいの割合で表示するか
+					100で真円,-100もいける
+GrHandle			描画する画像、2の乗数でないと正しく動作しないらしい
+alphaを下げて二周するゲージとかも作れそう
 
 
 
