@@ -1,17 +1,29 @@
 #pragma once
 #include "ColliderData.h"
 
+class Collider;
+class Physics;
+
 class ColliderDataCapsule : public ColliderData {
 public:
-	ColliderDataCapsule(bool isTrigger, float rad, Vector3 start_, Vector3 end_);
+	ColliderDataCapsule(bool isTrigger, float rad, float dist, 
+		Vector3 angle = Vector3Up());
 	
-	Vector3 GetStartPos();
-	Vector3 GetEndPos();
+	Vector3 GetStartPos(Position3 pos);
+	Vector3 GetEndPos(Position3 pos);
+	float GetRad() { return _radius; }
+	Vector3 GetAngle() { return _angle; }
+	float GetDist() { return _dist; }
 
-	// 半径
-	float radius;
+	// 以降の変数のアクセス権を渡す
+	friend Collider;
+	friend Physics;
+
 private:
-	// 開始/終了位置
-	Vector3 start;
-	Vector3 end;
+	// 半径
+	float _radius;
+	// 角度
+	Vector3 _angle;
+	// startからendまでの距離
+	float _dist;
 };

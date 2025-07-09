@@ -35,8 +35,6 @@
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerState.cpp" />
-    <ClCompile Include="PlayerStateIdle.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="SceneBase.cpp" />
@@ -44,6 +42,7 @@
     <ClCompile Include="SceneGamePlay.cpp" />
     <ClCompile Include="SceneResult.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
+    <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Statistics.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="Vector2.cpp" />
@@ -66,8 +65,6 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Physics.h" />
-    <ClInclude Include="PlayerState.h" />
-    <ClInclude Include="PlayerStateIdle.h" />
     <ClInclude Include="ProjectSettings.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quaternion.h" />
@@ -77,6 +74,7 @@
     <ClInclude Include="SceneGamePlay.h" />
     <ClInclude Include="SceneResult.h" />
     <ClInclude Include="SceneTitle.h" />
+    <ClInclude Include="Skydome.h" />
     <ClInclude Include="Statistics.h" />
     <ClInclude Include="StringUtility.h" />
     <ClInclude Include="Vector2.h" />

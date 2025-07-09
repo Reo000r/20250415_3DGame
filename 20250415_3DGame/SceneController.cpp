@@ -10,7 +10,6 @@ SceneController::SceneController()
 
 SceneController& SceneController::GetInstance()
 {
-	// この宣言の時点でメモリが確保されてアプリ終了まで残る
 	static SceneController controller;
 	return controller;
 }
@@ -51,6 +50,7 @@ void SceneController::PushScene(std::shared_ptr<SceneBase> scene)
 	// 最後尾に追加
 	_scenes.push_back(scene);
 
+	// 初期化処理
 	scene->Init();
 }
 

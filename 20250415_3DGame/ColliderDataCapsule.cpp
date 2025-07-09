@@ -1,19 +1,20 @@
 #include "ColliderDataCapsule.h"
 
-ColliderDataCapsule::ColliderDataCapsule(bool isTrigger, float rad, Vector3 start_, Vector3 end_):
+ColliderDataCapsule::ColliderDataCapsule(bool isTrigger, float rad, float dist
+	, Vector3 angle) :
 	ColliderData(PhysicsData::ColliderKind::Capsule, isTrigger),
-	radius(rad),
-	start(start_),
-	end(end_)
+	_radius(rad),
+	_angle(angle),
+	_dist(dist)
 {
 }
 
-Vector3 ColliderDataCapsule::GetStartPos()
+Vector3 ColliderDataCapsule::GetStartPos(Position3 pos)
 {
-	return Vector3();
+	return (pos - (_angle.Normalize() * _dist * 0.5f));
 }
 
-Vector3 ColliderDataCapsule::GetEndPos()
+Vector3 ColliderDataCapsule::GetEndPos(Position3 pos)
 {
-	return Vector3();
+	return (pos + (_angle.Normalize() * _dist * 0.5f));
 }

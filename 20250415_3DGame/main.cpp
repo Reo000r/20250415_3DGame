@@ -20,7 +20,5 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// Œãˆ—
 	app.Terminate();
 
-	DxLib_End();
-
 	return 0;
 }

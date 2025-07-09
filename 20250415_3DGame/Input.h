@@ -16,7 +16,7 @@ public:
 	/// <summary>
 	/// シングルトンオブジェクトを返す
 	/// </summary>
-	/// <returns>Applicationシングルトンオブジェクト</returns>
+	/// <returns>シングルトンオブジェクト</returns>
 	static Input& GetInstance();
 
 	/// <summary>

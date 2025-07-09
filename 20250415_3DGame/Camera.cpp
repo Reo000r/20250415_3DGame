@@ -33,11 +33,13 @@ Camera::Camera() :
 #endif // !USE_QUATERNION
 	_near(10.0f),
 	_far(10000.0f),
-	_viewAngle(DX_PI_F / 180.0f * 60.0f)
+	_viewAngle(DX_PI_F / 180.0f * 60.0f),
+	_lightHandle(-1)
 {
 }
 
 Camera::~Camera() {
+	DeleteLightHandle(_lightHandle);
 }
 
 void Camera::Init(std::weak_ptr<Player> player) {
@@ -45,6 +47,9 @@ void Camera::Init(std::weak_ptr<Player> player) {
 	_targetPos = _player.lock()->GetPos() + kPlayerToTarget;
 	//SetCameraPositionAndTarget_UpVecY(pos, target);
 	SetCameraPositionAndTarget_UpVecY(_pos, _targetPos);
+
+	_lightHandle = CreatePointLightHandle(_pos, _far, 
+		1.0f, 0.005f, 0.0f);
 }
 
 void Camera::Update() {
@@ -134,6 +139,20 @@ void Camera::Update() {
 	SetCameraPositionAndTarget_UpVecY(_pos, _targetPos);
 	SetCameraNearFar(_near, _far);
 	SetupCamera_Perspective(_viewAngle);
+
+	// ライトの位置と方向を更新
+	if (_lightHandle != -1) {
+		// ライトの位置をカメラの位置に設定
+		SetLightPositionHandle(_lightHandle, _pos);
+
+		// ライトの方向をカメラの位置から注視点へのベクトルに設定
+		VECTOR direction = (_targetPos - _pos).Normalize();
+		SetLightDirectionHandle(_lightHandle, direction);
+	
+		// ライトを有効にする
+		SetLightEnableHandle(_lightHandle, true);
+	}
+
 }
 
 void Camera::Draw() {

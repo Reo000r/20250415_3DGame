@@ -50,7 +50,7 @@ Vector3 Collider::GetDir() const
 
 std::shared_ptr<ColliderData> Collider::CreateColliderData(
 	PhysicsData::ColliderKind kind, bool isTrigger, 
-	float rad = 0.0f, Vector3 start = Vector3(), Vector3 end = Vector3())
+	float rad, float dist, Vector3 angle)
 {
 	if (colliderData != nullptr) {
 		assert(false && "colliderData‚ÍŠù‚Éì‚ç‚ê‚Ä‚¢‚é");
@@ -63,7 +63,7 @@ std::shared_ptr<ColliderData> Collider::CreateColliderData(
 		colliderData = std::make_shared<ColliderDataSphere>(isTrigger, rad);
 		break;
 	case PhysicsData::ColliderKind::Capsule:	// Capsule—p‚Ì‰Šú‰»
-		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, rad, start, end);
+		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, rad, dist, angle);
 		break;
 	}
 	return colliderData;
@@ -71,7 +71,7 @@ std::shared_ptr<ColliderData> Collider::CreateColliderData(
 
 void Collider::SetColliderData(
 	PhysicsData::ColliderKind kind, bool isTrigger, 
-	float rad, Vector3 start, Vector3 end)
+	float rad, float dist, Vector3 angle)
 {
 	if (colliderData == nullptr) {
 		assert(false && "colliderData‚ªì‚ç‚ê‚Ä‚¢‚È‚¢");
@@ -86,16 +86,17 @@ void Collider::SetColliderData(
 	case PhysicsData::ColliderKind::Sphere:		// Sphere—p‚Ì‘ã“ü
 	{
 		auto colliderDataSphere = std::static_pointer_cast<ColliderDataSphere>(colliderData);
-		colliderDataSphere->radius = rad;
-		colliderData = (colliderDataSphere);
+		colliderDataSphere->_radius = rad;
+		colliderData = colliderDataSphere;
 		break;
 	}
 	case PhysicsData::ColliderKind::Capsule:	// Capsule—p‚Ì‘ã“ü
 	{
 		auto colliderDataCapsule = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
-		colliderDataCapsule->radius = rad;
-		colliderDataCapsule->start = start;
-		colliderDataCapsule->end = end;
+		colliderDataCapsule->_radius = rad;
+		colliderDataCapsule->_dist = dist;
+		colliderDataCapsule->_angle = angle;
+		colliderData = colliderDataCapsule;
 		break;
 	}
 	}

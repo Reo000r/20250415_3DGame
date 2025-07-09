@@ -6,11 +6,16 @@
 /// <summary>
 /// デバッグ用の描画情報をまとめ、後で表示するクラス
 /// </summary>
-class DebugDraw
-{
+class DebugDraw final {
 public:
-	static void Clear();
-	static void Draw();
+	/// <summary>
+	/// シングルトンオブジェクトを返す
+	/// </summary>
+	/// <returns>シングルトンオブジェクト</returns>
+	static DebugDraw& GetInstance();
+
+	void Clear();
+	void Draw();
 
 	/// <summary>
 	/// 線分描画情報登録
@@ -18,7 +23,7 @@ public:
 	/// <param name="start"></param>
 	/// <param name="end"></param>
 	/// <param name="color"></param>
-	static void DrawLine(const Vector3& start, const Vector3& end, int color);
+	void DrawLine(const Vector3& start, const Vector3& end, int color);
 
 	/// <summary>
 	/// 球描画情報登録
@@ -26,7 +31,7 @@ public:
 	/// <param name="center"></param>
 	/// <param name="rad"></param>
 	/// <param name="color"></param>
-	static void DrawSphere(const Vector3& center, float rad, int color);
+	void DrawSphere(const Vector3& center, float rad, int color);
 	
 	/// <summary>
 	/// カプセル描画情報登録
@@ -35,33 +40,34 @@ public:
 	/// <param name="end"></param>
 	/// <param name="rad"></param>
 	/// <param name="color"></param>
-	static void DrawCapsule(const Vector3& start, const Vector3& end, float rad, int color);
+	void DrawCapsule(const Vector3& start, const Vector3& end, float rad, int color);
 
 private:
+	DebugDraw();
+	DebugDraw(const DebugDraw&) = delete;
+	void operator=(const DebugDraw&) = delete;
+
 	// 線分情報
-	struct LineInfo
-	{
+	struct LineInfo {
 		Vector3	start;
 		Vector3	end;
 		int		color;
 	};
 	// 球情報
-	struct SphereInfo
-	{
+	struct SphereInfo {
 		Vector3	center;
 		float	rad;
 		int		color;
 	};
 	// カプセル情報
-	struct CapsuleInfo
-	{
+	struct CapsuleInfo {
 		Vector3	start;
 		Vector3	end;
 		float	rad;
 		int		color;
 	};
 
-	static std::vector<LineInfo>	_lineInfo;
-	static std::vector<SphereInfo>	_sphereInfo;
-	static std::vector<CapsuleInfo>	_capsuleInfo;
+	std::vector<LineInfo>	_lineInfo;
+	std::vector<SphereInfo>	_sphereInfo;
+	std::vector<CapsuleInfo>	_capsuleInfo;
 };

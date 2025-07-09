@@ -27,12 +27,20 @@ namespace {
 	const std::wstring kAnimNameIdle = kAnimName + L"Idle";
 	const std::wstring kAnimNameWalk = kAnimName + L"Walk";
 	const std::wstring kAnimNameRun = kAnimName + L"Run";
-	const std::wstring kAnimNameAttack = kAnimName + L"Attack360High";
+	//const std::wstring kAnimNameAttack = kAnimName + L"Attack360High";
 	const std::wstring kAnimNameAttackCombo1 = kAnimName + L"AttackCombo1";
 	const std::wstring kAnimNameAttackCombo2 = kAnimName + L"AttackCombo2";
 	const std::wstring kAnimNameAttackCombo3 = kAnimName + L"AttackCombo3";
 	const std::wstring kAnimNameDamage = kAnimName + L"React";
 	const std::wstring kAnimNameDead = kAnimName + L"Dead";
+
+	constexpr float kAttackCombo1InputStart = 0.0f;
+	constexpr float kAttackCombo1InputEnd	= 1.0f;
+	constexpr float kAttackCombo2InputStart = 0.0f;
+	constexpr float kAttackCombo2InputEnd	= 1.0f;
+	constexpr float kAttackCombo3InputStart = 0.0f;
+	constexpr float kAttackCombo3InputEnd	= 1.0f;
+
 #else
 	const std::wstring kAnimName		= L"CharacterArmature|";
 	const std::wstring kAnimNameIdle	= kAnimName + L"Idle";
@@ -55,7 +63,8 @@ Player::Player() :
 	_nowUpdateState(&Player::UpdateIdle),
 	_animator(std::make_shared<Animator>()),
 	_weapon(std::make_shared<Weapon>()),
-	_rotAngle(0.0f)
+	_rotAngle(0.0f),
+	_hasDerivedAttackInput(false)
 {
 	rigidbody->Init(true);
 
@@ -64,7 +73,7 @@ Player::Player() :
 
 #ifndef ANIMATION_TEST
 	// モデルの読み込み
-	_animator->Init(MV1LoadModel(L"data/model/Player.mv1"));
+	_animator->Init(MV1LoadModel(L"data/model/character/Player.mv1"));
 #else
 	// モデルの読み込み
 	_animator->Init(MV1LoadModel(L"data/model/Player_test.mv1"));
@@ -75,7 +84,9 @@ Player::Player() :
 	_animator->SetAnimData(kAnimNameIdle, true);
 	_animator->SetAnimData(kAnimNameWalk, true);
 	_animator->SetAnimData(kAnimNameRun, true);
-	_animator->SetAnimData(kAnimNameAttack, false);
+	_animator->SetAnimData(kAnimNameAttackCombo1, false);
+	_animator->SetAnimData(kAnimNameAttackCombo2, false);
+	_animator->SetAnimData(kAnimNameAttackCombo3, false);
 	_animator->SetAnimData(kAnimNameDamage, false);
 	_animator->SetAnimData(kAnimNameDead, false);
 	// 最初のアニメーションを設定する
@@ -96,10 +107,12 @@ Player::Player() :
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameIdle);
 #endif
-	
 
-	_weapon->Init(_animator->GetModelHandle(), 100.0f, 
-		Vector3(0,0,0), Vector3(0,500,0));
+	// 武器初期化
+	int weaponModelHandle = MV1LoadModel(L"data/model/weapon/PlayerWeapon.mv1");
+	assert(weaponModelHandle >= 0 && "モデルハンドルが正しくない");
+	_weapon->Init(weaponModelHandle, 100.0f,
+		500, Vector3Up());
 }
 
 Player::~Player() {
@@ -121,8 +134,8 @@ void Player::Update() {
 	// 現在のステートに応じたUpdateが行われる
 	(this->*_nowUpdateState)();
 
-	// 手の行列を入れる
-	_weapon->Update();
+	// 武器更新
+	WeaponUpdate();
 }
 
 void Player::Draw() {
@@ -156,6 +169,7 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 		_animator->ChangeAnim(kAnimNameDamage, false);
 		// ダメージを受ける
 
+
 		return;
 	}
 }
@@ -164,14 +178,47 @@ void Player::CheckStateTransition()
 {
 	Input& input = Input::GetInstance();
 	Vector3 stick = input.GetPadLeftSitck();
+	
+	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
+
 	// 現在のアニメーションが終わっているかつ現在のステートが攻撃関連ならtrue
 	bool isEndAttack = (
-		_animator->IsEnd(_animator->GetCurrentAnimName()) &&
+		isEndAnim &&
 		(_nowUpdateState == &Player::UpdateAttackFirst ||
 		_nowUpdateState == &Player::UpdateAttackSecond ||
 		_nowUpdateState == &Player::UpdateAttackThird)
 		);
-	// 攻撃予約が入っているか
+
+	// 攻撃中に派生入力があった
+	// もしくは現在攻撃関連のステートでないなら
+	// 一段目の攻撃状態へ
+	if (isEndAttack ||
+		(_nowUpdateState != &Player::UpdateAttackFirst &&
+			_nowUpdateState != &Player::UpdateAttackSecond &&
+			_nowUpdateState != &Player::UpdateAttackThird)) {
+		_nowUpdateState = &Player::UpdateAttackFirst;
+		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
+		_hasDerivedAttackInput = false;
+	}
+	// アニメーションが終わっているかつ
+	// 現在攻撃の一段目なら
+	// 二段目の攻撃状態へ
+	if (_hasDerivedAttackInput && (isEndAnim &&
+		(_nowUpdateState == &Player::UpdateAttackFirst))) {
+		_nowUpdateState = &Player::UpdateAttackSecond;
+		_animator->ChangeAnim(kAnimNameAttackCombo2, false);
+		_hasDerivedAttackInput = false;
+	}
+	// アニメーションが終わっているかつ
+	// 現在攻撃の二段目なら
+	// 三段目の攻撃状態へ
+	if (_hasDerivedAttackInput && (isEndAnim &&
+		(_nowUpdateState == &Player::UpdateAttackSecond))) {
+		_nowUpdateState = &Player::UpdateAttackThird;
+		_animator->ChangeAnim(kAnimNameAttackCombo3, false);
+		_hasDerivedAttackInput = false;
+	}
+
 
 
 	//// 地上にいて、
@@ -187,10 +234,12 @@ void Player::CheckStateTransition()
 	//	return; // 状態が変わったので、以降の判定はしない
 	//}
 
-	// 地上にいて、
+	// 地上にいるかつ
+	// 攻撃が終わっているかつ
 	// 一定以上のスティック入力があるなら
 	// ダッシュ状態へ
 	if (GetPos().y <= kGround && 
+		isEndAttack &&
 		(stick.Normalize().Magnitude() >= 0.8f) &&
 		input.IsPress("dash")) {
 		if (_nowUpdateState != &Player::UpdateDash) { // 現在ダッシュでなければ
@@ -200,7 +249,8 @@ void Player::CheckStateTransition()
 		return;
 	}
 
-	// 地上にいて、
+	// 地上にいるかつ
+	// 攻撃が終わっているかつ
 	// ジャンプ状態でないかつ
 	// スティック入力があれば
 	// 歩き状態へ
@@ -221,6 +271,19 @@ void Player::CheckStateTransition()
 		}
 		return;
 	}
+}
+
+void Player::WeaponUpdate()
+{
+	// 手の行列を武器のワールド行列とする
+
+	// 武器をアタッチするフレームの番号を検索
+	int frameIndex = MV1SearchFrame(_animator->GetModelHandle(), L"FrameName");
+	// 武器をアタッチするフレームのローカル→ワールド変換行列を取得する
+	Matrix4x4 frameMatrix = MV1GetFrameLocalWorldMatrix(_animator->GetModelHandle(), frameIndex);
+
+	// フレームの行列を入れる
+	_weapon->Update(frameMatrix);
 }
 
 void Player::UpdateIdle()
@@ -323,10 +386,22 @@ void Player::UpdateAttackFirst()
 
 	// 入力受付範囲内で攻撃入力が入れば
 	// 攻撃secondを予約する
+	Input& input = Input::GetInstance();
+	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
+	if (!isEndAnim && input.IsTrigger("action")) {
+		_hasDerivedAttackInput = true;
+	}
 }
 
 void Player::UpdateAttackSecond()
 {
+	// 入力受付範囲内で攻撃入力が入れば
+	// 攻撃secondを予約する
+	Input& input = Input::GetInstance();
+	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
+	if (!isEndAnim && input.IsTrigger("action")) {
+		_hasDerivedAttackInput = true;
+	}
 }
 
 void Player::UpdateAttackThird()

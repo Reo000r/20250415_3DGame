@@ -39,6 +39,11 @@ private:
 	/// </summary>
 	void CheckStateTransition();
 
+	/// <summary>
+	/// •ŠíXV
+	/// </summary>
+	void WeaponUpdate();
+
 	void UpdateIdle();
 	void UpdateWalk();
 	void UpdateDash();
@@ -67,5 +72,8 @@ private:
 	float _rotAngle;
 	//Matrix4x4 _rotMtx;
 	Quaternion _quaternion;
+
+	// UŒ‚‚Ì”h¶“ü—Í‚ª‚ ‚Á‚½‚©‚Ç‚¤‚©
+	bool  _hasDerivedAttackInput;
 };
 

@@ -83,17 +83,20 @@ void Physics::Update()
 		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
 		{
 			auto sphereData = std::static_pointer_cast<ColliderDataSphere>(collider->colliderData);
-			float radius = sphereData->radius;
-			DebugDraw::DrawSphere(pos, radius, 0xff00ff);
+			float radius = sphereData->_radius;
+			DebugDraw::GetInstance().DrawSphere(pos, radius, 0xff00ff);
 		}
 		// カプセル
 		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule)
 		{
 			auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(collider->colliderData);
-			Vector3 start = capsuleData->start;
-			Vector3 end = capsuleData->end;
-			float radius = capsuleData->radius;
-			DebugDraw::DrawCapsule(start, end, radius, 0xff00ff);
+			Position3 pos = collider->rigidbody->GetPos();
+			Position3 start = capsuleData->GetStartPos(pos);
+			Position3 end = capsuleData->GetEndPos(pos);
+			float radius = capsuleData->GetRad();
+			DebugDraw::GetInstance().DrawSphere(start, radius, 0x0000ff);
+			DebugDraw::GetInstance().DrawSphere(end, radius, 0xff0000);
+			DebugDraw::GetInstance().DrawCapsule(start, end, radius, 0xff00ff);
 		}
 #endif
 
@@ -220,9 +223,9 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 		auto atobLength = atob.Magnitude();
 
 		// お互いの距離が、それぞれの半径を足したものより小さければ当たる
-		auto objAColliderData = dynamic_cast<ColliderDataSphere*>(objA->colliderData.get());
-		auto objBColliderData = dynamic_cast<ColliderDataSphere*>(objB->colliderData.get());
-		isHit = (atobLength < objAColliderData->radius + objBColliderData->radius);
+		auto objAColliderData = std::static_pointer_cast<ColliderDataSphere>(objA->colliderData);
+		auto objBColliderData = std::static_pointer_cast<ColliderDataSphere>(objB->colliderData);
+		isHit = (atobLength < objAColliderData->_radius + objBColliderData->_radius);
 	}
 	// カプセル同士
 	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
@@ -249,15 +252,15 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 	if (aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Sphere)
 	{
 		// 当たり判定データ取得
-		auto priColliderData = dynamic_cast<ColliderDataSphere*>(primary->colliderData.get());
-		auto secColliderData = dynamic_cast<ColliderDataSphere*>(secondary->colliderData.get());
+		auto priColliderData = std::static_pointer_cast<ColliderDataSphere>(primary->colliderData);
+		auto secColliderData = std::static_pointer_cast<ColliderDataSphere>(secondary->colliderData);
 
 		Vector3 priToSec = primary->nextPos - secondary->nextPos;
 		Vector3 priToSecDir = priToSec.Normalize();
 		// 補正前の位置
 		Position3 oldSecPos = secondary->nextPos;
 		// そのままだとちょうど当たる位置になるので少し補正を掛ける
-		float  awayDist = secColliderData->radius + priColliderData->radius + PhysicsData::kFixPositionOffset;
+		float  awayDist = secColliderData->_radius + priColliderData->_radius + PhysicsData::kFixPositionOffset;
 		Vector3 priToNewSecVel = priToSecDir * awayDist;
 		// 両方補正する場合
 		if (isMutualPushback) {

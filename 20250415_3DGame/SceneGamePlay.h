@@ -9,6 +9,7 @@ class Physics;
 class Camera;
 class Player;
 class Ground;
+class Skydome;
 
 class SceneGamePlay final : public SceneBase {
 public:
@@ -42,6 +43,7 @@ private:
 	std::shared_ptr<Camera> _camera;
 	std::shared_ptr<Player> _player;
 	std::shared_ptr<Ground> _ground;
+	std::shared_ptr<Skydome> _skydome;
 
 	// Update‚ÆDraw‚ÌStateƒpƒ^[ƒ“
 	// _update‚â_draw‚ª•Ï”‚Å‚ ‚é‚±‚Æ‚ğ•ª‚©‚è‚â‚·‚­‚µ‚Ä‚¢‚é

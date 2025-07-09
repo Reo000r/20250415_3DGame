@@ -1,6 +1,12 @@
 #include "DebugDraw.h"
 #include <DxLib.h>
 
+DebugDraw& DebugDraw::GetInstance()
+{
+	static DebugDraw ret;
+	return ret;
+}
+
 void DebugDraw::Clear()
 {
 	_lineInfo.clear();
@@ -69,4 +75,8 @@ void DebugDraw::DrawCapsule(const Vector3& start, const Vector3& end, float rad,
 	info.rad = rad;
 	info.color = color;
 	_capsuleInfo.emplace_back(info);
+}
+
+DebugDraw::DebugDraw() {
+	Clear();
 }

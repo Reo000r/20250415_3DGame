@@ -11,9 +11,15 @@ public:
 	Weapon();
 	~Weapon();
 
-	void Init(int modelHandle, float rad, Vector3 start, Vector3 end);
+	void Init(int modelHandle, float rad, float dist, Vector3 angle = Vector3Up());
 	void Update(Matrix4x4 worldMatrix);
-	void Draw();
+	void Draw() ;
+
+	/// <summary>
+	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+	/// </summary>
+	/// <param name="colider"></param>
+	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
 private:
 	// ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹

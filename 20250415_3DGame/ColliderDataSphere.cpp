@@ -2,6 +2,6 @@
 
 ColliderDataSphere::ColliderDataSphere(bool isTrigger, float rad) :
 	ColliderData(PhysicsData::ColliderKind::Sphere, isTrigger),
-	radius(rad)
+	_radius(rad)
 {
 }

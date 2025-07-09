@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Player.h"
 #include "Ground.h"
+#include "Skydome.h"
 #include "Physics.h"
 
 #include "Statistics.h"
@@ -20,6 +21,7 @@ SceneGamePlay::SceneGamePlay() :
 	_camera(std::make_shared<Camera>()),
 	_player(std::make_shared<Player>()),
 	_ground(std::make_shared<Ground>()),
+	_skydome(std::make_shared<Skydome>()),
 	_nowUpdateState(&SceneGamePlay::FadeinUpdate),
 	_nowDrawState(&SceneGamePlay::FadeDraw)
 {
@@ -27,17 +29,19 @@ SceneGamePlay::SceneGamePlay() :
 
 SceneGamePlay::~SceneGamePlay()
 {
+	// playerの当たり判定処理登録を削除
 	_player->ReleasePhysics();
 }
 
 void SceneGamePlay::Init()
 {
 	// 初期化処理
-	//_any->Init();
 	_camera->Init(_player);
 	_player->Init(_camera);
 	_ground->Init();
+	_skydome->Init(_camera);
 
+	// playerの当たり判定処理登録
 	_player->EntryPhysics(_physics);
 }
 
@@ -55,6 +59,7 @@ void SceneGamePlay::FadeinUpdate()
 {
 	_frame--;
 
+	// フェードが終わったらシーン遷移
 	if (_frame <= 0) {
 		_nowUpdateState = &SceneGamePlay::NormalUpdate;
 		_nowDrawState = &SceneGamePlay::NormalDraw;
@@ -63,10 +68,11 @@ void SceneGamePlay::FadeinUpdate()
 
 void SceneGamePlay::NormalUpdate()
 {
-	//_any->Update();
+	// 更新
 	_camera->Update();
 	_player->Update();
 	_ground->Update();
+	_skydome->Update();
 
 	// 物理演算更新
 	_physics->Update();
@@ -92,10 +98,10 @@ void SceneGamePlay::FadeoutUpdate()
 
 void SceneGamePlay::FadeDraw()
 {
-	//_any->Draw();
 	_ground->Draw();
 	_camera->Draw();
 	_player->Draw();
+	_skydome->Draw();
 
 #ifdef _DEBUG
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");
@@ -112,10 +118,10 @@ void SceneGamePlay::FadeDraw()
 
 void SceneGamePlay::NormalDraw()
 {
-	//_any->Draw();
 	_ground->Draw();
 	_camera->Draw();
 	_player->Draw();
+	_skydome->Draw();
 
 #ifdef _DEBUG
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");

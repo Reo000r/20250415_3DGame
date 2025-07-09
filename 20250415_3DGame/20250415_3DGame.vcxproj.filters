@@ -28,9 +28,6 @@
     <Filter Include="Object\Player">
       <UniqueIdentifier>{31614ffb-921c-4e76-a414-789c13cf9536}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Player\PlayerState">
-      <UniqueIdentifier>{a018f4f7-c860-456c-8238-9502693edb0d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -105,12 +102,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Object\Player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerState.cpp">
-      <Filter>Object\Player\PlayerState</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerStateIdle.cpp">
-      <Filter>Object\Player\PlayerState</Filter>
-    </ClCompile>
     <ClCompile Include="EnemyNormal.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -121,6 +112,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DebugDraw.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -200,12 +194,6 @@
     <ClInclude Include="Player.h">
       <Filter>Object\Player</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerState.h">
-      <Filter>Object\Player\PlayerState</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerStateIdle.h">
-      <Filter>Object\Player\PlayerState</Filter>
-    </ClInclude>
     <ClInclude Include="EnemyNormal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -216,6 +204,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DebugDraw.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

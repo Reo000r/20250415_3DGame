@@ -75,6 +75,12 @@ public:
 	/// <param name="animName"></param>
 	/// <returns></returns>
 	bool IsEnd(const std::wstring animName) { return FindAnimData(animName).isEnd; }
+	/// <summary>
+	/// 指定のアニメーションがループするか
+	/// </summary>
+	/// <param name="animName"></param>
+	/// <returns></returns>
+	bool IsLoop(const std::wstring animName) { return FindAnimData(animName).isLoop; }
 
 private:
 	// モデルハンドル

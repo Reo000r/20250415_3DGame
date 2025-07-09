@@ -16,6 +16,8 @@ public:
 	void Update();
 	void Draw();
 
+	Position3 GetPos() { return _pos; }
+
 	/// <summary>
 	/// Y²‚Ì‰ñ“]î•ñ
 	/// </summary>
@@ -33,5 +35,7 @@ private:
 	float _near;
 	float _far;
 	float _viewAngle;
+
+	int _lightHandle;
 };
 

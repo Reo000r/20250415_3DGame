@@ -10,7 +10,7 @@
 
 Application& Application::GetInstance()
 {
-	// この宣言の時点でメモリが確保されてアプリ終了まで残る
+	// 初実行時にメモリ確保
 	static Application app;
 	return app;
 }
@@ -25,10 +25,12 @@ bool Application::Init()
 	freopen_s(&_in, "CON", "r", stdin);		// stdin
 #endif	// _DEBUG
 
+	// スクリーン初期化処理
 	SetGraphMode(Statistics::kScreenWidth, Statistics::kScreenHeight, 32);
 	ChangeWindowMode(true);
-	SetWindowText(L"Skeleton Window");
+	SetWindowText(L"Window");
 
+	// DxLibの初期化処理
 	if (DxLib_Init()) {
 		assert(false && "DxLib_Init_Error");
 		return false;
@@ -46,8 +48,10 @@ bool Application::Init()
 
 void Application::Run()
 {
+	// シングルトンオブジェクトを取得
 	SceneController& sceneController = SceneController::GetInstance();
 	Input& input = Input::GetInstance();
+	DebugDraw& debugDraw = DebugDraw::GetInstance();
 
 	while (ProcessMessage() != -1) {
 		// 今回のループが始まった時間を覚えておく
@@ -57,7 +61,7 @@ void Application::Run()
 
 #ifdef _DEBUG
 		// デバッグ描画情報を初期化
-		DebugDraw::Clear();
+		debugDraw.Clear();
 #endif // _DEBUG
 
 		// 入力更新
@@ -69,13 +73,14 @@ void Application::Run()
 
 #ifdef _DEBUG
 		// デバッグ描画
-		DebugDraw::Draw();
+		debugDraw.Draw();
 #endif // _DEBUG
 
 		ScreenFlip();
 
+		// escが押されたら
 		if (CheckHitKey(KEY_INPUT_ESCAPE)) {
-			break;
+			break;	// 処理を抜ける
 		}
 
 		// FPS60に固定する
