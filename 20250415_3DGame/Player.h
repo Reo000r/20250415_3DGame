@@ -25,8 +25,8 @@ public:
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
-	//Matrix4x4 GetRotMtx() const { return _rotMtx; }
-
+	float GetHitPoint() { return _hitpoint; }
+	
 private:
 	// Update‚ÌStateƒpƒ^[ƒ“
 	// _nowUpdateState‚ª•Ï”‚Å‚ ‚é‚±‚Æ‚ğ•ª‚©‚è‚â‚·‚­‚µ‚Ä‚¢‚é
@@ -75,5 +75,7 @@ private:
 
 	// UŒ‚‚Ì”h¶“ü—Í‚ª‚ ‚Á‚½‚©‚Ç‚¤‚©
 	bool  _hasDerivedAttackInput;
+
+	float _hitpoint;
 };
 

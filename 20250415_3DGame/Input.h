@@ -44,6 +44,13 @@ public:
 	/// </summary>
 	/// <returns>右スティックの入力情報</returns>
 	Vector3 GetPadRightSitck() const;
+	/// <summary>
+	/// 右スティックの入力情報をVector3型で返す
+	/// x、zに値を入れる
+	/// 最後にあった入力を返す
+	/// </summary>
+	/// <returns>右スティックの入力情報</returns>
+	Vector3 GetPadRightSitckLast() const;
 
 	/// <summary>
 	/// 左スティックの入力情報をVector3型で返す
@@ -51,6 +58,13 @@ public:
 	/// </summary>
 	/// <returns>左スティックの入力情報</returns>
 	Vector3 GetPadLeftSitck() const;
+	/// <summary>
+	/// 左スティックの入力情報をVector3型で返す
+	/// x、zに値を入れる
+	/// 最後にあった入力を返す
+	/// </summary>
+	/// <returns>左スティックの入力情報</returns>
+	Vector3 GetPadLeftSitckLast() const;
 
 private:
 	Input();
@@ -103,6 +117,9 @@ private:
 	// 左右スティック入力情報
 	Vector3 _rightStickInput;
 	Vector3 _leftStickInput;
+	// 左右スティックの最後の入力情報
+	Vector3 _rightStickLastInput;
+	Vector3 _leftStickLastInput;
 
 	/// <summary>
 	/// 現在のキーボード状態を調べて最も

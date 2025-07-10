@@ -21,6 +21,8 @@ namespace {
 	constexpr float kDashSpeed = 14.0f;
 	constexpr float kJumpForce = 20.0f;
 	constexpr float kGround = 0.0f;
+	
+	constexpr float kHitPoint = 100.0f;
 
 #ifndef ANIMATION_TEST
 	const std::wstring kAnimName = L"Armature|Animation_";
@@ -64,7 +66,8 @@ Player::Player() :
 	_animator(std::make_shared<Animator>()),
 	_weapon(std::make_shared<Weapon>()),
 	_rotAngle(0.0f),
-	_hasDerivedAttackInput(false)
+	_hasDerivedAttackInput(false),
+	_hitpoint(kHitPoint)
 {
 	rigidbody->Init(true);
 
@@ -160,15 +163,16 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 	// coliderと衝突
 
 	// 特定のタグではない場合return
-	if (collider.lock()->GetTag() != PhysicsData::GameObjectTag::PlayerAttack) return;
+	if (collider.lock()->GetTag() != PhysicsData::GameObjectTag::EnemyAttack) return;
 
 	// (ダメージを受け)
 	// 被弾状態へ
 	if (_nowUpdateState != &Player::UpdateDamage) {
 		_nowUpdateState = &Player::UpdateDamage;
 		_animator->ChangeAnim(kAnimNameDamage, false);
-		// ダメージを受ける
+		_hasDerivedAttackInput = false;
 
+		// ダメージを受ける
 
 		return;
 	}
@@ -180,40 +184,50 @@ void Player::CheckStateTransition()
 	Vector3 stick = input.GetPadLeftSitck();
 	
 	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
+	bool isLoopAnim = _animator->IsLoop(_animator->GetCurrentAnimName());
+
+	// ループである
+	// もしくはループでないかつアニメーション再生が終わっているか
+	bool canChangeState = (!isLoopAnim && isEndAnim) || (isLoopAnim);
+
+	bool isAttack = 
+		(_nowUpdateState == &Player::UpdateAttackFirst ||
+		_nowUpdateState == &Player::UpdateAttackSecond ||
+		_nowUpdateState == &Player::UpdateAttackThird);
 
 	// 現在のアニメーションが終わっているかつ現在のステートが攻撃関連ならtrue
 	bool isEndAttack = (
-		isEndAnim &&
+		((!isLoopAnim && isEndAnim) || (isLoopAnim)) &&
 		(_nowUpdateState == &Player::UpdateAttackFirst ||
 		_nowUpdateState == &Player::UpdateAttackSecond ||
 		_nowUpdateState == &Player::UpdateAttackThird)
 		);
 
-	// 攻撃中に派生入力があった
-	// もしくは現在攻撃関連のステートでないなら
+	// 現在攻撃関連のステートでないかつ
+	// 攻撃入力があったかつ
+	// アニメーション処理が問題ないなら
 	// 一段目の攻撃状態へ
-	if (isEndAttack ||
-		(_nowUpdateState != &Player::UpdateAttackFirst &&
-			_nowUpdateState != &Player::UpdateAttackSecond &&
-			_nowUpdateState != &Player::UpdateAttackThird)) {
+	if (!isAttack && input.IsPress("action") && canChangeState) {
 		_nowUpdateState = &Player::UpdateAttackFirst;
 		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
 		_hasDerivedAttackInput = false;
 	}
+	// 攻撃中に派生入力があったかつ
 	// アニメーションが終わっているかつ
 	// 現在攻撃の一段目なら
 	// 二段目の攻撃状態へ
-	if (_hasDerivedAttackInput && (isEndAnim &&
-		(_nowUpdateState == &Player::UpdateAttackFirst))) {
+	if (_hasDerivedAttackInput && isEndAnim &&
+		_nowUpdateState == &Player::UpdateAttackFirst) {
 		_nowUpdateState = &Player::UpdateAttackSecond;
 		_animator->ChangeAnim(kAnimNameAttackCombo2, false);
 		_hasDerivedAttackInput = false;
 	}
+	// 攻撃中に派生入力があったかつ
 	// アニメーションが終わっているかつ
 	// 現在攻撃の二段目なら
 	// 三段目の攻撃状態へ
-	if (_hasDerivedAttackInput && (isEndAnim &&
-		(_nowUpdateState == &Player::UpdateAttackSecond))) {
+	if (_hasDerivedAttackInput && isEndAnim &&
+		_nowUpdateState == &Player::UpdateAttackSecond) {
 		_nowUpdateState = &Player::UpdateAttackThird;
 		_animator->ChangeAnim(kAnimNameAttackCombo3, false);
 		_hasDerivedAttackInput = false;
@@ -235,11 +249,11 @@ void Player::CheckStateTransition()
 	//}
 
 	// 地上にいるかつ
-	// 攻撃が終わっているかつ
+	// アニメーション処理が問題ないかつ
 	// 一定以上のスティック入力があるなら
 	// ダッシュ状態へ
 	if (GetPos().y <= kGround && 
-		isEndAttack &&
+		canChangeState &&
 		(stick.Normalize().Magnitude() >= 0.8f) &&
 		input.IsPress("dash")) {
 		if (_nowUpdateState != &Player::UpdateDash) { // 現在ダッシュでなければ
@@ -250,11 +264,12 @@ void Player::CheckStateTransition()
 	}
 
 	// 地上にいるかつ
-	// 攻撃が終わっているかつ
+	// アニメーション処理が問題ないかつ
 	// ジャンプ状態でないかつ
 	// スティック入力があれば
 	// 歩き状態へ
 	if (GetPos().y <= kGround && 
+		canChangeState &&
 		(stick.Magnitude() != 0.0f)) {
 		if (_nowUpdateState != &Player::UpdateWalk) { // 現在歩きでなければ
 			_nowUpdateState = &Player::UpdateWalk;
@@ -263,8 +278,11 @@ void Player::CheckStateTransition()
 		return;
 	}
 
-	// 上記のいずれでもなければ待機状態へ
-	if (GetPos().y <= kGround) {
+	// 上記のいずれでもないかつ
+	// アニメーション処理が問題なければ
+	// 待機状態へ
+	if (GetPos().y <= kGround && 
+		canChangeState) {
 		if (_nowUpdateState != &Player::UpdateIdle) {
 			_nowUpdateState = &Player::UpdateIdle;
 			_animator->ChangeAnim(kAnimNameIdle, true);
@@ -288,10 +306,10 @@ void Player::WeaponUpdate()
 
 void Player::UpdateIdle()
 {
+#ifdef OLD_STATETRANSITION
 	Input& input = Input::GetInstance();
 	Vector3 stick = input.GetPadLeftSitck();
 
-#ifdef OLD_STATETRANSITION
 	// 入力があればステートを変更する
 	if ((int)stick.x != 0 || (int)stick.z != 0) {
 		// 追加の入力があればダッシュ
@@ -304,18 +322,14 @@ void Player::UpdateIdle()
 			_nowUpdateState = &Player::UpdateWalk;
 		}
 	}
-#endif // OLD_STATETRANSITION
 
 	Vector3 vel = GetVel();
-
-#ifdef OLD_STATETRANSITION
 	// ジャンプ処理
 	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
 		vel.y += kJumpForce;
 		_animator->ChangeAnim(kAnimNameJump, true);
 		_nowUpdateState = &Player::UpdateJump;
 	}
-#endif // OLD_STATETRANSITION
 
 	const float cameraRot = _camera.lock()->GetRotAngleY();
 
@@ -330,6 +344,9 @@ void Player::UpdateIdle()
 
 	// rigidbodyに編集した移動量を代入
 	rigidbody->SetVel(vel);
+#endif // OLD_STATETRANSITION
+
+	// 処理なし
 }
 
 void Player::UpdateWalk()
@@ -373,7 +390,6 @@ void Player::UpdateJump()
 	}
 #endif // OLD_STATETRANSITION
 
-	
 	// 移動処理
 	Move(kDashSpeed);
 	// 進行方向への方向転換処理
@@ -382,8 +398,6 @@ void Player::UpdateJump()
 
 void Player::UpdateAttackFirst()
 {
-	// 攻撃処理
-
 	// 入力受付範囲内で攻撃入力が入れば
 	// 攻撃secondを予約する
 	Input& input = Input::GetInstance();
@@ -396,7 +410,7 @@ void Player::UpdateAttackFirst()
 void Player::UpdateAttackSecond()
 {
 	// 入力受付範囲内で攻撃入力が入れば
-	// 攻撃secondを予約する
+	// 攻撃thirdを予約する
 	Input& input = Input::GetInstance();
 	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
 	if (!isEndAnim && input.IsTrigger("action")) {

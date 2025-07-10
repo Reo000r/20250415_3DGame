@@ -51,8 +51,14 @@ void Input::Update() {
     int xInput, zInput;
     GetJoypadAnalogInputRight(&xInput, &zInput, DX_INPUT_PAD1);
     _rightStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
+    if (_rightStickInput.SqrMagnitude() != 0.0f) {  // 入力があった場合更新
+        _rightStickLastInput = _rightStickInput;
+    }
     GetJoypadAnalogInput(&xInput, &zInput, DX_INPUT_PAD1);
     _leftStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
+    if (_leftStickInput.SqrMagnitude() != 0.0f) {   // 入力があった場合更新
+        _leftStickLastInput = _leftStickInput;
+    }
 }
 
 bool Input::IsPress(const char* key) const {
@@ -87,12 +93,25 @@ Vector3 Input::GetPadRightSitck() const {
     return _rightStickInput;
 }
 
+Vector3 Input::GetPadRightSitckLast() const {
+    return _rightStickLastInput;
+}
+
 
 Vector3 Input::GetPadLeftSitck() const {
     return _leftStickInput;
 }
 
-Input::Input() {
+Vector3 Input::GetPadLeftSitckLast() const {
+    return _leftStickLastInput;
+}
+
+Input::Input() :
+    _rightStickInput(),
+    _leftStickInput(),
+    _rightStickLastInput(),
+    _leftStickLastInput()
+{
     SetDefault();
     LoadInputTable();
     // 一時テーブルにコピー
