@@ -79,7 +79,7 @@ Player::Player() :
 	_animator->Init(MV1LoadModel(L"data/model/character/Player.mv1"));
 #else
 	// モデルの読み込み
-	_animator->Init(MV1LoadModel(L"data/model/Player_test.mv1"));
+	_animator->Init(MV1LoadModel(L"data/model/character/Player_test.mv1"));
 #endif
 
 #ifndef ANIMATION_TEST
@@ -113,9 +113,9 @@ Player::Player() :
 
 	// 武器初期化
 	int weaponModelHandle = MV1LoadModel(L"data/model/weapon/PlayerWeapon.mv1");
-	assert(weaponModelHandle >= 0 && "モデルハンドルが正しくない");
-	_weapon->Init(weaponModelHandle, 100.0f,
-		500, Vector3Up());
+	//assert(weaponModelHandle >= 0 && "モデルハンドルが正しくない");
+	//_weapon->Init(weaponModelHandle, 100.0f,
+	//	500, Vector3Up());
 }
 
 Player::~Player() {

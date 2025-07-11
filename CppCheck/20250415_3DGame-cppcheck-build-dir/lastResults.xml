@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+    <cppcheck version="2.17.1"/>
+    <errors>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;forward_list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;forward_list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="4"/>
+        </error>
+        <error id="returnByReference" severity="performance" msg="Function &amp;#039;GetCurrentAnimName()&amp;#039; should return member &amp;#039;_currentAnimName&amp;#039; by const reference." verbose="Function &amp;#039;GetCurrentAnimName()&amp;#039; should return member &amp;#039;_currentAnimName&amp;#039; by const reference." file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="69"/>
+        </error>
+        <error id="returnByReference" severity="performance" msg="Function &amp;#039;GetBlendingAnimName()&amp;#039; should return member &amp;#039;_blendingAnimName&amp;#039; by const reference." verbose="Function &amp;#039;GetBlendingAnimName()&amp;#039; should return member &amp;#039;_blendingAnimName&amp;#039; by const reference." file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="70"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="77"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="83"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/EnemyBase.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="32"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/EnemyBase.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="38"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/EnemyBase.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="45"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/EnemyBase.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="63"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/EnemyBase.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.h" line="65"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="4"/>
+        </error>
+        <error id="returnReference" severity="error" msg="Reference to local variable returned." verbose="Reference to local variable returned." cwe="562" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="192"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="59"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="67"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="89"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="157"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;animName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;animName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="181"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="71"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." cwe="398" file0="../20250415_3DGame/Animator.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Animator.cpp" line="185"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.h" line="2"/>
+        </error>
+        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &amp;#039;Application::_out&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;Application::_out&amp;#039; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.h" line="7"/>
+        </error>
+        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &amp;#039;Application::_in&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;Application::_in&amp;#039; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.h" line="7"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;map&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;map&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.h" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.h" line="5"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.h" line="6"/>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &amp;#039;Input::GetKeyboradState&amp;#039;" verbose="Unused private function: &amp;#039;Input::GetKeyboradState&amp;#039;" cwe="398" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.h" line="130"/>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &amp;#039;Input::GetPadState&amp;#039;" verbose="Unused private function: &amp;#039;Input::GetPadState&amp;#039;" cwe="398" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.h" line="137"/>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &amp;#039;Input::SaveInputTable&amp;#039;" verbose="Unused private function: &amp;#039;Input::SaveInputTable&amp;#039;" cwe="398" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.h" line="142"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneController.h" line="2"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneController.h" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;array&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;array&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Matrix4x4.h" line="2"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Matrix4x4&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Matrix4x4&amp;#039; has a constructor with 1 argument that is not explicit. Such, so called &amp;quot;Converting constructors&amp;quot;, should in general be explicit for type safety reasons as that prevents unintended implicit conversions." cwe="398" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Matrix4x4.h" line="19"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Matrix4x4&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Matrix4x4&amp;#039; has a constructor with 1 argument that is not explicit. Such, so called &amp;quot;Converting constructors&amp;quot;, should in general be explicit for type safety reasons as that prevents unintended implicit conversions." cwe="398" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Matrix4x4.h" line="25"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;m_&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;m_&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Matrix4x4.h" line="19"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\DebugDraw.h" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\DebugDraw.h" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.cpp" line="7"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.cpp" line="8"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.cpp" line="9"/>
+        </error>
+        <error id="ignoredReturnValue" severity="warning" msg="Return value of function freopen_s() is not used." verbose="Return value of function freopen_s() is not used." cwe="252" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.cpp" line="23"/>
+        </error>
+        <error id="ignoredReturnValue" severity="warning" msg="Return value of function freopen_s() is not used." verbose="Return value of function freopen_s() is not used." cwe="252" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Application.cpp" line="25"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Vector3&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Vector3&amp;#039; has a constructor with 1 argument that is not explicit. Such, so called &amp;quot;Converting constructors&amp;quot;, should in general be explicit for type safety reasons as that prevents unintended implicit conversions." cwe="398" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Vector3.h" line="26"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;mat&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;mat&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Application.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Quaternion.h" line="85"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Camera.h" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Collider.h" line="2"/>
+        </error>
+        <error id="class_X_Y" severity="information" msg="The code &amp;#039;class Collider abstract :&amp;#039; is not handled. You can use -I or --include to add handling of this code." verbose="The code &amp;#039;class Collider abstract :&amp;#039; is not handled. You can use -I or --include to add handling of this code." file0="../20250415_3DGame/Camera.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Collider.h" line="14"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.h" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Camera.cpp" line="5"/>
+        </error>
+        <error id="redundantInitialization" severity="style" msg="Redundant initialization for &amp;#039;rotDeltaX&amp;#039;. The initialized value is overwritten before it is read." verbose="Redundant initialization for &amp;#039;rotDeltaX&amp;#039;. The initialized value is overwritten before it is read." cwe="563" file0="../20250415_3DGame/Camera.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Camera.cpp" line="89" info="rotDeltaX is overwritten"/>
+            <location file="..\20250415_3DGame\Camera.cpp" line="78" info="rotDeltaX is initialized"/>
+        </error>
+        <error id="redundantInitialization" severity="style" msg="Redundant initialization for &amp;#039;rotDeltaY&amp;#039;. The initialized value is overwritten before it is read." verbose="Redundant initialization for &amp;#039;rotDeltaY&amp;#039;. The initialized value is overwritten before it is read." cwe="563" file0="../20250415_3DGame/Camera.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Camera.cpp" line="86" info="rotDeltaY is overwritten"/>
+            <location file="..\20250415_3DGame\Camera.cpp" line="79" info="rotDeltaY is initialized"/>
+        </error>
+        <error id="redundantInitialization" severity="style" msg="Redundant initialization for &amp;#039;rotMtx&amp;#039;. The initialized value is overwritten before it is read." verbose="Redundant initialization for &amp;#039;rotMtx&amp;#039;. The initialized value is overwritten before it is read." cwe="563" file0="../20250415_3DGame/Camera.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Camera.cpp" line="119" info="rotMtx is overwritten"/>
+            <location file="..\20250415_3DGame\Camera.cpp" line="106" info="rotMtx is initialized"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;input&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;input&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Camera.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Camera.cpp" line="56"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.h" line="2"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.h" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;list&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\ColliderData.h" line="2"/>
+        </error>
+        <error id="class_X_Y" severity="information" msg="The code &amp;#039;class ColliderData abstract {&amp;#039; is not handled. You can use -I or --include to add handling of this code." verbose="The code &amp;#039;class ColliderData abstract {&amp;#039; is not handled. You can use -I or --include to add handling of this code." file0="../20250415_3DGame/Collider.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\ColliderData.h" line="5"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Collider.cpp" line="7"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\ColliderData.cpp" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\DebugDraw.cpp" line="2"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyBase.h" line="4"/>
+        </error>
+        <error id="class_X_Y" severity="information" msg="The code &amp;#039;class EnemyBase abstract :&amp;#039; is not handled. You can use -I or --include to add handling of this code." verbose="The code &amp;#039;class EnemyBase abstract :&amp;#039; is not handled. You can use -I or --include to add handling of this code." file0="../20250415_3DGame/EnemyBase.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyBase.h" line="9"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyBase.cpp" line="8"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyBase.cpp" line="10"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyNormal.cpp" line="8"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyNormal.cpp" line="10"/>
+        </error>
+        <error id="identicalInnerCondition" severity="warning" msg="Identical inner &amp;#039;if&amp;#039; condition is always true." verbose="Identical inner &amp;#039;if&amp;#039; condition is always true (outer condition is &amp;#039;_nowUpdateState!=&amp;amp;EnemyNormal::UpdateDead&amp;#039; and inner condition is &amp;#039;_nowUpdateState!=&amp;amp;EnemyNormal::UpdateDead&amp;#039;)." cwe="398" file0="../20250415_3DGame/EnemyNormal.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyNormal.cpp" line="103" info="identical inner condition: _nowUpdateState!=&amp;amp;EnemyNormal::UpdateDead"/>
+            <location file="..\20250415_3DGame\EnemyNormal.cpp" line="101" info="outer condition: _nowUpdateState!=&amp;amp;EnemyNormal::UpdateDead"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;color&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;color&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/EnemyNormal.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyNormal.cpp" line="71"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;y&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;y&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/EnemyNormal.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\EnemyNormal.cpp" line="72"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Ground.cpp" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;string&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\StringUtility.h" line="2"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\StringUtility.h" line="3"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.cpp" line="4"/>
+        </error>
+        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &amp;#039;Input::_currentRawPadState&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;Input::_currentRawPadState&amp;#039; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.cpp" line="109"/>
+        </error>
+        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &amp;#039;Input::_lastRawPadState&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;Input::_lastRawPadState&amp;#039; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.cpp" line="109"/>
+        </error>
+        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &amp;#039;Input::_currentRawKeybdState&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;Input::_currentRawKeybdState&amp;#039; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.cpp" line="109"/>
+        </error>
+        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &amp;#039;Input::_lastRawKeybdState&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;Input::_lastRawKeybdState&amp;#039; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.cpp" line="109"/>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &amp;#039;Header::signature&amp;#039; is never used." verbose="struct member &amp;#039;Header::signature&amp;#039; is never used." cwe="563" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.cpp" line="241"/>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &amp;#039;Header::version&amp;#039; is never used." verbose="struct member &amp;#039;Header::version&amp;#039; is never used." cwe="563" file0="../20250415_3DGame/Input.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Input.cpp" line="242"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Matrix4x4.cpp" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Matrix4x4.cpp" line="5"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.cpp" line="9"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.cpp" line="10"/>
+        </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../20250415_3DGame/Physics.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.cpp" line="0"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;collider&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;collider&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Physics.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.cpp" line="48"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;oldSecPos&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;oldSecPos&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/Physics.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.cpp" line="261"/>
+        </error>
+        <error id="shadowVariable" severity="style" msg="Local variable &amp;#039;pos&amp;#039; shadows outer variable" verbose="Local variable &amp;#039;pos&amp;#039; shadows outer variable" cwe="398" file0="../20250415_3DGame/Physics.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Physics.cpp" line="93" info="Shadow variable"/>
+            <location file="..\20250415_3DGame\Physics.cpp" line="50" info="Shadowed declaration"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="9"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="11"/>
+        </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="0"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;input&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;input&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="183"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;input&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;input&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="403"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;input&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;input&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="414"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;input&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;input&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="438"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;weaponModelHandle&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;weaponModelHandle&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="115"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;isEndAttack&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;isEndAttack&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="199"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;pos.y&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;pos.y&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="498"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;input&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;input&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="310"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &amp;#039;input&amp;#039; can be declared as reference to const" verbose="Variable &amp;#039;input&amp;#039; can be declared as reference to const" cwe="398" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="372"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;cameraRot&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;cameraRot&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/Player.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Player.cpp" line="334"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cmath&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cmath&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Quaternion.cpp" line="5"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Quaternion.cpp" line="6"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;mat&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;mat&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="../20250415_3DGame/Quaternion.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Quaternion.cpp" line="166"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;sqw&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;sqw&amp;#039; is assigned a value that is never used." cwe="563" file0="../20250415_3DGame/Quaternion.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Quaternion.cpp" line="253"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneGamePlay.h" line="5"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;vector&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneGamePlay.h" line="6"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneResult.h" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Skydome.h" line="2"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneGamePlay.cpp" line="13"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneGamePlay.cpp" line="14"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneGamePlay.cpp" line="15"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneTitle.h" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneResult.cpp" line="10"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneResult.cpp" line="11"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneResult.cpp" line="12"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;memory&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneTitle.cpp" line="8"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneTitle.cpp" line="9"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneTitle.cpp" line="10"/>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &amp;#039;SceneTitle::_startFadeFrame&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;SceneTitle::_startFadeFrame&amp;#039; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="../20250415_3DGame/SceneTitle.cpp" sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\SceneTitle.cpp" line="63"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Skydome.cpp" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Skydome.cpp" line="5"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cmath&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cmath&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Vector2.cpp" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cmath&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cmath&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Vector3.cpp" line="4"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Vector3.cpp" line="6"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;cassert&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Weapon.cpp" line="5"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\Weapon.cpp" line="7"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &amp;lt;DxLib.h&amp;gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." sinceDate="2025/07/11">
+            <location file="..\20250415_3DGame\main.cpp" line="1"/>
+        </error>
+    </errors>
+</results>

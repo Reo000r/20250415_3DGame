@@ -180,14 +180,14 @@ void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
 
 Animator::AnimData& Animator::FindAnimData(const std::wstring animName)
 {
+	AnimData* firstData = nullptr;
 	// アニメーション名で検索
 	for (auto& data : _animDataList) {
-		if (animName == data.animName) {
-			return data;
-		}
+		if (firstData == nullptr)		firstData = &data;
+		if (animName == data.animName)	return data;
 	}
 
 	assert(false && "指定の名前のアニメーションが登録されていなかった");
-	AnimData animData;
-	return animData;
+	// 見つからなかった場合は最初に見たアニメーションデータを返す
+	return *(firstData);
 }

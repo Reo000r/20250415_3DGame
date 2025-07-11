@@ -62,6 +62,13 @@ public:
 	/// <param name="isLoop"></param>
 	void ChangeAnim(const std::wstring animName, bool isLoop);
 
+	/// <summary>
+	/// アニメーションデータを名前で検索し参照を返す
+	/// 見つからなかった場合は最初に見たアニメーションデータを返す
+	/// debugならassertを投げる
+	/// </summary>
+	/// <param name="animName"></param>
+	/// <returns></returns>
 	AnimData& FindAnimData(const std::wstring animName);
 
 	int GetModelHandle() const{ return _model; }

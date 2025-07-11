@@ -3,7 +3,6 @@
 #include "Geometry.h"
 
 #include <memory>
-#include <vector>
 
 class Physics;
 class Camera;

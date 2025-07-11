@@ -1,0 +1,7 @@
+[11.07.2025]
+1752213071466
+cppcheck-error:0
+cppcheck-warning:9
+cppcheck-style:29
+cppcheck-performance:16
+cppcheck-portability:0

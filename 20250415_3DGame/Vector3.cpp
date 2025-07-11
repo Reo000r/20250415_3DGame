@@ -7,11 +7,11 @@
 
 
 Vector3::operator DxLib::tagVECTOR() {
-	return Vector3(x, y, z);
+	return VGet(x, y, z);
 }
 
 Vector3::operator DxLib::tagVECTOR() const {
-	return Vector3(x, y, z);
+	return VGet(x, y, z);
 }
 
 Vector3::Vector3(const DxLib::tagVECTOR vector) :
