@@ -29,12 +29,19 @@ namespace {
 	const std::wstring kAnimNameIdle = kAnimName + L"Idle";
 	const std::wstring kAnimNameWalk = kAnimName + L"Walk";
 	const std::wstring kAnimNameRun = kAnimName + L"Run";
-	//const std::wstring kAnimNameAttack = kAnimName + L"Attack360High";
+	const std::wstring kAnimNameAttackNormal = kAnimName + L"Attack360High";
+	const std::wstring kAnimNameAttackBack	= kAnimName + L"AttackBackhand";
 	const std::wstring kAnimNameAttackCombo1 = kAnimName + L"AttackCombo1";
 	const std::wstring kAnimNameAttackCombo2 = kAnimName + L"AttackCombo2";
 	const std::wstring kAnimNameAttackCombo3 = kAnimName + L"AttackCombo3";
-	const std::wstring kAnimNameDamage = kAnimName + L"React";
-	const std::wstring kAnimNameDead = kAnimName + L"Dead";
+	const std::wstring kAnimNameSpecialAttack1 = kAnimName + L"SpecialAttack1";
+	const std::wstring kAnimNameSpecialAttack2 = kAnimName + L"SpecialAttack2";
+	const std::wstring kAnimNameBlock		= kAnimName + L"Block";
+	const std::wstring kAnimNameBlockReact	= kAnimName + L"BlockReact";
+	const std::wstring kAnimNameReact		= kAnimName + L"React";
+	const std::wstring kAnimNameBuff	= kAnimName + L"Buff";
+	const std::wstring kAnimNameDead = kAnimName + L"Dying";
+	const std::wstring kAnimNameAppeal = kAnimName + L"WinAnim";
 
 	constexpr float kAttackCombo1InputStart = 0.0f;
 	constexpr float kAttackCombo1InputEnd	= 1.0f;
@@ -77,6 +84,7 @@ Player::Player() :
 #ifndef ANIMATION_TEST
 	// モデルの読み込み
 	_animator->Init(MV1LoadModel(L"data/model/character/Player.mv1"));
+	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * 2.0f);
 #else
 	// モデルの読み込み
 	_animator->Init(MV1LoadModel(L"data/model/character/Player_test.mv1"));
@@ -87,11 +95,19 @@ Player::Player() :
 	_animator->SetAnimData(kAnimNameIdle, true);
 	_animator->SetAnimData(kAnimNameWalk, true);
 	_animator->SetAnimData(kAnimNameRun, true);
+	_animator->SetAnimData(kAnimNameAttackNormal, false);
+	_animator->SetAnimData(kAnimNameAttackBack, false);
 	_animator->SetAnimData(kAnimNameAttackCombo1, false);
 	_animator->SetAnimData(kAnimNameAttackCombo2, false);
 	_animator->SetAnimData(kAnimNameAttackCombo3, false);
-	_animator->SetAnimData(kAnimNameDamage, false);
+	_animator->SetAnimData(kAnimNameSpecialAttack1, false);
+	_animator->SetAnimData(kAnimNameSpecialAttack2, false);
+	_animator->SetAnimData(kAnimNameBlock, true);
+	_animator->SetAnimData(kAnimNameBlockReact, false);
+	_animator->SetAnimData(kAnimNameReact, false);
+	_animator->SetAnimData(kAnimNameBuff, false);
 	_animator->SetAnimData(kAnimNameDead, false);
+	_animator->SetAnimData(kAnimNameAppeal, false);
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameIdle);
 #else
@@ -113,9 +129,9 @@ Player::Player() :
 
 	// 武器初期化
 	int weaponModelHandle = MV1LoadModel(L"data/model/weapon/PlayerWeapon.mv1");
-	//assert(weaponModelHandle >= 0 && "モデルハンドルが正しくない");
-	//_weapon->Init(weaponModelHandle, 100.0f,
-	//	500, Vector3Up());
+	assert(weaponModelHandle >= 0 && "モデルハンドルが正しくない");
+	_weapon->Init(weaponModelHandle, 100.0f,
+		500, Vector3Up());
 }
 
 Player::~Player() {
@@ -169,7 +185,7 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 	// 被弾状態へ
 	if (_nowUpdateState != &Player::UpdateDamage) {
 		_nowUpdateState = &Player::UpdateDamage;
-		_animator->ChangeAnim(kAnimNameDamage, false);
+		_animator->ChangeAnim(kAnimNameReact, false);
 		_hasDerivedAttackInput = false;
 
 		// ダメージを受ける
@@ -436,7 +452,7 @@ void Player::Move(const float speed)
 	Vector3 vel = GetVel();
 	Position3 pos = GetPos();	// 移動予定位置
 	Input& input = Input::GetInstance();
-	const float cameraRot = _camera.lock()->GetRotAngleY();
+	const float cameraRot = _camera.lock()->GetRotAngleY() * -1;
 
 	// スティックによる平面移動
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();

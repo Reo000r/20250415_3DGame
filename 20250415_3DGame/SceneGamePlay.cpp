@@ -98,10 +98,10 @@ void SceneGamePlay::FadeoutUpdate()
 
 void SceneGamePlay::FadeDraw()
 {
+	_skydome->Draw();
 	_ground->Draw();
 	_camera->Draw();
 	_player->Draw();
-	_skydome->Draw();
 
 #ifdef _DEBUG
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");
@@ -118,10 +118,10 @@ void SceneGamePlay::FadeDraw()
 
 void SceneGamePlay::NormalDraw()
 {
+	_skydome->Draw();
 	_ground->Draw();
 	_camera->Draw();
 	_player->Draw();
-	_skydome->Draw();
 
 #ifdef _DEBUG
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");

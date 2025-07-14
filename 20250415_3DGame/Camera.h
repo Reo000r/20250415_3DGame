@@ -22,16 +22,18 @@ public:
 	/// Y軸の回転情報
 	/// </summary>
 	/// <returns></returns>
-	float GetRotAngleY() const { return ConvQuaternionToEuler(_quaternion).y; }
+	float GetRotAngleY() const { return _rotAngle.y; }
 
 private:
 	Position3 _pos;
+	Vector3 _vel;
 	// Playerの位置だけ見たい
 	std::weak_ptr<Player> _player;
 	Vector3 _targetPos;
 
-	// それぞれの座標軸での回転量を表す
-	Quaternion _quaternion;
+	// それぞれの回転量を表す
+	Vector3 _rotAngle;
+
 	float _near;
 	float _far;
 	float _viewAngle;

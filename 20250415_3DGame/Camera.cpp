@@ -4,9 +4,10 @@
 
 #include <DxLib.h>
 
-#define USE_QUATERNION
+//#define USE_QUATERNION
 
 namespace {
+	constexpr float kTargetHormingRad = 1000;
 
 	constexpr float kRotSpeedX = 0.03f;
 	constexpr float kRotSpeedY = 0.05f;
@@ -48,7 +49,10 @@ void Camera::Init(std::weak_ptr<Player> player) {
 	//SetCameraPositionAndTarget_UpVecY(pos, target);
 	SetCameraPositionAndTarget_UpVecY(_pos, _targetPos);
 
-	_lightHandle = CreatePointLightHandle(_pos, _far, 
+	//_lightHandle = CreatePointLightHandle(_pos, _far, 
+	//	1.0f, 0.005f, 0.0f);
+	_lightHandle = CreateSpotLightHandle(_pos, Vector3Up(),
+		_viewAngle, _viewAngle*0.9f, _far, 
 		1.0f, 0.005f, 0.0f);
 }
 
@@ -89,6 +93,8 @@ void Camera::Update() {
 	rotDeltaX = AngleAxis(Vector3Right(), stick.z * 0.001f * kRotSpeedX);
 
 	rotDelta = rotDeltaY * rotDeltaX;	// 
+
+	_quaternion = _quaternion * rotDelta;
 #else
 	float rotSpeed = 0.0f;
 	//LRでカメラを回転させる
@@ -139,7 +145,9 @@ void Camera::Update() {
 	SetCameraPositionAndTarget_UpVecY(_pos, _targetPos);
 	SetCameraNearFar(_near, _far);
 	SetupCamera_Perspective(_viewAngle);
+}
 
+void Camera::Draw() {
 	// ライトの位置と方向を更新
 	if (_lightHandle != -1) {
 		// ライトの位置をカメラの位置に設定
@@ -148,20 +156,22 @@ void Camera::Update() {
 		// ライトの方向をカメラの位置から注視点へのベクトルに設定
 		VECTOR direction = (_targetPos - _pos).Normalize();
 		SetLightDirectionHandle(_lightHandle, direction);
-	
+
 		// ライトを有効にする
 		SetLightEnableHandle(_lightHandle, true);
 	}
 
-}
-
-void Camera::Draw() {
 #ifdef _DEBUG
 	int color = 0xffffff;
 	int y = 16 * 6;
 	DrawFormatString(0, y, color, L"Camera:Pos (%.3f,%.3f,%.3f)", _pos.x, _pos.y, _pos.z);
 	y += 16;
-	Vector3 rotAngle = ConvQuaternionToEuler(_quaternion);
+	Vector3 rotAngle;
+#ifndef USE_QUATERNION
+	rotAngle = _rotAngle;
+#else
+	rotAngle = ConvQuaternionToEuler(_quaternion);
+#endif
 	DrawFormatString(0, y, color, L"Camera:RotAngle (%.3f,%.3f,%.3f)", rotAngle.x, rotAngle.y, rotAngle.z);
 #endif
 }

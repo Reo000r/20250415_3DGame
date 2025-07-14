@@ -23,7 +23,7 @@ void Skydome::Init(std::weak_ptr<Camera> camera)
 	_handle = MV1LoadModel(L"data/skydome/Sky_Daylight01.mv1");
 	assert(_handle >= 0);
 	// Т▓Ро
-	MV1SetScale(_handle, VGet(5.0f, 5.0f, 5.0f));
+	MV1SetScale(_handle, Vector3(1,1,1)*4.0f);
 	MV1SetPosition(_handle, _camera.lock()->GetPos());
 }
 
