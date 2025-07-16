@@ -49,9 +49,12 @@ namespace PhysicsData {
 
 	// “–‚½‚è”»’è‰ñ”‚ÌÅ‘å”
 	constexpr int kCheckCollideMaxCount = 1000;
+
+	// ƒ[ƒ‚ÆŒ©‚È‚·‹–—e”ÍˆÍ
+	constexpr float kZeroTolerance = 0.00001f;
 	// “–‚½‚è”»’è‚É‰Ÿ‚µ–ß‚·’Ç‰Á•â³—Ê
 	// (‚»‚Ì‚Ü‚Ü–ß‚·‚Æ‚¿‚å‚¤‚Ç“–‚½‚Á‚Ä‚µ‚Ü‚¤ˆÊ’u‚É‚È‚é‚½‚ß)
-	constexpr float kFixPositionOffset = 0.00001f;
+	constexpr float kFixPositionOffset = kZeroTolerance;
 
 	// ‰¼‚Ì’n–Ê‚Ì‚‚³
 	constexpr float kTempGroundHeight = 0.0f;

@@ -26,6 +26,7 @@
     <ClCompile Include="ColliderData.cpp" />
     <ClCompile Include="ColliderDataCapsule.cpp" />
     <ClCompile Include="ColliderDataSphere.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="EnemyBase.cpp" />
     <ClCompile Include="EnemyNormal.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="ColliderData.h" />
     <ClInclude Include="ColliderDataCapsule.h" />
     <ClInclude Include="ColliderDataSphere.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="EnemyBase.h" />
     <ClInclude Include="EnemyNormal.h" />

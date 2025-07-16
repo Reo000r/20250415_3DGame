@@ -5,6 +5,7 @@
 #include "ColliderDataCapsule.h"
 #include "Rigidbody.h"
 #include "DebugDraw.h"
+#include "Collision.h"
 
 #include <cassert>
 #include <vector>
@@ -205,7 +206,7 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 {
 	bool isHit = false;
 
-	// collidableの種類によって、当たり判定を分ける
+	// Colliderの種類によって、当たり判定を分ける
 	auto aKind = objA->colliderData->GetKind();
 	auto bKind = objB->colliderData->GetKind();
 
@@ -230,13 +231,74 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 	// カプセル同士
 	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
 	{
+		auto capsuleA = std::static_pointer_cast<ColliderDataCapsule>(objA->colliderData);
+		auto capsuleB = std::static_pointer_cast<ColliderDataCapsule>(objB->colliderData);
+		
+		// カプセルAの線分と半径
+		Vector3 startA = capsuleA->GetStartPos(objA->nextPos);
+		Vector3 endA = capsuleA->GetEndPos(objA->nextPos);
+		float radiusA = capsuleA->_radius;
+		
+		// カプセルBの線分と半径
+		Vector3 startB = capsuleB->GetStartPos(objB->nextPos);
+		Vector3 endB = capsuleB->GetEndPos(objB->nextPos);
+		float radiusB = capsuleB->_radius;
+		
+		// 2つの線分の最近接点を求める
+		Vector3 pA, pB;
+		ClosestPointSegments(startA, endA, startB, endB, pA, pB);
 
+		// 最近接点間の距離の2乗を計算
+		float distSq = (pA - pB).SqrMagnitude();
+		float radSum = radiusA + radiusB;
+		
+		// 最近接点間の距離が、半径の合計より小さいかどうかで衝突を判定
+		isHit = distSq < (radSum * radSum);
 	}
 	// 球とカプセル
 	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) || 
 			(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
 	{
+		// 球とカプセルを判定する
+		std::shared_ptr<Collider> sphereObj;
+		std::shared_ptr<Collider> capsuleObj;
+		// objAが球であるかをチェック
+		if (aKind == PhysicsData::ColliderKind::Sphere) {
+			sphereObj = objA;
+			capsuleObj = objB;
+		}
+		// でなければobjAはカプセル、objBが球
+		else {
+			sphereObj = objB;
+			capsuleObj = objA;
+		}
 
+		// それぞれのコライダー情報を取得
+		auto sphereData = std::static_pointer_cast<ColliderDataSphere>(sphereObj->colliderData);
+		auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(capsuleObj->colliderData);
+		
+		// 球の情報を取得
+		Vector3 sphereCenter = sphereObj->nextPos;
+		float sphereRadius = sphereData->_radius;
+		
+		// カプセルの情報を取得
+		Vector3 capsuleStart = capsuleData->GetStartPos(capsuleObj->nextPos);
+		Vector3 capsuleEnd = capsuleData->GetEndPos(capsuleObj->nextPos);
+		float capsuleRadius = capsuleData->_radius;
+		
+		// 点と線分の最近接点を求める
+		Vector3 closestPointOnCapsuleAxis = 
+			ClosestPointPointAndSegment(
+				sphereCenter, 
+				capsuleStart, capsuleEnd);
+		
+		// 最近接点間の距離の2乗を計算
+		float distSq = (sphereCenter - closestPointOnCapsuleAxis).SqrMagnitude();
+		// 半径の合計を計算
+		float radSum = sphereRadius + capsuleRadius;
+		
+		// 距離が半径の合計より小さいか判定
+		isHit = distSq < (radSum * radSum);
 	}
 
 	return isHit;
@@ -255,35 +317,204 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 		auto priColliderData = std::static_pointer_cast<ColliderDataSphere>(primary->colliderData);
 		auto secColliderData = std::static_pointer_cast<ColliderDataSphere>(secondary->colliderData);
 
-		Vector3 priToSec = primary->nextPos - secondary->nextPos;
-		Vector3 priToSecDir = priToSec.Normalize();
-		// 補正前の位置
-		Position3 oldSecPos = secondary->nextPos;
-		// そのままだとちょうど当たる位置になるので少し補正を掛ける
-		float  awayDist = secColliderData->_radius + priColliderData->_radius + PhysicsData::kFixPositionOffset;
-		Vector3 priToNewSecVel = priToSecDir * awayDist;
-		// 両方補正する場合
-		if (isMutualPushback) {
-
+		// 押し戻し方向の決定
+		// secondaryからprimaryへ向かうベクトルを計算し、正規化する
+		Vector3 pushBackVec = primary->nextPos - secondary->nextPos;
+		// 距離がゼロに近い場合は、押し戻し方向が不定になるため処理をスキップ
+		if (pushBackVec.SqrMagnitude() < PhysicsData::kZeroTolerance) {
+			return;
 		}
-		// secのみ補正する場合
+		pushBackVec.Normalized();
+
+		// 押し戻し距離(貫通深度)の計算
+		// 現在の中心間の距離を計算
+		float currentDist = (primary->nextPos - secondary->nextPos).Magnitude();
+		// 2つの球の半径の合計
+		float radiusSum = priColliderData->_radius + secColliderData->_radius;
+		// 貫通深度にオフセットを加えた、最終的な押し戻し距離を計算
+		float pushBackDist = (radiusSum - currentDist) + PhysicsData::kFixPositionOffset;
+
+		// 位置の修正
+		// 計算した方向と距離から、押し戻しベクトルを生成
+		Vector3 fixVec = pushBackVec * pushBackDist;
+
+		// 優先度が同じでお互いに押し戻す場合
+		if (isMutualPushback) {
+			// 押し戻し量を半分ずつに分ける
+			Vector3 halfFixVec = fixVec * 0.5f;
+			primary->nextPos += halfFixVec;
+			secondary->nextPos -= halfFixVec;
+		}
+		// secondaryのみを押し戻す場合
 		else {
-			Position3 fixedPos = secondary->nextPos + priToNewSecVel;
-			secondary->nextPos = fixedPos;
+			// secondaryを、primaryから離れる方向(pushBackVecの逆方向)に押し戻す
+			secondary->nextPos -= fixVec;
 		}
 	}
 	// カプセル同士
 	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
 	{
+		/*
+		1. 衝突情報の取得
+      まず、衝突している2つのカプセル（仮にA、Bとします）それぞれの次のフレームの予測位置、中心線の始点と終
+  点、そして半径を取得します。
 
+
+   2. 最近傍点の計算
+      当たり判定の時と同様に、カプセルAの中心線（線分）とカプセルBの中心線の間で、最も距離が近くなる2つの点
+  （Aの中心線上の点Pa、Bの中心線上の点Pb）を計算します。これは ClosestPointSegments
+  関数を使えば求められます。
+
+
+   3. 押し戻し方向の決定
+      ステップ2で求めた2つの最近傍点（Pa と Pb）を結ぶベクトルを計算します。このベクトルが、お互いを引き離す
+  ための最も効率的な「押し戻し方向」になります。このベクトルを正規化（長さを1に）しておきます。
+
+
+   4. 押し戻し距離（貫通深度）の計算
+      次に、どれだけの距離を押し戻せばよいかを計算します。
+       * まず、2つのカプセルがどれだけめり込んでいるか（＝貫通深度）を求めます。これは「カプセルAとBの半径の合
+         計」から「最近傍点PaとPbの現在の距離」を引くことで計算できます。
+       * 押し戻した後に再び接触しないよう、計算した貫通深度に、ごくわずかなオフセット値（PhysicsData::kFixPosi
+         tionOffsetなど）を加えます。これが最終的な「押し戻し距離」となります。
+
+
+   5. 位置の修正
+      最後に、計算した「押し戻し方向」と「押し戻し距離」を使って、カプセルの位置を修正します。
+       * 優先度に応じて片方だけを動かす場合：
+         優先度の低い方のカプセルの予測位置（nextPos）を、算出した方向と距離だけ移動させます。
+       * 優先度が同じでお互いに押し戻す場合： 押し戻すベクトルを半分ずつに分け、片方はその方向に、もう片方はそ
+         の逆方向に、それぞれ予測位置を移動させます。
+
+		*/
+
+
+		// 当たり判定データ取得
+		auto priCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(primary->colliderData);
+		auto secCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(secondary->colliderData);
+
+		// primaryカプセルの情報を取得
+		Position3 priStart = priCapsuleData->GetStartPos(primary->nextPos);
+		Position3 priEnd = priCapsuleData->GetEndPos(primary->nextPos);
+		float priRadius = priCapsuleData->_radius;
+
+		// secondaryカプセルの情報を取得
+		Position3 secStart = secCapsuleData->GetStartPos(secondary->nextPos);
+		Position3 secEnd = secCapsuleData->GetEndPos(secondary->nextPos);
+		float secRadius = secCapsuleData->_radius;
+
+		// 最近傍点の計算
+		// 2つのカプセルの中心線上で最も近い点(pPri, pSec)を計算
+		Position3 pPri, pSec;
+		ClosestPointSegments(priStart, priEnd, secStart, secEnd, pPri, pSec);
+
+		// 押し戻し方向の決定
+		// 最近傍点間のベクトルを計算し、押し戻し方向を決定
+		Vector3 pushBackVec = pSec - pPri;
+		// 距離がゼロに近い場合は、カプセルの中心位置から方向を仮決めする（めり込みきっている場合など）
+		if (pushBackVec.SqrMagnitude() < PhysicsData::kZeroTolerance) {
+			pushBackVec = secondary->nextPos - primary->nextPos;
+		}
+		pushBackVec.Normalized();
+
+		// 押し戻し距離(貫通深度)の計算
+		// 最近傍点間の現在の距離を計算
+		float currentDist = (pSec - pPri).Magnitude();
+		// 2つのカプセルの半径の合計
+		float radiusSum = priRadius + secRadius;
+		// 貫通深度にオフセットを加えた、最終的な押し戻し距離を計算
+		float pushBackDist = (radiusSum - currentDist) + PhysicsData::kFixPositionOffset;
+
+		// 位置の修正
+		// 計算した方向と距離を使って、カプセルの位置を修正
+		Vector3 fixVec = pushBackVec * pushBackDist;
+
+		// 優先度が同じでお互いに押し戻す場合
+		if (isMutualPushback) {
+			// 押し戻し量を半分ずつに分ける
+			Vector3 halfFixVec = fixVec * 0.5f;
+			primary->nextPos -= halfFixVec;
+			secondary->nextPos += halfFixVec;
+		}
+		// secondaryのみを押し戻す場合
+		else {
+			secondary->nextPos += fixVec;
+		}
 	}
 	// 球とカプセル
 	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) ||
 		(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
 	{
+		// 当たり判定データ取得
+		std::shared_ptr<Collider> sphereObj;
+		std::shared_ptr<Collider> capsuleObj;
+		// primaryとsecondaryがそれぞれ球かカプセルかを判別
+		if (primary->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere) {
+			sphereObj = primary;
+			capsuleObj = secondary;
+		}
+		else {
+			sphereObj = secondary;
+			capsuleObj = primary;
+		}
 
+		// それぞれのColliderからデータを取得
+		auto sphereData = std::static_pointer_cast<ColliderDataSphere>(sphereObj->colliderData);
+		auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(capsuleObj->colliderData);
+
+		// 球の情報を取得
+		Vector3 sphereCenter = sphereObj->nextPos;
+		float sphereRadius = sphereData->_radius;
+
+		// カプセルの情報を取得
+		Vector3 capsuleStart = capsuleData->GetStartPos(capsuleObj->nextPos);
+		Vector3 capsuleEnd = capsuleData->GetEndPos(capsuleObj->nextPos);
+		float capsuleRadius = capsuleData->_radius;
+
+		// 最近傍点の計算
+		// 球の中心とカプセルの中心線との最近傍点を計算
+		Vector3 closestPointOnCapsuleAxis = ClosestPointPointAndSegment(sphereCenter, capsuleStart, capsuleEnd);
+
+		// 押し戻し方向の決定
+		// カプセルの最近傍点から球の中心へ向かうベクトルを、押し戻し方向とする
+		Vector3 pushBackVec = sphereCenter - closestPointOnCapsuleAxis;
+		// 距離がゼロに近い場合は、オブジェクトの中心位置から方向を仮決めする
+		if (pushBackVec.SqrMagnitude() < PhysicsData::kZeroTolerance) {
+			pushBackVec = sphereObj->nextPos - capsuleObj->nextPos;
+		}
+		pushBackVec.Normalized();
+
+		// 押し戻し距離(貫通深度)の計算
+		// 最近傍点間の現在の距離を計算
+		float currentDist = (sphereCenter - closestPointOnCapsuleAxis).Magnitude();
+		// 2つのオブジェクトの半径の合計
+		float radiusSum = sphereRadius + capsuleRadius;
+		// 貫通深度にオフセットを加えた、最終的な押し戻し距離を計算
+		float pushBackDist = (radiusSum - currentDist) + PhysicsData::kFixPositionOffset;
+
+		// 位置の修正
+		// 計算した方向と距離を使って、オブジェクトの位置を修正
+		Vector3 fixVec = pushBackVec * pushBackDist;
+
+		// 優先度が同じでお互いに押し戻す場合
+		if (isMutualPushback) {
+			// 押し戻し量を半分ずつに分け、それぞれを押し戻す
+			Vector3 halfFixVec = fixVec * 0.5f;
+			sphereObj->nextPos += halfFixVec;	// 球を押し戻し
+			capsuleObj->nextPos -= halfFixVec;	// カプセルを押し戻し
+		}
+		// 優先度に従って片方のみを押し戻す場合
+		else {
+			// 優先度の低い方(secondary)を押し戻す
+			// (fixVecはカプセルから球へのベクトルのため、足し引きを使い分ける)
+			if (secondary == sphereObj) {
+				secondary->nextPos += fixVec;	// secondary(球)を押し戻す
+			}
+			else {	// secondary == capsuleObj
+				secondary->nextPos -= fixVec;	// secondary(カプセル)を押し戻す
+			}
+		}
 	}
-	
 }
 
 void Physics::FixPosition()
