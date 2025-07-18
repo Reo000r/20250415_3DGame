@@ -1,4 +1,4 @@
-#include "Input.h"
+ï»¿#include "Input.h"
 #include "StringUtility.h"
 
 #include <DxLib.h>
@@ -9,7 +9,7 @@ namespace {
 }
 
 Input& Input::GetInstance() {
-    // ‚±‚ÌéŒ¾‚Ì“_‚Åƒƒ‚ƒŠ‚ªŠm•Û‚³‚ê‚ÄƒAƒvƒŠI—¹‚Ü‚Åc‚é
+    // ã“ã®å®£è¨€ã®æ™‚ç‚¹ã§ãƒ¡ãƒ¢ãƒªãŒç¢ºä¿ã•ã‚Œã¦ã‚¢ãƒ—ãƒªçµ‚äº†ã¾ã§æ®‹ã‚‹
     static Input input;
     return input;
 }
@@ -17,21 +17,21 @@ Input& Input::GetInstance() {
 void Input::Update() {
     _last = _current;
 
-    // ’¼‘O‚Ìî•ñ‚ğƒRƒs[
+    // ç›´å‰ã®æƒ…å ±ã‚’ã‚³ãƒ”ãƒ¼
     std::copy(std::begin(_currentRawKeybdState), std::end(_currentRawKeybdState), std::begin(_lastRawKeybdState));
     _lastRawPadState = _currentRawPadState;
-    // ƒn[ƒhƒEƒFƒA(ü•Ó‹@Ší)‚Ìó‘Ô‚ğæ“¾
-    GetHitKeyStateAll(_currentRawKeybdState);//ƒn[ƒhƒEƒFƒA‚©‚çŒ»İ‚Ì“ü—Íó‘Ô‚ğæ“¾
-    _currentRawPadState = GetJoypadInputState(DX_INPUT_PAD1);//ƒpƒbƒh‚P‚Ìó‘Ô‚ğæ“¾
+    // ãƒãƒ¼ãƒ‰ã‚¦ã‚§ã‚¢(å‘¨è¾ºæ©Ÿå™¨)ã®çŠ¶æ…‹ã‚’å–å¾—
+    GetHitKeyStateAll(_currentRawKeybdState);//ãƒãƒ¼ãƒ‰ã‚¦ã‚§ã‚¢ã‹ã‚‰ç¾åœ¨ã®å…¥åŠ›çŠ¶æ…‹ã‚’å–å¾—
+    _currentRawPadState = GetJoypadInputState(DX_INPUT_PAD1);//ãƒ‘ãƒƒãƒ‰ï¼‘ã®çŠ¶æ…‹ã‚’å–å¾—
 
-    //“ü—Íƒ`ƒFƒbƒN(¶‚Ì“ü—Í‚ğƒQ[ƒ€‚ÌƒCƒxƒ“ƒg‚É•ÏŠ·‚µ‚Ä‚¢‚­)
+    //å…¥åŠ›ãƒã‚§ãƒƒã‚¯(ç”Ÿã®å…¥åŠ›ã‚’ã‚²ãƒ¼ãƒ ã®ã‚¤ãƒ™ãƒ³ãƒˆã«å¤‰æ›ã—ã¦ã„ã)
     for (const auto& inputRow : _inputTable) {
-        // s‚ÌƒL[
+        // è¡Œã®ã‚­ãƒ¼
         const auto& key = inputRow.first;
-        // u‰Ÿ‚µ‚Ä‚éó‘Ôv‚Ì‰Šú‰»
+        // ã€ŒæŠ¼ã—ã¦ã‚‹çŠ¶æ…‹ã€ã®åˆæœŸåŒ–
         _current[key] = false;
 
-        // “ü—Í’è‹`vector‚Ìƒ‹[ƒv
+        // å…¥åŠ›å®šç¾©vectorã®ãƒ«ãƒ¼ãƒ—
         for (const auto& hardInput : inputRow.second) {
             if (hardInput.type == PeripheralType::keybd) {
                 _current[key] = _currentRawKeybdState[hardInput.id];
@@ -39,51 +39,51 @@ void Input::Update() {
             else if (hardInput.type == PeripheralType::pad1) {
                 _current[key] = hardInput.id & _currentRawPadState;
             }
-            // ‚Ç‚ê‚©ˆê‚Â‚Å‚àu‰Ÿ‚³‚ê‚Ä‚¢‚évó‘Ô‚È‚ç‚à‚¤’²‚×‚È‚¢
-            // ‹@Ší‚Ìî•ñ‚ª—~‚µ‚¢‚í‚¯‚Å‚Í‚È‚¢ˆ×A’N‚©‚ª‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Î‚à‚¤OK
+            // ã©ã‚Œã‹ä¸€ã¤ã§ã‚‚ã€ŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã€çŠ¶æ…‹ãªã‚‰ã‚‚ã†èª¿ã¹ãªã„
+            // æ©Ÿå™¨ã®æƒ…å ±ãŒæ¬²ã—ã„ã‚ã‘ã§ã¯ãªã„ç‚ºã€èª°ã‹ãŒæŠ¼ã•ã‚Œã¦ã„ã‚Œã°ã‚‚ã†OK
             if (_current[key]) {
                 break;
             }
         }
     }
 
-    // ¶‰EƒXƒeƒBƒbƒNXV
+    // å·¦å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯æ›´æ–°
     int xInput, zInput;
     GetJoypadAnalogInputRight(&xInput, &zInput, DX_INPUT_PAD1);
     _rightStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
-    if (_rightStickInput.SqrMagnitude() != 0.0f) {  // “ü—Í‚ª‚ ‚Á‚½ê‡XV
+    if (_rightStickInput.SqrMagnitude() != 0.0f) {  // å…¥åŠ›ãŒã‚ã£ãŸå ´åˆæ›´æ–°
         _rightStickLastInput = _rightStickInput;
     }
     GetJoypadAnalogInput(&xInput, &zInput, DX_INPUT_PAD1);
     _leftStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
-    if (_leftStickInput.SqrMagnitude() != 0.0f) {   // “ü—Í‚ª‚ ‚Á‚½ê‡XV
+    if (_leftStickInput.SqrMagnitude() != 0.0f) {   // å…¥åŠ›ãŒã‚ã£ãŸå ´åˆæ›´æ–°
         _leftStickLastInput = _leftStickInput;
     }
 }
 
 bool Input::IsPress(const char* key) const {
-    // ‚»‚à‚»‚à“o˜^‚³‚ê‚Ä‚¢‚È‚¢ƒL[ƒ^ƒCƒv‚È‚çreturn
+    // ãã‚‚ãã‚‚ç™»éŒ²ã•ã‚Œã¦ã„ãªã„ã‚­ãƒ¼ã‚¿ã‚¤ãƒ—ãªã‚‰return
     if (!_current.contains(key)) {
         return false;
     }
-    // ‰Ÿ‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğ•Ô‚·
+    // æŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’è¿”ã™
     return _current.at(key);
 
-    // (‹Œˆ—)
-    //// ‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Îtrue
+    // (æ—§å‡¦ç†)
+    //// æŠ¼ã•ã‚Œã¦ã„ã‚Œã°true
     //return (_padInput & button);
 }
 
 bool Input::IsTrigger(const char* key) const {
-    // ‚»‚à‚»‚à“o˜^‚³‚ê‚Ä‚¢‚È‚¢ƒL[ƒ^ƒCƒv‚È‚çreturn
+    // ãã‚‚ãã‚‚ç™»éŒ²ã•ã‚Œã¦ã„ãªã„ã‚­ãƒ¼ã‚¿ã‚¤ãƒ—ãªã‚‰return
     if (!_current.contains(key)) {
         return false;
     }
-    // 1f‘O‚Í‰Ÿ‚³‚ê‚Ä‚È‚¢ ‚©‚Â ¡‰Ÿ‚³‚ê‚Ä‚¢‚é ‚È‚çtrue
+    // 1få‰ã¯æŠ¼ã•ã‚Œã¦ãªã„ ã‹ã¤ ä»ŠæŠ¼ã•ã‚Œã¦ã„ã‚‹ ãªã‚‰true
     return (_current.at(key) && !_last.at(key));
 
-    // (‹Œˆ—)
-    //// ‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Îtrue.‚»‚¤‚Å‚È‚¢‚È‚çfalse
+    // (æ—§å‡¦ç†)
+    //// æŠ¼ã•ã‚Œã¦ã„ã‚Œã°true.ãã†ã§ãªã„ãªã‚‰false
     //bool isNow = (_padInput & button);
     //bool isLast = (_lastInput & button);
     //return (isNow && !isLast);
@@ -114,47 +114,47 @@ Input::Input() :
 {
     SetDefault();
     LoadInputTable();
-    // ˆêƒe[ƒuƒ‹‚ÉƒRƒs[
+    // ä¸€æ™‚ãƒ†ãƒ¼ãƒ–ãƒ«ã«ã‚³ãƒ”ãƒ¼
     _tempInputTable = _inputTable;
-    // •\¦‡˜‰Šú‰»
+    // è¡¨ç¤ºé †åºåˆæœŸåŒ–
     _orderForDisplay = { "ok","next","back","pause","action","dash","jump" };
 }
 
 void Input::SetDefault()
 {
-    //“ü—Í‚Æ–¼‘O‚Ì‘Î‰•\‚ğì‚é
+    //å…¥åŠ›ã¨åå‰ã®å¯¾å¿œè¡¨ã‚’ä½œã‚‹
     _inputTable["next"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
-                            {PeripheralType::pad1, PAD_INPUT_8}     // Startƒ{ƒ^ƒ“
+                            {PeripheralType::pad1, PAD_INPUT_8}     // RStartãƒœã‚¿ãƒ³
     };
     _inputTable["back"] = { {PeripheralType::keybd, KEY_INPUT_ESCAPE},
-                            {PeripheralType::pad1, PAD_INPUT_B}     // Bƒ{ƒ^ƒ“
+                            {PeripheralType::pad1, PAD_INPUT_2}     // Bãƒœã‚¿ãƒ³
     };
 
     _inputTable["ok"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
-                        {PeripheralType::pad1, PAD_INPUT_A}         // Aƒ{ƒ^ƒ“
+                        {PeripheralType::pad1, PAD_INPUT_1}         // Aãƒœã‚¿ãƒ³
     };
     _inputTable["pause"] = { {PeripheralType::keybd, KEY_INPUT_P},
-                            {PeripheralType::pad1, PAD_INPUT_R}     // STARTƒ{ƒ^ƒ“
+                            {PeripheralType::pad1, PAD_INPUT_7}     // LStartãƒœã‚¿ãƒ³
     };
 
-    //ƒQ[ƒ€’†‚Ìƒ{ƒ^ƒ“ƒe[ƒuƒ‹
+    //ã‚²ãƒ¼ãƒ ä¸­ã®ãƒœã‚¿ãƒ³ãƒ†ãƒ¼ãƒ–ãƒ«
     _inputTable["action"] = { {PeripheralType::keybd, KEY_INPUT_Z},
-                            {PeripheralType::pad1, PAD_INPUT_X}     // Yƒ{ƒ^ƒ“
+                            {PeripheralType::pad1, PAD_INPUT_4}     // Yãƒœã‚¿ãƒ³
     };
     _inputTable["dash"] = { {PeripheralType::keybd, KEY_INPUT_X},
-                        {PeripheralType::pad1, PAD_INPUT_C}         // Xƒ{ƒ^ƒ“
+                        {PeripheralType::pad1, PAD_INPUT_3}         // Xãƒœã‚¿ãƒ³
     };
     _inputTable["jump"] = { {PeripheralType::keybd, KEY_INPUT_C},
-                        {PeripheralType::pad1, PAD_INPUT_A}         // (‘½•ª)Aƒ{ƒ^ƒ“
+                        {PeripheralType::pad1, PAD_INPUT_1}         // (å¤šåˆ†)Aãƒœã‚¿ãƒ³
     };
     _inputTable["Rbutton"] = { {PeripheralType::keybd, KEY_INPUT_I},
-                        {PeripheralType::pad1, PAD_INPUT_5}         // ‰Eƒ{ƒ^ƒ“
+                        {PeripheralType::pad1, PAD_INPUT_6}         // å³ãƒœã‚¿ãƒ³
     };
     _inputTable["Lbutton"] = { {PeripheralType::keybd, KEY_INPUT_P},
-                        {PeripheralType::pad1, PAD_INPUT_6}         // ¶ƒ{ƒ^ƒ“
+                        {PeripheralType::pad1, PAD_INPUT_5}         // å·¦ãƒœã‚¿ãƒ³
     };
 
-    //ã‰º¶‰E
+    //ä¸Šä¸‹å·¦å³
     _inputTable["up"] = { {PeripheralType::keybd, KEY_INPUT_UP},
                             {PeripheralType::pad1, PAD_INPUT_UP}
     };
@@ -167,12 +167,84 @@ void Input::SetDefault()
     _inputTable["right"] = { {PeripheralType::keybd, KEY_INPUT_RIGHT},
                             {PeripheralType::pad1, PAD_INPUT_RIGHT}
     };
-    _tempInputTable = _inputTable;  // ˆêƒe[ƒuƒ‹‚ÉƒRƒs[
+    _tempInputTable = _inputTable;  // ä¸€æ™‚ãƒ†ãƒ¼ãƒ–ãƒ«ã«ã‚³ãƒ”ãƒ¼
+
+    /*
+    { PAD_INPUT_1,      L"PAD_INPUT_1 (Logi A)" },
+    { PAD_INPUT_2,      L"PAD_INPUT_2 (Logi B)" },
+    { PAD_INPUT_3,      L"PAD_INPUT_3 (Logi X)" },
+    { PAD_INPUT_4,      L"PAD_INPUT_4 (Logi Y)" },
+    { PAD_INPUT_5,      L"PAD_INPUT_5 (Logi LB)" },
+    { PAD_INPUT_6,      L"PAD_INPUT_6 (Logi RB)" },
+    { PAD_INPUT_7,      L"PAD_INPUT_7 (Logi LStart)" },
+    { PAD_INPUT_8,      L"PAD_INPUT_8 (Logi RStart)" },
+    { PAD_INPUT_9,      L"PAD_INPUT_9 (Logi LStick)" },
+    { PAD_INPUT_10,     L"PAD_INPUT_10 (Logi RStick)" },
+    { PAD_INPUT_11,     L"PAD_INPUT_11" },
+    { PAD_INPUT_12,     L"PAD_INPUT_12" },
+
+    { PAD_INPUT_13,     L"PAD_INPUT_13" },
+    { PAD_INPUT_14,     L"PAD_INPUT_14" },
+    { PAD_INPUT_15,     L"PAD_INPUT_15" },
+    { PAD_INPUT_16,     L"PAD_INPUT_16" },
+    { PAD_INPUT_17,     L"PAD_INPUT_17" },
+    { PAD_INPUT_18,     L"PAD_INPUT_18" },
+    { PAD_INPUT_19,     L"PAD_INPUT_19" },
+    { PAD_INPUT_20,     L"PAD_INPUT_20" },
+    { PAD_INPUT_21,     L"PAD_INPUT_21" },
+    { PAD_INPUT_22,     L"PAD_INPUT_22" },
+    { PAD_INPUT_23,     L"PAD_INPUT_23" },
+    { PAD_INPUT_24,     L"PAD_INPUT_24" },
+    { PAD_INPUT_25,     L"PAD_INPUT_25" },
+    { PAD_INPUT_26,     L"PAD_INPUT_26" },
+    { PAD_INPUT_27,     L"PAD_INPUT_27" },
+    { PAD_INPUT_28,     L"PAD_INPUT_28" },
+
+    // æ–¹å‘ã‚­ãƒ¼
+    { PAD_INPUT_UP,     L"PAD_INPUT_UP" },
+    { PAD_INPUT_DOWN,   L"PAD_INPUT_DOWN" },
+    { PAD_INPUT_LEFT,   L"PAD_INPUT_LEFT" },
+    { PAD_INPUT_RIGHT,  L"PAD_INPUT_RIGHT" },
+
+    // ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆãƒœã‚¿ãƒ³
+    { PAD_INPUT_A,      L"PAD_INPUT_A (Logi A)" },
+    { PAD_INPUT_B,      L"PAD_INPUT_B (Logi B)" },
+    { PAD_INPUT_C,      L"PAD_INPUT_C (Logi X)" },
+    { PAD_INPUT_D,      L"PAD_INPUT_D" },
+    //{ PAD_INPUT_E,      L"PAD_INPUT_E" },
+    { PAD_INPUT_F, L"PAD_INPUT_F" },
+    { PAD_INPUT_G,      L"PAD_INPUT_G" },
+    { PAD_INPUT_H,      L"PAD_INPUT_H" },
+    { PAD_INPUT_I,      L"PAD_INPUT_I" },
+    { PAD_INPUT_J,      L"PAD_INPUT_J" },
+    { PAD_INPUT_K,      L"PAD_INPUT_K" },
+    { PAD_INPUT_L,      L"PAD_INPUT_L (Logi LStart)" },
+    { PAD_INPUT_M,      L"PAD_INPUT_M (Logi RStick)" },
+    { PAD_INPUT_N,      L"PAD_INPUT_N" },
+    { PAD_INPUT_O,      L"PAD_INPUT_O" },
+    { PAD_INPUT_P,      L"PAD_INPUT_P" },
+    //{ PAD_INPUT_Q,      L"PAD_INPUT_Q" },
+    { PAD_INPUT_R,      L"PAD_INPUT_R (Logi RStart)" },
+    { PAD_INPUT_S,      L"PAD_INPUT_S" },
+    { PAD_INPUT_T,      L"PAD_INPUT_T" },
+    { PAD_INPUT_U,      L"PAD_INPUT_U" },
+    { PAD_INPUT_V,      L"PAD_INPUT_V" },
+    { PAD_INPUT_W,      L"PAD_INPUT_W" },
+    { PAD_INPUT_X,      L"PAD_INPUT_X (Logi Y)" },
+    { PAD_INPUT_Y,      L"PAD_INPUT_Y (Logi LB)" },
+    { PAD_INPUT_Z,      L"PAD_INPUT_Z (Logi RB)" },
+
+        // ãã®ä»–
+    { PAD_INPUT_START,  L"PAD_INPUT_START (Logi LStick)" },
+    { PAD_INPUT_LL,     L"PAD_INPUT_LL" },
+    { PAD_INPUT_RR,     L"PAD_INPUT_RR" },
+    { PAD_INPUT_XX,     L"PAD_INPUT_XX" },
+    */
 }
 
 int Input::GetKeyboradState() const
 {
-    // ‘Sƒ`ƒFƒbƒN‚µA‚Ç‚ê‚©‚Ğ‚Æ‚Â‚Å‚à“ü—Í‚ª‚ ‚Á‚½‚ç‚»‚ê‚ğ•Ô‚·
+    // å…¨ãƒã‚§ãƒƒã‚¯ã—ã€ã©ã‚Œã‹ã²ã¨ã¤ã§ã‚‚å…¥åŠ›ãŒã‚ã£ãŸã‚‰ãã‚Œã‚’è¿”ã™
     for (int i = 0; i < _countof(_currentRawKeybdState); ++i) {
         if (_currentRawKeybdState[i] && !_lastRawKeybdState[i]) {
             return i;
@@ -183,7 +255,7 @@ int Input::GetKeyboradState() const
 
 int Input::GetPadState(int padno) const
 {
-    // w’è”Ô†‚Ìƒpƒbƒhî•ñ‚ğ‚ğæ“¾‚·‚é
+    // æŒ‡å®šç•ªå·ã®ãƒ‘ãƒƒãƒ‰æƒ…å ±ã‚’ã‚’å–å¾—ã™ã‚‹
     uint32_t bit = 0b00000000000000000000000000000001;
     for (int i = 0; i < 32; ++i) {
         auto value = (bit << i);
@@ -197,32 +269,32 @@ int Input::GetPadState(int padno) const
 void Input::SaveInputTable()
 {
     FILE* fp = nullptr;
-    auto err = fopen_s(&fp, kKeyConfigFilename, "wb");//ƒoƒCƒiƒŠ‚Åu‘‚«‚İv
-    //¯•Êq‘‚«‚İ(‚SƒoƒCƒg)
-    std::string signature = kKeyConfigSignature;//ƒtƒ@ƒCƒ‹‚ğ¯•Ê‚·‚é‚½‚ß‚Ì¯•Êq
-    fwrite(signature.data(), signature.size(), 1, fp);//¯•Êq‚Ì‘‚«‚İ
+    auto err = fopen_s(&fp, kKeyConfigFilename, "wb");//ãƒã‚¤ãƒŠãƒªã§ã€Œæ›¸ãè¾¼ã¿ã€
+    //è­˜åˆ¥å­æ›¸ãè¾¼ã¿(ï¼”ãƒã‚¤ãƒˆ)
+    std::string signature = kKeyConfigSignature;//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è­˜åˆ¥ã™ã‚‹ãŸã‚ã®è­˜åˆ¥å­
+    fwrite(signature.data(), signature.size(), 1, fp);//è­˜åˆ¥å­ã®æ›¸ãè¾¼ã¿
 
-    //ƒo[ƒWƒ‡ƒ“‚Ì‘‚«‚İ
+    //ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®æ›¸ãè¾¼ã¿
     const float version = 1.0f;
-    fwrite(&version, sizeof(version), 1, fp);//4ƒoƒCƒg
+    fwrite(&version, sizeof(version), 1, fp);//4ãƒã‚¤ãƒˆ
 
-    //ƒf[ƒ^ƒTƒCƒY‚Ì‘‚«‚İ
+    //ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºã®æ›¸ãè¾¼ã¿
     auto size = _inputTable.size();
-    fwrite(&size, sizeof(size), 1, fp);//4ƒoƒCƒg
+    fwrite(&size, sizeof(size), 1, fp);//4ãƒã‚¤ãƒˆ
 
-    //ƒf[ƒ^–{‘Ì‚Ì‘‚«‚İ
+    //ãƒ‡ãƒ¼ã‚¿æœ¬ä½“ã®æ›¸ãè¾¼ã¿
     for (const auto& record : _inputTable) {
-        //ƒL[‚Ì‘‚«‚İ(ƒCƒxƒ“ƒg–¼)
-        byte nameSize = static_cast<byte>(record.first.length());//•¶š—ñ”
-        fwrite(&nameSize, sizeof(nameSize), 1, fp);//•¶š—ñ‚ÌƒTƒCƒY
-        fwrite(record.first.data(), record.first.size(), 1, fp);//•¶š—ñ–{‘Ì
-        //Àƒf[ƒ^’l‚Ì‘‚«‚İ(u“ü—Íí•Ê{“ü—ÍIDv‚Ì”z—ñ)
-        //‚Ü‚¸‚ÍAÀƒf[ƒ^”z—ñ‚ÌƒTƒCƒY‚ğæ“¾‚µ‚Ü‚·
+        //ã‚­ãƒ¼ã®æ›¸ãè¾¼ã¿(ã‚¤ãƒ™ãƒ³ãƒˆå)
+        byte nameSize = static_cast<byte>(record.first.length());//æ–‡å­—åˆ—æ•°
+        fwrite(&nameSize, sizeof(nameSize), 1, fp);//æ–‡å­—åˆ—ã®ã‚µã‚¤ã‚º
+        fwrite(record.first.data(), record.first.size(), 1, fp);//æ–‡å­—åˆ—æœ¬ä½“
+        //å®Ÿãƒ‡ãƒ¼ã‚¿å€¤ã®æ›¸ãè¾¼ã¿(ã€Œå…¥åŠ›ç¨®åˆ¥ï¼‹å…¥åŠ›IDã€ã®é…åˆ—)
+        //ã¾ãšã¯ã€å®Ÿãƒ‡ãƒ¼ã‚¿é…åˆ—ã®ã‚µã‚¤ã‚ºã‚’å–å¾—ã—ã¾ã™
         byte inputDataSize = static_cast<byte>(record.second.size());
         fwrite(&inputDataSize, sizeof(inputDataSize), 1, fp);
-        fwrite(record.second.data(), //‘‚«‚ŞÀƒf[ƒ^‚Ìæ“ªƒAƒhƒŒƒX
-            sizeof(record.second[0]), //‘‚«‚Şƒf[ƒ^‚P‚Â‚ ‚½‚è‚ÌƒTƒCƒY
-            record.second.size(), //‘‚«‚Şƒf[ƒ^”
+        fwrite(record.second.data(), //æ›¸ãè¾¼ã‚€å®Ÿãƒ‡ãƒ¼ã‚¿ã®å…ˆé ­ã‚¢ãƒ‰ãƒ¬ã‚¹
+            sizeof(record.second[0]), //æ›¸ãè¾¼ã‚€ãƒ‡ãƒ¼ã‚¿ï¼‘ã¤ã‚ãŸã‚Šã®ã‚µã‚¤ã‚º
+            record.second.size(), //æ›¸ãè¾¼ã‚€ãƒ‡ãƒ¼ã‚¿æ•°
             fp);
     }
 
@@ -234,28 +306,28 @@ void Input::LoadInputTable()
     std::string filename = kKeyConfigFilename;
     auto wfilename = StringUtility::GetWStringFromString(filename);
     auto handle = FileRead_open(wfilename.c_str());
-    if (handle == 0) {//‰½“ª‚ÌŒ´ˆö‚Å“Ç‚İ‚İ¸”s‚µ‚½‚ç“Ç‚İ‚Ü‚È‚¢
+    if (handle == 0) {//ä½•é ­ã®åŸå› ã§èª­ã¿è¾¼ã¿å¤±æ•—ã—ãŸã‚‰èª­ã¿è¾¼ã¾ãªã„
         return;
     }
     struct Header {
-        char signature[4];//ƒVƒOƒlƒ`ƒƒ
-        float version;//ƒo[ƒWƒ‡ƒ“
-        size_t dataNum;//ƒf[ƒ^”
+        char signature[4];//ã‚·ã‚°ãƒãƒãƒ£
+        float version;//ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+        size_t dataNum;//ãƒ‡ãƒ¼ã‚¿æ•°
     };
-    Header header = {};//ƒwƒbƒ_[‚Ì“Ç‚İ‚İ
+    Header header = {};//ãƒ˜ãƒƒãƒ€ãƒ¼ã®èª­ã¿è¾¼ã¿
     FileRead_read(&header, sizeof(header), handle);
-    //ƒf[ƒ^”‚Ì•ª‚¾‚¯“Ç‚İ‚ñ‚Å‚¢‚­
+    //ãƒ‡ãƒ¼ã‚¿æ•°ã®åˆ†ã ã‘èª­ã¿è¾¼ã‚“ã§ã„ã
     for (int i = 0; i < header.dataNum; ++i) {
-        //ƒf[ƒ^‚Í‚Ü‚¸AƒCƒxƒ“ƒg–¼‚ğ“Ç‚İ‚Ş
-        //–¼‘O‚ÌƒTƒCƒY
+        //ãƒ‡ãƒ¼ã‚¿ã¯ã¾ãšã€ã‚¤ãƒ™ãƒ³ãƒˆåã‚’èª­ã¿è¾¼ã‚€
+        //åå‰ã®ã‚µã‚¤ã‚º
         byte nameSize = 0;
         FileRead_read(&nameSize, sizeof(nameSize), handle);
-        //ÀÛ‚É–¼‘O•¶š—ñ‚ğæ“¾
+        //å®Ÿéš›ã«åå‰æ–‡å­—åˆ—ã‚’å–å¾—
         std::string strEventName;
-        strEventName.resize(nameSize);//–¼‘O‚ÌƒTƒCƒY•ªŠm•Û
+        strEventName.resize(nameSize);//åå‰ã®ã‚µã‚¤ã‚ºåˆ†ç¢ºä¿
         FileRead_read(strEventName.data(), nameSize * sizeof(char), handle);
 
-        //–¼‘O‚ªI‚í‚Á‚½Œã‚ÍÀƒf[ƒ^‚È‚Ì‚ÅA‚Ü‚¸Àƒf[ƒ^ŒÂ”‚ğæ“¾
+        //åå‰ãŒçµ‚ã‚ã£ãŸå¾Œã¯å®Ÿãƒ‡ãƒ¼ã‚¿ãªã®ã§ã€ã¾ãšå®Ÿãƒ‡ãƒ¼ã‚¿å€‹æ•°ã‚’å–å¾—
         byte inputDataNum = 0;
         FileRead_read(&inputDataNum, sizeof(inputDataNum), handle);
         std::vector<InputState> inputStates;

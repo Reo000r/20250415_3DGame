@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "ColliderData.h"
 
 class Collider;
@@ -15,15 +15,15 @@ public:
 	Vector3 GetAngle() { return _angle; }
 	float GetDist() { return _dist; }
 
-	// ˆÈ~‚Ì•Ï”‚ÌƒAƒNƒZƒXŒ ‚ğ“n‚·
+	// ä»¥é™ã®å¤‰æ•°ã®ã‚¢ã‚¯ã‚»ã‚¹æ¨©ã‚’æ¸¡ã™
 	friend Collider;
 	friend Physics;
 
 private:
-	// ”¼Œa
+	// åŠå¾„
 	float _radius;
-	// Šp“x
+	// è§’åº¦
 	Vector3 _angle;
-	// start‚©‚çend‚Ü‚Å‚Ì‹——£
+	// startã‹ã‚‰endã¾ã§ã®è·é›¢
 	float _dist;
 };

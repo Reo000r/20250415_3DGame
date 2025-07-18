@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "SceneBase.h"
 
 #include <memory>
@@ -9,17 +9,17 @@ public:
 	~SceneResult();
 
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	void Init() override;
 
 	/// <summary>
-	/// “à•”•Ï”‚ÌXV
+	/// å†…éƒ¨å¤‰æ•°ã®æ›´æ–°
 	/// </summary>
 	virtual void Update() override;
 
 	/// <summary>
-	/// •`‰æ‘S”Ê
+	/// æç”»å…¨èˆ¬
 	/// </summary>
 	virtual void Draw() override;
 
@@ -34,23 +34,23 @@ private:
 	SceneName _nextSceneName;
 	std::shared_ptr<SceneBase> _nextScene;
 
-	// _update‚â_draw‚ª•Ï”‚Å‚ ‚é‚±‚Æ‚ğ•ª‚©‚è‚â‚·‚­‚µ‚Ä‚¢‚é
+	// _updateã‚„_drawãŒå¤‰æ•°ã§ã‚ã‚‹ã“ã¨ã‚’åˆ†ã‹ã‚Šã‚„ã™ãã—ã¦ã„ã‚‹
 	using UpdateFunc_t = void(SceneResult::*)();
 	using DrawFunc_t = void(SceneResult::*)();
 
 	UpdateFunc_t _nowUpdateState = nullptr;
 	DrawFunc_t   _nowDrawState = nullptr;
 
-	// ƒtƒF[ƒhƒCƒ“‚ÌXVˆ—
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³æ™‚ã®æ›´æ–°å‡¦ç†
 	void FadeinUpdate();
-	// ’Êí‚ÌXVˆ—
+	// é€šå¸¸æ™‚ã®æ›´æ–°å‡¦ç†
 	void NormalUpdate();
-	// ƒtƒF[ƒhƒAƒEƒg‚ÌXVˆ—
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆæ™‚ã®æ›´æ–°å‡¦ç†
 	void FadeoutUpdate();
 
-	// ƒtƒF[ƒh‚Ì•`‰æ
+	// ãƒ•ã‚§ãƒ¼ãƒ‰æ™‚ã®æç”»
 	void FadeDraw();
-	// ’Êí‚Ì•`‰æ
+	// é€šå¸¸æ™‚ã®æç”»
 	void NormalDraw();
 };
 

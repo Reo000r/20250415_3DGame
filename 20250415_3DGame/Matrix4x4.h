@@ -1,7 +1,7 @@
-#pragma once
-#include <array>		// Matrix—p
+ï»¿#pragma once
+#include <array>		// Matrixç”¨
 
-// ‘ŠŒİ•ÏŠ·‚Ì‚½‚ß‚Ìƒvƒƒgƒ^ƒCƒvéŒ¾
+// ç›¸äº’å¤‰æ›ã®ãŸã‚ã®ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 namespace DxLib {
 	struct tagMATRIX;
 }
@@ -9,9 +9,9 @@ namespace DxLib {
 class Vector3;
 
 /// <summary>
-/// s—ñƒNƒ‰ƒX
-/// s—ñ¬•ª‚ÍDirectXŒ`®(s•ûŒü‚ª²‚ÌŒü‚«)
-/// (m[s(‰¡)][—ñ(c)])
+/// è¡Œåˆ—ã‚¯ãƒ©ã‚¹
+/// è¡Œåˆ—æˆåˆ†ã¯DirectXå½¢å¼(è¡Œæ–¹å‘ãŒè»¸ã®å‘ã)
+/// (m[è¡Œ(æ¨ª)][åˆ—(ç¸¦)])
 /// </summary>
 class Matrix4x4 final {
 public:
@@ -19,31 +19,31 @@ public:
 	Matrix4x4(std::array<std::array<float, 4>, 4> m_) : m(m_) {};
 	std::array<std::array<float, 4>, 4> m;
 
-	// tagMATRIX‚Æ‚Ì‘ŠŒİ•ÏŠ·
+	// tagMATRIXã¨ã®ç›¸äº’å¤‰æ›
 	operator DxLib::tagMATRIX();
 	operator DxLib::tagMATRIX() const;
 	Matrix4x4(const DxLib::tagMATRIX& mat);
 
-	Matrix4x4 operator*(const Matrix4x4& mat) const;	// æZ
-	void operator*=(const Matrix4x4& mat);	// æZ
-	bool operator==(const Matrix4x4& mat);	// “™‰¿”äŠr
+	Matrix4x4 operator*(const Matrix4x4& mat) const;	// ä¹—ç®—
+	void operator*=(const Matrix4x4& mat);	// ä¹—ç®—
+	bool operator==(const Matrix4x4& mat);	// ç­‰ä¾¡æ¯”è¼ƒ
 
 	/// <summary>
-	/// ©g‚ğg‚¢ƒxƒNƒgƒ‹‚ğs—ñæZ‚µŒ‹‰Ê‚ğ•Ô‚·
+	/// è‡ªèº«ã‚’ä½¿ã„ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¡Œåˆ—ä¹—ç®—ã—çµæœã‚’è¿”ã™
 	/// </summary>
-	/// <param name="vec">ƒxƒNƒgƒ‹</param>
+	/// <param name="vec">ãƒ™ã‚¯ãƒˆãƒ«</param>
 	/// <returns></returns>
 	Vector3 VecMultiple(const Vector3& vec) const;
 
 	/// <summary>
-	/// s—ñ‚ğˆø””{‚·‚é
+	/// è¡Œåˆ—ã‚’å¼•æ•°å€ã™ã‚‹
 	/// </summary>
-	/// <param name="scale">”{—¦</param>
+	/// <param name="scale">å€ç‡</param>
 	/// <returns></returns>
 	void MatScale(const float& scale);
 
 	/// <summary>
-	/// DxLib‚Ìs—ñ‚ğ•ÏŠ·‚·‚éŠÖ”
+	/// DxLibã®è¡Œåˆ—ã‚’å¤‰æ›ã™ã‚‹é–¢æ•°
 	/// </summary>
 	/// <param name="mat"></param>
 	/// <returns></returns>
@@ -51,66 +51,66 @@ public:
 };
 
 /// <summary>
-/// ’PˆÊs—ñ‚ğ•Ô‚·
+/// å˜ä½è¡Œåˆ—ã‚’è¿”ã™
 /// </summary>
 /// <returns></returns>
 Matrix4x4 MatIdentity();
 
 /// <summary>
-/// •½sˆÚ“®s—ñ‚ğ•Ô‚·
+/// å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’è¿”ã™
 /// </summary>
-/// <param name="vec">•½sˆÚ“®—Ê</param>
+/// <param name="vec">å¹³è¡Œç§»å‹•é‡</param>
 /// <returns></returns>
 Matrix4x4 MatTranslate(const Vector3& vec);
 /// <summary>
-/// •½sˆÚ“®s—ñ‚ğ•Ô‚·
+/// å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’è¿”ã™
 /// </summary>
-/// <param name="x">x•ûŒü•½sˆÚ“®—Ê</param>
-/// <param name="y">y•ûŒü•½sˆÚ“®—Ê</param>
-/// <param name="z">z•ûŒü•½sˆÚ“®—Ê</param>
+/// <param name="x">xæ–¹å‘å¹³è¡Œç§»å‹•é‡</param>
+/// <param name="y">yæ–¹å‘å¹³è¡Œç§»å‹•é‡</param>
+/// <param name="z">zæ–¹å‘å¹³è¡Œç§»å‹•é‡</param>
 /// <returns></returns>
 Matrix4x4 MatTranslate(const float& x, const float& y, const float& z);
 
 /// <summary>
-/// y²‰ñ“]s—ñ‚ğ•Ô‚·
+/// yè»¸å›è»¢è¡Œåˆ—ã‚’è¿”ã™
 /// </summary>
-/// <param name="angle">‰ñ“]’l</param>
+/// <param name="angle">å›è»¢å€¤</param>
 /// <returns></returns>
 Matrix4x4 MatRotateY(const float& angle);
 
 /// <summary>
-/// “ñ‚Â‚Ìs—ñ‚ÌæZ‚ğ•Ô‚·
+/// äºŒã¤ã®è¡Œåˆ—ã®ä¹—ç®—ã‚’è¿”ã™
 /// </summary>
-/// <param name="lmat">¶•Ó’l</param>
-/// <param name="rmat">‰E•Ó’l</param>
+/// <param name="lmat">å·¦è¾ºå€¤</param>
+/// <param name="rmat">å³è¾ºå€¤</param>
 /// <returns></returns>
 Matrix4x4 MatMultiple(const Matrix4x4& lmat, const Matrix4x4& rmat);
 
 /// <summary>
-/// ƒxƒNƒgƒ‹‚É‘Î‚µ‚Äs—ñæZ‚µŒ‹‰Ê‚ğ•Ô‚·
+/// ãƒ™ã‚¯ãƒˆãƒ«ã«å¯¾ã—ã¦è¡Œåˆ—ä¹—ç®—ã—çµæœã‚’è¿”ã™
 /// </summary>
-/// <param name="mat">s—ñ</param>
-/// <param name="vec">ƒxƒNƒgƒ‹</param>
+/// <param name="mat">è¡Œåˆ—</param>
+/// <param name="vec">ãƒ™ã‚¯ãƒˆãƒ«</param>
 /// <returns></returns>
 Vector3 VecMultiple(const Matrix4x4& mat, const Vector3& vec);
 
 /// <summary>
-/// Šg‘ås—ñ‚ğ•Ô‚·
+/// æ‹¡å¤§è¡Œåˆ—ã‚’è¿”ã™
 /// </summary>
-/// <param name="scale">Šg‘å—¦</param>
+/// <param name="scale">æ‹¡å¤§ç‡</param>
 /// <returns></returns>
 Matrix4x4 MatGetScale(const Vector3& scale);
 
 /// <summary>
-/// ‹ts—ñ‚Ì“±o
+/// é€†è¡Œåˆ—ã®å°å‡º
 /// </summary>
-/// <param name="mat">s—ñ</param>
+/// <param name="mat">è¡Œåˆ—</param>
 /// <returns></returns>
 Matrix4x4 MatInverse(const Matrix4x4& mat);
 
 /// <summary>
-/// “]’us—ñ‚ğ•Ô‚·
+/// è»¢ç½®è¡Œåˆ—ã‚’è¿”ã™
 /// </summary>
-/// <param name="mat">s—ñ</param>
+/// <param name="mat">è¡Œåˆ—</param>
 /// <returns></returns>
 Matrix4x4 MatTranspose(const Matrix4x4& mat);

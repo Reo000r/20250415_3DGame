@@ -1,6 +1,6 @@
-#include "SceneResult.h"
-#include "SceneTitle.h"		// ‘JˆÚæ‚ÌƒV[ƒ“
-#include "SceneGamePlay.h"  // ‘JˆÚæ‚ÌƒV[ƒ“
+ï»¿#include "SceneResult.h"
+#include "SceneTitle.h"		// é·ç§»å…ˆã®ã‚·ãƒ¼ãƒ³
+#include "SceneGamePlay.h"  // é·ç§»å…ˆã®ã‚·ãƒ¼ãƒ³
 #include "SceneBase.h"
 #include "SceneController.h"
 
@@ -52,7 +52,7 @@ void SceneResult::FadeinUpdate()
 
 void SceneResult::NormalUpdate()
 {
-	// Œˆ’è‚ğ‰Ÿ‚µ‚½‚ç
+	// æ±ºå®šã‚’æŠ¼ã—ãŸã‚‰
 	if (Input::GetInstance().IsTrigger("next")) {
 		_nextSceneName = SceneName::GamePlay;
 		_nowUpdateState = &SceneResult::FadeoutUpdate;
@@ -79,15 +79,15 @@ void SceneResult::FadeoutUpdate()
 			_nextScene = std::make_shared<SceneTitle>();
 		}
 		else {
-			assert(false && "Ÿ‚ÌƒV[ƒ“‚ª•s–¾");
+			assert(false && "æ¬¡ã®ã‚·ãƒ¼ãƒ³ãŒä¸æ˜");
 		}
 
 		if (_nextScene == nullptr) {
-			assert(false && "Ÿ‚ÌƒV[ƒ“‚ª•s–¾");
+			assert(false && "æ¬¡ã®ã‚·ãƒ¼ãƒ³ãŒä¸æ˜");
 		}
 		SceneController::GetInstance().ChangeScene(_nextScene);
-		return;  // ©•ª‚ª€‚ñ‚Å‚¢‚é‚Ì‚Å‚à‚µ
-		// —]Œv‚Èˆ—‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚Ü‚¸‚¢‚Ì‚Åreturn;
+		return;  // è‡ªåˆ†ãŒæ­»ã‚“ã§ã„ã‚‹ã®ã§ã‚‚ã—
+		// ä½™è¨ˆãªå‡¦ç†ãŒå…¥ã£ã¦ã„ã‚‹ã¨ã¾ãšã„ã®ã§return;
 	}
 }
 
@@ -98,12 +98,12 @@ void SceneResult::FadeDraw()
 	DrawFormatString(0, 0, 0xffffff, L"Scene Result");
 #endif
 
-	// ƒtƒF[ƒhƒCƒ“/ƒAƒEƒg‚Ìˆ—
-	// ƒtƒF[ƒhŠ„‡‚ÌŒvZ(0.0-1.0)
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³/ã‚¢ã‚¦ãƒˆã®å‡¦ç†
+	// ãƒ•ã‚§ãƒ¼ãƒ‰å‰²åˆã®è¨ˆç®—(0.0-1.0)
 	float rate = static_cast<float>(_frame) / static_cast<float>(Statistics::kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(255 * rate));
 	DrawBox(0, 0, Statistics::kScreenWidth, Statistics::kScreenHeight, 0x000000, true);
-	// BlendMode‚ğg‚Á‚½Œã‚ÍNOBLEND‚É‚µ‚Ä‚¨‚­‚±‚Æ‚ğ–Y‚ê‚¸
+	// BlendModeã‚’ä½¿ã£ãŸå¾Œã¯NOBLENDã«ã—ã¦ãŠãã“ã¨ã‚’å¿˜ã‚Œãš
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 

@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include "EnemyBase.h"
 
 /// <summary>
-/// –³“ï‚Ès“®‚ğs‚¤“G
+/// ç„¡é›£ãªè¡Œå‹•ã‚’è¡Œã†æ•µ
 /// </summary>
 class EnemyNormal final : public EnemyBase
 {
@@ -15,14 +15,14 @@ public:
 	void Draw() override;
 
 	/// <summary>
-	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+	/// è¡çªã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
 	/// </summary>
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
 private:
 	/// <summary>
-	/// ƒXƒe[ƒg‚Ì‘JˆÚğŒ‚ğŠm”F‚µA•ÏX‰Â”\‚ÈƒXƒe[ƒg‚ª‚ ‚ê‚Î‚»‚ê‚É‘JˆÚ‚·‚é
+	/// ã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»æ¡ä»¶ã‚’ç¢ºèªã—ã€å¤‰æ›´å¯èƒ½ãªã‚¹ãƒ†ãƒ¼ãƒˆãŒã‚ã‚Œã°ãã‚Œã«é·ç§»ã™ã‚‹
 	/// </summary>
 	void CheckStateTransition() override;
 
@@ -32,24 +32,24 @@ private:
 private:
 
 	/// <summary>
-	/// ’N‚©‚ªƒvƒŒƒCƒ„[‚ğ‰£‚Á‚Ä‚¢‚½‚è‚·‚éê‡
-	/// ­‚µ—£‚ê‚Ä—lq‚ğ‚¤‚©‚ª‚¤
+	/// èª°ã‹ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ®´ã£ã¦ã„ãŸã‚Šã™ã‚‹å ´åˆ
+	/// å°‘ã—é›¢ã‚Œã¦æ§˜å­ã‚’ã†ã‹ãŒã†
 	/// </summary>
 	void UpdateIdle();
 	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚ğ•â‘«‚µ‚Ä‹ß‚Ã‚­
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è£œè¶³ã—ã¦è¿‘ã¥ã
 	/// </summary>
 	void UpdateWalk();
 	/// <summary>
-	/// UŒ‚
+	/// æ”»æ’ƒ
 	/// </summary>
 	void UpdateAttack();
 	/// <summary>
-	/// ”í’e
+	/// è¢«å¼¾
 	/// </summary>
 	void UpdateDamage();
 	/// <summary>
-	/// €–S
+	/// æ­»äº¡
 	/// </summary>
 	void UpdateDead();
 };

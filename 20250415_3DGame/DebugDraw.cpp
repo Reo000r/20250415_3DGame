@@ -1,4 +1,4 @@
-#include "DebugDraw.h"
+ï»¿#include "DebugDraw.h"
 #include <DxLib.h>
 
 DebugDraw& DebugDraw::GetInstance()
@@ -16,7 +16,7 @@ void DebugDraw::Clear()
 
 void DebugDraw::Draw()
 {
-	// ü•ª•`‰æ
+	// ç·šåˆ†æç”»
 	for (const auto& item : _lineInfo)
 	{
 		DxLib::DrawLine3D(
@@ -24,7 +24,7 @@ void DebugDraw::Draw()
 			item.end,
 			item.color);
 	}
-	// ‹…•`‰æ
+	// çƒæç”»
 	for (const auto& item : _sphereInfo)
 	{
 		DxLib::DrawSphere3D(
@@ -35,7 +35,7 @@ void DebugDraw::Draw()
 			item.color,
 			false);
 	}
-	// ƒJƒvƒZƒ‹•`‰æ
+	// ã‚«ãƒ—ã‚»ãƒ«æç”»
 	for (const auto& item : _capsuleInfo)
 	{
 		DxLib::DrawCapsule3D(

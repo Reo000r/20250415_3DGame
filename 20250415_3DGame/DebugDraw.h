@@ -1,24 +1,24 @@
-#pragma once
+ï»¿#pragma once
 #include "Geometry.h"
 #include <vector>
 #include <string>
 
 /// <summary>
-/// ƒfƒoƒbƒO—p‚Ì•`‰æî•ñ‚ğ‚Ü‚Æ‚ßAŒã‚Å•\¦‚·‚éƒNƒ‰ƒX
+/// ãƒ‡ãƒãƒƒã‚°ç”¨ã®æç”»æƒ…å ±ã‚’ã¾ã¨ã‚ã€å¾Œã§è¡¨ç¤ºã™ã‚‹ã‚¯ãƒ©ã‚¹
 /// </summary>
 class DebugDraw final {
 public:
 	/// <summary>
-	/// ƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg‚ğ•Ô‚·
+	/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™
 	/// </summary>
-	/// <returns>ƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg</returns>
+	/// <returns>ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ</returns>
 	static DebugDraw& GetInstance();
 
 	void Clear();
 	void Draw();
 
 	/// <summary>
-	/// ü•ª•`‰æî•ñ“o˜^
+	/// ç·šåˆ†æç”»æƒ…å ±ç™»éŒ²
 	/// </summary>
 	/// <param name="start"></param>
 	/// <param name="end"></param>
@@ -26,7 +26,7 @@ public:
 	void DrawLine(const Vector3& start, const Vector3& end, int color);
 
 	/// <summary>
-	/// ‹…•`‰æî•ñ“o˜^
+	/// çƒæç”»æƒ…å ±ç™»éŒ²
 	/// </summary>
 	/// <param name="center"></param>
 	/// <param name="rad"></param>
@@ -34,7 +34,7 @@ public:
 	void DrawSphere(const Vector3& center, float rad, int color);
 	
 	/// <summary>
-	/// ƒJƒvƒZƒ‹•`‰æî•ñ“o˜^
+	/// ã‚«ãƒ—ã‚»ãƒ«æç”»æƒ…å ±ç™»éŒ²
 	/// </summary>
 	/// <param name="start"></param>
 	/// <param name="end"></param>
@@ -47,19 +47,19 @@ private:
 	DebugDraw(const DebugDraw&) = delete;
 	void operator=(const DebugDraw&) = delete;
 
-	// ü•ªî•ñ
+	// ç·šåˆ†æƒ…å ±
 	struct LineInfo {
 		Vector3	start;
 		Vector3	end;
 		int		color;
 	};
-	// ‹…î•ñ
+	// çƒæƒ…å ±
 	struct SphereInfo {
 		Vector3	center;
 		float	rad;
 		int		color;
 	};
-	// ƒJƒvƒZƒ‹î•ñ
+	// ã‚«ãƒ—ã‚»ãƒ«æƒ…å ±
 	struct CapsuleInfo {
 		Vector3	start;
 		Vector3	end;

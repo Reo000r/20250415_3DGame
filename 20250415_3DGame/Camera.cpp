@@ -1,4 +1,4 @@
-#include "Camera.h"
+ï»¿#include "Camera.h"
 #include "Player.h"
 #include "Input.h"
 
@@ -18,7 +18,7 @@ namespace {
 	// 
 	const Vector3 kPlayerToCamera = { 0.0f, 520.0f, 860.0f };
 	const Vector3 kPlayerToTarget = { 0.0f, 220.0f, 0.0f };
-	// ‰ŠúˆÊ’u
+	// åˆæœŸä½ç½®
 	const Vector3 kDefaultPos = { -300, 500, -700 };
 	const Vector3 kTargetOffset = { 0, 200, 0 };
 }
@@ -61,12 +61,12 @@ void Camera::Update() {
 
 #ifndef USE_QUATERNION
 #ifdef USE_STICK
-	// ƒXƒeƒBƒbƒN‚É‚æ‚é•½–ÊˆÚ“®
+	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã«ã‚ˆã‚‹å¹³é¢ç§»å‹•
 	Vector3 stick = Input::GetInstance().GetPadRightSitck();
-	// Y²‰ñ“]
+	// Yè»¸å›è»¢
 	_rotAngle.y += stick.x * 0.001f * kRotSpeedY;
 #else
-	//LR‚ÅƒJƒƒ‰‚ğ‰ñ“]‚³‚¹‚é
+	//LRã§ã‚«ãƒ¡ãƒ©ã‚’å›è»¢ã•ã›ã‚‹
 	if (input.IsPress("Rbutton")) {
 		_rotAngle.y -= 0.05f;
 	}
@@ -77,19 +77,19 @@ void Camera::Update() {
 
 #else
 
-	// –ˆƒtƒŒ[ƒ€‚Ì‰ñ“]—Ê ²–ˆ‚Éì‚è‡¬‚·‚é
+	// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã®å›è»¢é‡ è»¸æ¯ã«ä½œã‚Šåˆæˆã™ã‚‹
 	Quaternion rotDelta = Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
 	Quaternion rotDeltaX = rotDelta;
 	Quaternion rotDeltaY = rotDelta;
 
 #ifdef USE_STICK
-	// ƒXƒeƒBƒbƒN‚É‚æ‚é•½–ÊˆÚ“®
+	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã«ã‚ˆã‚‹å¹³é¢ç§»å‹•
 	Vector3 stick = Input::GetInstance().GetPadRightSitck();
-	// Y²‰ñ“]
-	// ‰¡‚Ì“ü—Í‚ğ[‚Ä‚é
+	// Yè»¸å›è»¢
+	// æ¨ªã®å…¥åŠ›ã‚’å……ã¦ã‚‹
 	rotDeltaY = AngleAxis(Vector3Up(), stick.x * 0.001f * kRotSpeedY);
-	// X²‰ñ“]
-	// c‚Ì“ü—Í‚ğ[‚Ä‚é
+	// Xè»¸å›è»¢
+	// ç¸¦ã®å…¥åŠ›ã‚’å……ã¦ã‚‹
 	rotDeltaX = AngleAxis(Vector3Right(), stick.z * 0.001f * kRotSpeedX);
 
 	rotDelta = rotDeltaY * rotDeltaX;	// 
@@ -97,7 +97,7 @@ void Camera::Update() {
 	_quaternion = _quaternion * rotDelta;
 #else
 	float rotSpeed = 0.0f;
-	//LR‚ÅƒJƒƒ‰‚ğ‰ñ“]‚³‚¹‚é
+	//LRã§ã‚«ãƒ¡ãƒ©ã‚’å›è»¢ã•ã›ã‚‹
 	if (input.IsPress("Rbutton")) {
 		rotSpeed -= 0.05f;
 	}
@@ -114,50 +114,50 @@ void Camera::Update() {
 
 #ifndef USE_QUATERNION
 	Matrix4x4 playerRotMtx = MatIdentity();
-	// ‚³‚ç‚ÉƒJƒƒ‰‚ª‚Â‰ñ“]î•ñ‚ğ‰Á‚¦‚é
+	// ã•ã‚‰ã«ã‚«ãƒ¡ãƒ©ãŒæŒã¤å›è»¢æƒ…å ±ã‚’åŠ ãˆã‚‹
 	Matrix4x4 cameraRotMtx = MatRotateY(_rotAngle.y);
-	// ƒvƒŒƒCƒ„[‚ª‚Â‰ñ“]î•ñ‚ÆƒJƒƒ‰‚ª‚Â‰ñ“]î•ñ‚ğ‡‚í‚¹
-	// ÅI“I‚È‰ñ“]î•ñ‚ğ¶¬‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæŒã¤å›è»¢æƒ…å ±ã¨ã‚«ãƒ¡ãƒ©ãŒæŒã¤å›è»¢æƒ…å ±ã‚’åˆã‚ã›
+	// æœ€çµ‚çš„ãªå›è»¢æƒ…å ±ã‚’ç”Ÿæˆã™ã‚‹
 	rotMtx = playerRotMtx * cameraRotMtx;
 #else
-	// ƒNƒH[ƒ^ƒjƒIƒ“‚©‚ç‰ñ“]s—ñ‚ğ¶¬
-	// ƒvƒŒƒCƒ„[‚ğl—¶‚µ‚Ä‚¢‚È‚¢
+	// ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰å›è»¢è¡Œåˆ—ã‚’ç”Ÿæˆ
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è€ƒæ…®ã—ã¦ã„ãªã„
 	rotMtx = ConvQuaternionToMatrix4x4(_quaternion * rotDelta);
 #endif // !USE_QUATERNION
 
-	// ƒvƒŒƒCƒ„[‚ÌˆÚ“®‚É‡‚í‚¹‚ÄˆÚ“®‚ğs‚¤
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•ã«åˆã‚ã›ã¦ç§»å‹•ã‚’è¡Œã†
 	Vector3 playerPos = _player.lock()->GetPos();
-	// ƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ
-	// ƒvƒŒƒCƒ„[‚Ì‰ñ“]î•ñ‚É‡‚í‚¹‚Ä‰ñ“]‚³‚¹‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰ã‚«ãƒ¡ãƒ©ã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å›è»¢æƒ…å ±ã«åˆã‚ã›ã¦å›è»¢ã•ã›ã‚‹
 	Vector3 toCamera = rotMtx.VecMultiple(kPlayerToCamera);
 	Vector3 toTarget = rotMtx.VecMultiple(kPlayerToTarget);
 
-	// ã‰º•ûŒü‚ÍƒJƒƒ‰‚ğ’x‚ç‚¹‚Ä’Ç”ö
-	// ƒJƒƒ‰‚ªÅI“I‚É‚¢‚Ä‚Ù‚µ‚¢ˆÊ’u
+	// ä¸Šä¸‹æ–¹å‘ã¯ã‚«ãƒ¡ãƒ©ã‚’é…ã‚‰ã›ã¦è¿½å°¾
+	// ã‚«ãƒ¡ãƒ©ãŒæœ€çµ‚çš„ã«ã„ã¦ã»ã—ã„ä½ç½®
 	Vector3 finalPos = playerPos + toCamera;
 	Vector3 finalTargetPos = playerPos + toTarget;
 
-	// Œ»İˆÊ’u‚ÆÅI“I‚É‚¢‚Ä‚Ù‚µ‚¢ˆÊ’u‚Ì’†“_‚ğ‹‚ß‚é
+	// ç¾åœ¨ä½ç½®ã¨æœ€çµ‚çš„ã«ã„ã¦ã»ã—ã„ä½ç½®ã®ä¸­ç‚¹ã‚’æ±‚ã‚ã‚‹
 	_pos = _pos * (1.0f - kCameraFollowLerpFactor) + finalPos * kCameraFollowLerpFactor;
 	_targetPos = _targetPos * (1.0f - kCameraFollowLerpFactor) + finalTargetPos * kCameraFollowLerpFactor;
 
-	// ƒJƒƒ‰‚ÌˆÊ’uA•`‰æ‹——£A‰æŠp‚ğXV
+	// ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã€æç”»è·é›¢ã€ç”»è§’ã‚’æ›´æ–°
 	SetCameraPositionAndTarget_UpVecY(_pos, _targetPos);
 	SetCameraNearFar(_near, _far);
 	SetupCamera_Perspective(_viewAngle);
 }
 
 void Camera::Draw() {
-	// ƒ‰ƒCƒg‚ÌˆÊ’u‚Æ•ûŒü‚ğXV
+	// ãƒ©ã‚¤ãƒˆã®ä½ç½®ã¨æ–¹å‘ã‚’æ›´æ–°
 	if (_lightHandle != -1) {
-		// ƒ‰ƒCƒg‚ÌˆÊ’u‚ğƒJƒƒ‰‚ÌˆÊ’u‚Éİ’è
+		// ãƒ©ã‚¤ãƒˆã®ä½ç½®ã‚’ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã«è¨­å®š
 		SetLightPositionHandle(_lightHandle, _pos);
 
-		// ƒ‰ƒCƒg‚Ì•ûŒü‚ğƒJƒƒ‰‚ÌˆÊ’u‚©‚ç’‹“_‚Ö‚ÌƒxƒNƒgƒ‹‚Éİ’è
+		// ãƒ©ã‚¤ãƒˆã®æ–¹å‘ã‚’ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‹ã‚‰æ³¨è¦–ç‚¹ã¸ã®ãƒ™ã‚¯ãƒˆãƒ«ã«è¨­å®š
 		VECTOR direction = (_targetPos - _pos).Normalize();
 		SetLightDirectionHandle(_lightHandle, direction);
 
-		// ƒ‰ƒCƒg‚ğ—LŒø‚É‚·‚é
+		// ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 		SetLightEnableHandle(_lightHandle, true);
 	}
 

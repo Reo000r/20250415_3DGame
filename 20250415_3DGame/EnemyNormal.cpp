@@ -1,4 +1,4 @@
-#include "EnemyNormal.h"
+ï»¿#include "EnemyNormal.h"
 #include "Player.h"
 #include "Camera.h"
 #include "Animator.h"
@@ -27,15 +27,15 @@ EnemyNormal::EnemyNormal() :
 {
 	rigidbody->Init(true);
 
-	// ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	// ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
 	_animator->Init(MV1LoadModel(L"data/model/EnemyNormal_test.mv1"));
 
-	// g—p‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‘S‚Ä“ü‚ê‚é
+	// ä½¿ç”¨ã™ã‚‹ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å…¨ã¦å…¥ã‚Œã‚‹
 	_animator->SetAnimData(kAnimNameIdle, true);
 	_animator->SetAnimData(kAnimNameWalk, true);
-	//_animator->SetAnimData(kAnimNameAttack, true);	// •Û—¯
+	//_animator->SetAnimData(kAnimNameAttack, true);	// ä¿ç•™
 	//_animator->SetAnimData(kAnimNameDamage, true);
-	// Å‰‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğİ’è‚·‚é
+	// æœ€åˆã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã™ã‚‹
 	_animator->SetStartAnim(kAnimNameIdle);
 }
 
@@ -53,18 +53,18 @@ void EnemyNormal::Update()
 {
 	_animator->Update();
 
-	// ó‘Ô‘JˆÚŠm”F
+	// çŠ¶æ…‹é·ç§»ç¢ºèª
 	CheckStateTransition();
 
-	// Œ»İ‚ÌƒXƒe[ƒg‚É‰‚¶‚½Update‚ªs‚í‚ê‚é
+	// ç¾åœ¨ã®ã‚¹ãƒ†ãƒ¼ãƒˆã«å¿œã˜ãŸUpdateãŒè¡Œã‚ã‚Œã‚‹
 	(this->*_nowUpdateState)();
 }
 
 void EnemyNormal::Draw()
 {
-	// “–‚½‚è”»’è‚ğs‚Á‚Ä‚©‚çƒ‚ƒfƒ‹‚ÌˆÊ’u‚ğİ’è‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’è¡Œã£ã¦ã‹ã‚‰ãƒ¢ãƒ‡ãƒ«ã®ä½ç½®ã‚’è¨­å®šã™ã‚‹
 	MV1SetPosition(_animator->GetModelHandle(), GetPos());
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 	MV1DrawModel(_animator->GetModelHandle());
 
 #ifdef _DEBUG
@@ -75,17 +75,17 @@ void EnemyNormal::Draw()
 
 void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)
 {
-	// colider‚ÆÕ“Ë
+	// coliderã¨è¡çª
 	
-	// “Á’è‚Ìƒ^ƒO‚Å‚Í‚È‚¢ê‡return
+	// ç‰¹å®šã®ã‚¿ã‚°ã§ã¯ãªã„å ´åˆreturn
 	if (collider.lock()->GetTag() != PhysicsData::GameObjectTag::PlayerAttack) return;
 
-	// (ƒ_ƒ[ƒW‚ğó‚¯)
-	// ”í’eó‘Ô‚Ö
+	// (ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘)
+	// è¢«å¼¾çŠ¶æ…‹ã¸
 	if (_nowUpdateState != &EnemyNormal::UpdateDamage) {
 		_nowUpdateState = &EnemyNormal::UpdateDamage;
 		_animator->ChangeAnim(kAnimNameDamage, false);
-		// ƒ_ƒ[ƒW‚ğó‚¯‚é
+		// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã‚‹
 
 		return;
 	}
@@ -93,34 +93,34 @@ void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)
 
 void EnemyNormal::CheckStateTransition()
 {
-	// ©g‚©‚çƒvƒŒƒCƒ„[‚Ü‚Å‚Ì‹——£
+	// è‡ªèº«ã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¾ã§ã®è·é›¢
 	float enemyToPlayerDist = (_player.lock()->GetPos() - GetPos()).Magnitude();
 
-	// HP‚ª‚È‚¢‚È‚ç
-	// €–Só‘Ô‚Ö
+	// HPãŒãªã„ãªã‚‰
+	// æ­»äº¡çŠ¶æ…‹ã¸
 	if (_nowUpdateState != &EnemyNormal::UpdateDead &&
 		_hitPoint <= 0.0f) {
-		if (_nowUpdateState != &EnemyNormal::UpdateDead) { // Œ»İ€–S‚Å‚È‚¯‚ê‚Î
+		if (_nowUpdateState != &EnemyNormal::UpdateDead) { // ç¾åœ¨æ­»äº¡ã§ãªã‘ã‚Œã°
 			_nowUpdateState = &EnemyNormal::UpdateDead;
 			_animator->ChangeAnim(kAnimNameAttack, false);
 		}
 		return;
 	}
 
-	// ”í’e‚µ‚Ä‚¢‚È‚¢‚©‚Â
-	// ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ªˆê’èˆÈ‰º‚È‚ç
-	// UŒ‚ó‘Ô‚Ö
+	// è¢«å¼¾ã—ã¦ã„ãªã„ã‹ã¤
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®è·é›¢ãŒä¸€å®šä»¥ä¸‹ãªã‚‰
+	// æ”»æ’ƒçŠ¶æ…‹ã¸
 	if (_nowUpdateState != &EnemyNormal::UpdateDamage &&
 		enemyToPlayerDist <= _transferAttackRad) {
-		if (_nowUpdateState != &EnemyNormal::UpdateAttack) { // Œ»İUŒ‚‚Å‚È‚¯‚ê‚Î
+		if (_nowUpdateState != &EnemyNormal::UpdateAttack) { // ç¾åœ¨æ”»æ’ƒã§ãªã‘ã‚Œã°
 			_nowUpdateState = &EnemyNormal::UpdateAttack;
 			_animator->ChangeAnim(kAnimNameAttack, false);
 		}
 		return;
 	}
 
-	// (’N‚©‚ªƒvƒŒƒCƒ„[‚Æí“¬’†‚È‚ç)
-	// ‘Ò‹@ó‘Ô‚Ö
+	// (èª°ã‹ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨æˆ¦é—˜ä¸­ãªã‚‰)
+	// å¾…æ©ŸçŠ¶æ…‹ã¸
 	if (_nowUpdateState != &EnemyNormal::UpdateDamage) {
 		if (_nowUpdateState != &EnemyNormal::UpdateIdle) {
 			_nowUpdateState = &EnemyNormal::UpdateIdle;
@@ -129,9 +129,9 @@ void EnemyNormal::CheckStateTransition()
 		return;
 	}
 
-	// ã‹L‚Ì‚¢‚¸‚ê‚Å‚à‚È‚¯‚ê‚Î‹ß‚Ã‚­ó‘Ô‚Ö
+	// ä¸Šè¨˜ã®ã„ãšã‚Œã§ã‚‚ãªã‘ã‚Œã°è¿‘ã¥ãçŠ¶æ…‹ã¸
 	if (_nowUpdateState != &EnemyNormal::UpdateDamage) {
-		if (_nowUpdateState != &EnemyNormal::UpdateWalk) { // Œ»İ‹ß‚Ã‚«‚Å‚È‚¯‚ê‚Î
+		if (_nowUpdateState != &EnemyNormal::UpdateWalk) { // ç¾åœ¨è¿‘ã¥ãã§ãªã‘ã‚Œã°
 			_nowUpdateState = &EnemyNormal::UpdateWalk;
 			_animator->ChangeAnim(kAnimNameWalk, true);
 		}
@@ -141,39 +141,39 @@ void EnemyNormal::CheckStateTransition()
 
 void EnemyNormal::UpdateIdle()
 {
-	// ˆ—‚È‚µ
+	// å‡¦ç†ãªã—
 }
 
 void EnemyNormal::UpdateWalk()
 {
-	// ƒvƒŒƒCƒ„[‚ÉŒü‚©‚Á‚ÄˆÚ“®‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«å‘ã‹ã£ã¦ç§»å‹•ã™ã‚‹
 	
-	// ©g‚©‚çƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// è‡ªèº«ã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 dir = (_player.lock()->GetPos() - GetPos()).Normalize();
 
 	Vector3 vel = dir * kWalkSpeed;
 
-	// rigidbody‚É•ÒW‚µ‚½ˆÚ“®—Ê‚ğ‘ã“ü
+	// rigidbodyã«ç·¨é›†ã—ãŸç§»å‹•é‡ã‚’ä»£å…¥
 	rigidbody->SetVel(vel);
 }
 
 void EnemyNormal::UpdateAttack()
 {
-	// UŒ‚ˆ—
+	// æ”»æ’ƒå‡¦ç†
 
 	// 
 }
 
 void EnemyNormal::UpdateDamage()
 {
-	// ”í’eˆ—
+	// è¢«å¼¾å‡¦ç†
 
-	// “–‚½‚Á‚½uŠÔ‚É’v€ƒIƒuƒWƒFƒNƒg(‚à‚µ‚­‚Íplayer)‚Æ”½‘Î•ûŒü‚ÉƒmƒbƒNƒoƒbƒN‚³‚¹‚½‚¢
+	// å½“ãŸã£ãŸç¬é–“ã«è‡´æ­»ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ(ã‚‚ã—ãã¯player)ã¨åå¯¾æ–¹å‘ã«ãƒãƒƒã‚¯ãƒãƒƒã‚¯ã•ã›ãŸã„
 }
 
 void EnemyNormal::UpdateDead()
 {
-	// €‚ñ‚¾uŠÔ‚É’v€ƒIƒuƒWƒFƒNƒg(‚à‚µ‚­‚Íplayer)‚Æ”½‘Î•ûŒü‚É‚«”ò‚Ñ‚½‚¢
+	// æ­»ã‚“ã ç¬é–“ã«è‡´æ­»ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ(ã‚‚ã—ãã¯player)ã¨åå¯¾æ–¹å‘ã«å¹ãé£›ã³ãŸã„
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚çÁ–Å
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ãŸã‚‰æ¶ˆæ»…
 }

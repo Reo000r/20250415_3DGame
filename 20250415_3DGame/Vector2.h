@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class Vector2;
 typedef Vector2 Position2;
@@ -32,28 +32,28 @@ public:
 	Vector3 operator+(const Vector3& vec3) const;
 
 	/// <summary>
-	/// •„†”½“]
+	/// ç¬¦å·åè»¢
 	/// </summary>
 	/// <returns></returns>
 	Vector2 operator-() const;
 
-	// •Ö—˜‚ÈŠÖ”ŒQ
+	// ä¾¿åˆ©ãªé–¢æ•°ç¾¤
 
 	/// <summary>
-	/// ‚±‚ÌƒxƒNƒgƒ‹‚Ì2æ‚Ì’·‚³‚ğ•Ô‚·
+	/// ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã®2ä¹—ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float SqrMagnitude() const;
 
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì2æ‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®2ä¹—ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <param name="a"></param>
 	/// <returns></returns>
 	float SqrMagnitude(const Vector2& a)const;
 
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì2æ‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®2ä¹—ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <param name="_x"></param>
 	/// <param name="_y"></param>
@@ -61,20 +61,20 @@ public:
 	float SqrMagnitude(float _x, float _y)const;
 
 	/// <summary>
-	/// ‚±‚ÌƒxƒNƒgƒ‹‚Ì’·‚³‚ğ•Ô‚·
+	/// ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float Magnitude() const;
 
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <param name="a"></param>
 	/// <returns></returns>
 	float Magnitude(const Vector2& a) const;
 
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <param name="_x"></param>
 	/// <param name="_y"></param>
@@ -82,8 +82,8 @@ public:
 	float Magnitude(float _x, float _y) const;
 
 	/// <summary>
-	/// a‚Æb‚ÌŠÔ‚Ì‹——£‚ğ•Ô‚·
-	/// (Distance(a, b) ‚Í (a-b).magnitude‚Æ“¯‚¶)
+	/// aã¨bã®é–“ã®è·é›¢ã‚’è¿”ã™
+	/// (Distance(a, b) ã¯ (a-b).magnitudeã¨åŒã˜)
 	/// </summary>
 	/// <param name="a"></param>
 	/// <param name="b"></param>
@@ -91,29 +91,29 @@ public:
 	float Distance(const Vector2& a, const Vector2& b) const;
 
 	/// <summary>
-	/// ³‹K‰»(normalized)‚³‚ê‚½‚Æ‚«A•ûŒü‚ğˆÛ‚µ‚½‚Ü‚Ü‚Å
-	/// ’·‚³‚ª 1.0 ‚ÌƒxƒNƒgƒ‹‚ğ•Ô‚·
+	/// æ­£è¦åŒ–(normalized)ã•ã‚ŒãŸã¨ãã€æ–¹å‘ã‚’ç¶­æŒã—ãŸã¾ã¾ã§
+	/// é•·ã•ãŒ 1.0 ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™
 	/// </summary>
 	/// <param name="a"></param>
 	/// <returns></returns>
 	void Normalized();
 
 	/// <summary>
-	/// ³‹K‰»(normalized)‚³‚ê‚½‚Æ‚«A•ûŒü‚ğˆÛ‚µ‚½‚Ü‚Ü‚Å
-	/// ’·‚³‚ª 1.0 ‚ÌƒxƒNƒgƒ‹‚ğ•Ô‚·
+	/// æ­£è¦åŒ–(normalized)ã•ã‚ŒãŸã¨ãã€æ–¹å‘ã‚’ç¶­æŒã—ãŸã¾ã¾ã§
+	/// é•·ã•ãŒ 1.0 ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™
 	/// </summary>
 	/// <param name="a"></param>
 	/// <returns></returns>
 	Vector2 Normalize() const;
 
 	/// <summary>
-	/// a‚©‚çb ‚Ö t‚ÌŠ„‡‚¾‚¯‹ß‚Ã‚¢‚½“_‚ğ•Ô‚·
-	/// t‚Í 0-1 ‚Ì”ÍˆÍ
-	/// t‚ª 0   ‚Ìê‡Aa ‚ğ•Ô‚·
-	/// t‚ª 1   ‚Ìê‡Ab ‚ğ•Ô‚·
-	/// t‚ª 0.5 ‚Ìê‡Aa ‚Æ b ‚Ì’†“_‚ª•Ô‚³‚ê‚é
-	/// t‚ª 0ˆÈ‰º ‚Ìê‡ a ‚ğ•Ô‚·(t=0‚Æ“¯‚¶)
-	/// t‚ª 1ˆÈã ‚Ìê‡ b ‚ğ•Ô‚·(t=1‚Æ“¯‚¶)
+	/// aã‹ã‚‰b ã¸ tã®å‰²åˆã ã‘è¿‘ã¥ã„ãŸç‚¹ã‚’è¿”ã™
+	/// tã¯ 0-1 ã®ç¯„å›²
+	/// tãŒ 0   ã®å ´åˆã€a ã‚’è¿”ã™
+	/// tãŒ 1   ã®å ´åˆã€b ã‚’è¿”ã™
+	/// tãŒ 0.5 ã®å ´åˆã€a ã¨ b ã®ä¸­ç‚¹ãŒè¿”ã•ã‚Œã‚‹
+	/// tãŒ 0ä»¥ä¸‹ ã®å ´åˆ a ã‚’è¿”ã™(t=0ã¨åŒã˜)
+	/// tãŒ 1ä»¥ä¸Š ã®å ´åˆ b ã‚’è¿”ã™(t=1ã¨åŒã˜)
 	/// </summary>
 	/// <param name="a"></param>
 	/// <param name="b"></param>

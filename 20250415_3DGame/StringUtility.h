@@ -1,18 +1,18 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
 #include <DxLib.h>
 
 namespace StringUtility {
 	/// <summary>
-	/// string‚©‚çwstring‚Ö•ÏŠ·‚·‚é
+	/// stringã‹ã‚‰wstringã¸å¤‰æ›ã™ã‚‹
 	/// </summary>
 	/// <param name="str"></param>
 	/// <returns></returns>
 	std::wstring GetWStringFromString(const std::string& str);
 
 	/// <summary>
-	/// wstring‚©‚çstring‚Ö•ÏŠ·‚·‚é
-	/// “®ì–¢Šm”F
+	/// wstringã‹ã‚‰stringã¸å¤‰æ›ã™ã‚‹
+	/// å‹•ä½œæœªç¢ºèª
 	/// </summary>
 	/// <param name="str"></param>
 	/// <returns></returns>

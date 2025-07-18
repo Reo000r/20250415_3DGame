@@ -1,4 +1,4 @@
-#include "SceneGamePlay.h"
+ï»¿#include "SceneGamePlay.h"
 #include "SceneResult.h"
 #include "SceneController.h"
 #include "Camera.h"
@@ -29,19 +29,19 @@ SceneGamePlay::SceneGamePlay() :
 
 SceneGamePlay::~SceneGamePlay()
 {
-	// player‚Ì“–‚½‚è”»’èˆ—“o˜^‚ğíœ
+	// playerã®å½“ãŸã‚Šåˆ¤å®šå‡¦ç†ç™»éŒ²ã‚’å‰Šé™¤
 	_player->ReleasePhysics();
 }
 
 void SceneGamePlay::Init()
 {
-	// ‰Šú‰»ˆ—
+	// åˆæœŸåŒ–å‡¦ç†
 	_camera->Init(_player);
 	_player->Init(_camera);
 	_ground->Init();
 	_skydome->Init(_camera);
 
-	// player‚Ì“–‚½‚è”»’èˆ—“o˜^
+	// playerã®å½“ãŸã‚Šåˆ¤å®šå‡¦ç†ç™»éŒ²
 	_player->EntryPhysics(_physics);
 }
 
@@ -59,7 +59,7 @@ void SceneGamePlay::FadeinUpdate()
 {
 	_frame--;
 
-	// ƒtƒF[ƒh‚ªI‚í‚Á‚½‚çƒV[ƒ“‘JˆÚ
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ãŒçµ‚ã‚ã£ãŸã‚‰ã‚·ãƒ¼ãƒ³é·ç§»
 	if (_frame <= 0) {
 		_nowUpdateState = &SceneGamePlay::NormalUpdate;
 		_nowDrawState = &SceneGamePlay::NormalDraw;
@@ -68,16 +68,16 @@ void SceneGamePlay::FadeinUpdate()
 
 void SceneGamePlay::NormalUpdate()
 {
-	// XV
+	// æ›´æ–°
 	_camera->Update();
 	_player->Update();
 	_ground->Update();
 	_skydome->Update();
 
-	// •¨—‰‰ZXV
+	// ç‰©ç†æ¼”ç®—æ›´æ–°
 	_physics->Update();
 
-	// Œˆ’è‚ğ‰Ÿ‚µ‚½‚ç
+	// æ±ºå®šã‚’æŠ¼ã—ãŸã‚‰
 	if (Input::GetInstance().IsTrigger("next")) {
 		_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
 		_nowDrawState = &SceneGamePlay::FadeDraw;
@@ -91,8 +91,8 @@ void SceneGamePlay::FadeoutUpdate()
 
 	if (_frame >= Statistics::kFadeInterval) {
 		SceneController::GetInstance().ChangeScene(_nextScene);
-		return;  // ©•ª‚ª€‚ñ‚Å‚¢‚é‚Ì‚Å‚à‚µ
-		// —]Œv‚Èˆ—‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚Ü‚¸‚¢‚Ì‚Åreturn;
+		return;  // è‡ªåˆ†ãŒæ­»ã‚“ã§ã„ã‚‹ã®ã§ã‚‚ã—
+		// ä½™è¨ˆãªå‡¦ç†ãŒå…¥ã£ã¦ã„ã‚‹ã¨ã¾ãšã„ã®ã§return;
 	}
 }
 
@@ -107,12 +107,12 @@ void SceneGamePlay::FadeDraw()
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");
 #endif
 
-	// ƒtƒF[ƒhƒCƒ“/ƒAƒEƒg‚Ìˆ—
-	// ƒtƒF[ƒhŠ„‡‚ÌŒvZ(0.0-1.0)
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³/ã‚¢ã‚¦ãƒˆã®å‡¦ç†
+	// ãƒ•ã‚§ãƒ¼ãƒ‰å‰²åˆã®è¨ˆç®—(0.0-1.0)
 	float rate = static_cast<float>(_frame) / static_cast<float>(Statistics::kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(255 * rate));
 	DrawBox(0, 0, Statistics::kScreenWidth, Statistics::kScreenHeight, 0x000000, true);
-	// BlendMode‚ğg‚Á‚½Œã‚ÍNOBLEND‚É‚µ‚Ä‚¨‚­‚±‚Æ‚ğ–Y‚ê‚¸
+	// BlendModeã‚’ä½¿ã£ãŸå¾Œã¯NOBLENDã«ã—ã¦ãŠãã“ã¨ã‚’å¿˜ã‚Œãš
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 

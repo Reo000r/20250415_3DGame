@@ -1,7 +1,7 @@
-#include "Vector2.h"
+ï»¿#include "Vector2.h"
 #include "Vector3.h"
 
-#include <cmath>		// ŠeíŒvZ—p
+#include <cmath>		// å„ç¨®è¨ˆç®—ç”¨
 
 void Vector2::operator+=(const Vector2& vec) {
 	x += vec.x;
@@ -21,7 +21,7 @@ void Vector2::operator*=(float scale) {
 void Vector2::operator/=(float scale) {
 	if (scale == 0.0f) {
 #ifdef USE_ASSERT_GEOMETRY
-		assert(false && "0œZ");
+		assert(false && "0é™¤ç®—");
 #endif // USE_ASSERT_GEOMETRY
 		x = 0.0f;
 		y = 0.0f;
@@ -46,7 +46,7 @@ Vector2 Vector2::operator*(float scale) const {
 Vector2 Vector2::operator/(float scale) const {
 	if (scale == 0.0f) {
 #ifdef USE_ASSERT_GEOMETRY
-		assert(false && "0œZ");
+		assert(false && "0é™¤ç®—");
 #endif // USE_ASSERT_GEOMETRY
 		return Vector2(0.0f, 0.0f);
 	}
@@ -112,7 +112,7 @@ Vector2 Vector2::Normalize() const {
 	float abs = sqrtf(SqrMagnitude());
 	if (abs == 0.0f) {
 		//#ifdef USE_ASSERT_GEOMETRY
-		//		assert(false && "0œZ");
+		//		assert(false && "0é™¤ç®—");
 		//#endif // USE_ASSERT_GEOMETRY
 		return *this;
 	}
@@ -120,8 +120,8 @@ Vector2 Vector2::Normalize() const {
 }
 
 Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, const float& t) const {
-	// ’·‚³‚ª0-1‚Å‚Í‚È‚¢‚È‚ç‘Š‰‚µ‚¢’l‚ğ•Ô‚·
-	if (t < 0.0f) return a;	// ’Z‚¢ê‡
-	if (t > 1.0f) return b;	// ’·‚¢ê‡
+	// é•·ã•ãŒ0-1ã§ã¯ãªã„ãªã‚‰ç›¸å¿œã—ã„å€¤ã‚’è¿”ã™
+	if (t < 0.0f) return a;	// çŸ­ã„å ´åˆ
+	if (t > 1.0f) return b;	// é•·ã„å ´åˆ
 	return a + (b - a) * t;
 }

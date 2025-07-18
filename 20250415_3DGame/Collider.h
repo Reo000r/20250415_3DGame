@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <memory>
 #include "Vector3.h"
 #include "ProjectSettings.h"
@@ -9,16 +9,16 @@ class ColliderData;
 class PlayerState;
 
 /// <summary>
-/// “–‚½‚è”»’è‚ğ‚½‚¹‚½‚¢ƒIƒuƒWƒFƒNƒg‚ÉŒp³‚³‚¹‚éŠî’êƒNƒ‰ƒX
+/// å½“ãŸã‚Šåˆ¤å®šã‚’æŒãŸã›ãŸã„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ç¶™æ‰¿ã•ã›ã‚‹åŸºåº•ã‚¯ãƒ©ã‚¹
 /// </summary>
 class Collider abstract : public std::enable_shared_from_this<Collider> {
 public:
 	/// <summary>
-	/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	/// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	/// </summary>
-	/// <param name="priority">ˆÊ’u•â³‚Ì—Dæ“x</param>
-	/// <param name="tag">ƒ^ƒO</param>
-	/// <param name="colliderKind">“–‚½‚è”»’èí•Ê</param>
+	/// <param name="priority">ä½ç½®è£œæ­£ã®å„ªå…ˆåº¦</param>
+	/// <param name="tag">ã‚¿ã‚°</param>
+	/// <param name="colliderKind">å½“ãŸã‚Šåˆ¤å®šç¨®åˆ¥</param>
 	/// <param name="isTrigger"></param>
 	Collider(PhysicsData::Priority priority, PhysicsData::GameObjectTag tag, PhysicsData::ColliderKind colliderKind, bool isTrigger);
 	virtual ~Collider();
@@ -26,13 +26,13 @@ public:
 	void ReleasePhysics();
 
 	/// <summary>
-	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+	/// è¡çªã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
 	/// </summary>
 	/// <param name="colider"></param>
 	virtual void OnCollide(const std::weak_ptr<Collider> collider) abstract;
 
 	PhysicsData::GameObjectTag GetTag() const	{ return tag; }
-	// ˆÊ’u•â³—Dæ“xî•ñ‚ğ•Ô‚·
+	// ä½ç½®è£œæ­£å„ªå…ˆåº¦æƒ…å ±ã‚’è¿”ã™
 	PhysicsData::Priority GetPriority() const	{ return priority; }
 	
 	Vector3 GetPos() const;
@@ -50,23 +50,23 @@ private:
 		PhysicsData::ColliderKind kind, bool isTrigger, 
 		float rad = 0.0f, float dist = 0.0f, Vector3 angle = Vector3Up());
 	
-protected:	// ‚»‚ê‚¼‚ê‚ÌƒIƒuƒWƒFƒNƒg‚©‚çŒÄ‚Ñ‚½‚¢‚½‚ß
+protected:	// ãã‚Œãã‚Œã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰å‘¼ã³ãŸã„ãŸã‚
 	void SetColliderData(
 		PhysicsData::ColliderKind kind, bool isTrigger, 
 		float rad = 0.0f, float dist = 0.0f, Vector3 angle = Vector3Up());
 
 private:
 	PhysicsData::GameObjectTag	tag;
-	// ˆÊ’u•â³—Dæ“xî•ñ
+	// ä½ç½®è£œæ­£å„ªå…ˆåº¦æƒ…å ±
 	PhysicsData::Priority priority;
 
 private:
-	// Physics‚ªCollidable‚ğ©—R‚ÉŠÇ—‚·‚é‚½‚ß‚ÉƒtƒŒƒ“ƒh
+	// PhysicsãŒCollidableã‚’è‡ªç”±ã«ç®¡ç†ã™ã‚‹ãŸã‚ã«ãƒ•ãƒ¬ãƒ³ãƒ‰
 	friend Physics;
 
-	// ˆÈ‰º‚ÍPhysics‚Ì‚İ‚ªˆµ‚¤Œ^‚â•Ï”
+	// ä»¥ä¸‹ã¯Physicsã®ã¿ãŒæ‰±ã†å‹ã‚„å¤‰æ•°
 
-	// ˆÚ“®—\’èˆÊ’u
+	// ç§»å‹•äºˆå®šä½ç½®
 	Vector3 nextPos;
 };
 

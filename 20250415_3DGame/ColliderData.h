@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include <list>
 #include "ProjectSettings.h"
 
 class ColliderData abstract {
 public:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	ColliderData(PhysicsData::ColliderKind kind_, bool isTrigger_) :
 		kind(kind_),
 		isTrigger(isTrigger_)
@@ -17,21 +17,21 @@ public:
 	PhysicsData::ColliderKind GetKind() const { return kind; }
 	bool IsTrigger() const { return isTrigger; }
 
-	// “–‚½‚è”»’è‚ğ–³‹‚·‚éƒ^ƒO‚Ì’Ç‰Á/íœ
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ã™ã‚‹ã‚¿ã‚°ã®è¿½åŠ /å‰Šé™¤
 	void AddThroughTag(PhysicsData::GameObjectTag tag);
 	void RemoveThroughTag(PhysicsData::GameObjectTag tag);
 
 	/// <summary>
-	/// “–‚½‚è”»’è‚ğ–³‹‚·‚éƒ^ƒO‚©‚Ç‚¤‚©
+	/// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ã™ã‚‹ã‚¿ã‚°ã‹ã©ã†ã‹
 	/// </summary>
-	/// <param name="target">ƒ^ƒO</param>
-	/// <returns>–³‹‚·‚éê‡‚Ítrue</returns>
+	/// <param name="target">ã‚¿ã‚°</param>
+	/// <returns>ç„¡è¦–ã™ã‚‹å ´åˆã¯true</returns>
 	bool IsThroughTarget(const PhysicsData::GameObjectTag target) const;
 
-	// “–‚½‚è”»’è‚ğ–³‹‚·‚éƒ^ƒO‚ÌƒŠƒXƒg
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ã™ã‚‹ã‚¿ã‚°ã®ãƒªã‚¹ãƒˆ
 	std::list<PhysicsData::GameObjectTag>	throughTags;
 
-	// MEMO:‚±‚±public‚É‚µ‚½‚ç–â‘è‚ ‚é‚©‚È
+	// MEMO:ã“ã“publicã«ã—ãŸã‚‰å•é¡Œã‚ã‚‹ã‹ãª
 public:
 
 	PhysicsData::ColliderKind	kind;

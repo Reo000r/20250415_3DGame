@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 
 class SceneController;
 
 /// <summary>
-/// ƒV[ƒ“‚ÌŠî’êƒNƒ‰ƒX
-/// ŽÀ‘Ì‚ÍŽ‚½‚È‚¢
+/// ã‚·ãƒ¼ãƒ³ã®åŸºåº•ã‚¯ãƒ©ã‚¹
+/// å®Ÿä½“ã¯æŒãŸãªã„
 /// </summary>
 class SceneBase
 {
@@ -12,19 +12,19 @@ public:
 	SceneBase() {};
 
 	/// <summary>
-	/// ‰Šú‰»
-	/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Å‰Šú‰»‚·‚é‚Æ‚«‚É
-	/// ƒ^ƒCƒ~ƒ“ƒO‚ªˆ«‚©‚Á‚½‚è‚µ‚½ê‡‚Ìˆ—
+	/// åˆæœŸåŒ–
+	/// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§åˆæœŸåŒ–ã™ã‚‹ã¨ãã«
+	/// ã‚¿ã‚¤ãƒŸãƒ³ã‚°ãŒæ‚ªã‹ã£ãŸã‚Šã—ãŸå ´åˆã®å‡¦ç†
 	/// </summary>
 	virtual void Init() abstract;
 
 	/// <summary>
-	/// “à•”•Ï”‚ÌXV
+	/// å†…éƒ¨å¤‰æ•°ã®æ›´æ–°
 	/// </summary>
 	virtual void Update() abstract;
 
 	/// <summary>
-	/// •`‰æ‘S”Ê
+	/// æç”»å…¨èˆ¬
 	/// </summary>
 	virtual void Draw() abstract;
 };

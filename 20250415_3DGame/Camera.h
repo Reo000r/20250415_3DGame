@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "Geometry.h"
 #include <memory>
 
 class Player;
 
 /// <summary>
-/// ƒQ[ƒ€ƒV[ƒ“‚É‚¨‚¯‚éƒJƒƒ‰‚ğŠÇ—‚·‚éƒNƒ‰ƒX
+/// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«ãŠã‘ã‚‹ã‚«ãƒ¡ãƒ©ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
 /// </summary>
 class Camera final {
 public:
@@ -19,7 +19,7 @@ public:
 	Position3 GetPos() { return _pos; }
 
 	/// <summary>
-	/// Y²‚Ì‰ñ“]î•ñ
+	/// Yè»¸ã®å›è»¢æƒ…å ±
 	/// </summary>
 	/// <returns></returns>
 	float GetRotAngleY() const { return _rotAngle.y; }
@@ -27,11 +27,11 @@ public:
 private:
 	Position3 _pos;
 	Vector3 _vel;
-	// Player‚ÌˆÊ’u‚¾‚¯Œ©‚½‚¢
+	// Playerã®ä½ç½®ã ã‘è¦‹ãŸã„
 	std::weak_ptr<Player> _player;
 	Vector3 _targetPos;
 
-	// ‚»‚ê‚¼‚ê‚Ì‰ñ“]—Ê‚ğ•\‚·
+	// ãã‚Œãã‚Œã®å›è»¢é‡ã‚’è¡¨ã™
 	Vector3 _rotAngle;
 
 	float _near;

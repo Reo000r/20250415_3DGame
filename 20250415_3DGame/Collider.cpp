@@ -1,4 +1,4 @@
-#include "Collider.h"
+ï»¿#include "Collider.h"
 #include "Physics.h"
 #include "Rigidbody.h"
 #include "ColliderDataSphere.h"
@@ -23,13 +23,13 @@ Collider::~Collider()
 void Collider::EntryPhysics(std::weak_ptr<Physics> physics_)
 {
 	physics = physics_;
-	// Physics‚É©g‚ğ“o˜^
+	// Physicsã«è‡ªèº«ã‚’ç™»éŒ²
 	physics.lock()->Entry(shared_from_this());
 }
 
 void Collider::ReleasePhysics()
 {
-	// Physics‚©‚ç©g‚ğ“o˜^‰ğœ
+	// Physicsã‹ã‚‰è‡ªèº«ã‚’ç™»éŒ²è§£é™¤
 	physics.lock()->Release(shared_from_this());
 }
 
@@ -53,16 +53,16 @@ std::shared_ptr<ColliderData> Collider::CreateColliderData(
 	float rad, float dist, Vector3 angle)
 {
 	if (colliderData != nullptr) {
-		assert(false && "colliderData‚ÍŠù‚Éì‚ç‚ê‚Ä‚¢‚é");
+		assert(false && "colliderDataã¯æ—¢ã«ä½œã‚‰ã‚Œã¦ã„ã‚‹");
 		return colliderData;
 	}
 
-	// kind‚É‰‚¶‚½Collider‚ğì¬
+	// kindã«å¿œã˜ãŸColliderã‚’ä½œæˆ
 	switch (kind) {
-	case PhysicsData::ColliderKind::Sphere:		// Sphere—p‚Ì‰Šú‰»
+	case PhysicsData::ColliderKind::Sphere:		// Sphereç”¨ã®åˆæœŸåŒ–
 		colliderData = std::make_shared<ColliderDataSphere>(isTrigger, rad);
 		break;
-	case PhysicsData::ColliderKind::Capsule:	// Capsule—p‚Ì‰Šú‰»
+	case PhysicsData::ColliderKind::Capsule:	// Capsuleç”¨ã®åˆæœŸåŒ–
 		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, rad, dist, angle);
 		break;
 	}
@@ -74,23 +74,23 @@ void Collider::SetColliderData(
 	float rad, float dist, Vector3 angle)
 {
 	if (colliderData == nullptr) {
-		assert(false && "colliderData‚ªì‚ç‚ê‚Ä‚¢‚È‚¢");
+		assert(false && "colliderDataãŒä½œã‚‰ã‚Œã¦ã„ãªã„");
 		return;
 	}
 
-	// ‹¤’Ê‚Ìƒf[ƒ^‚ğ•ÏX
+	// å…±é€šã®ãƒ‡ãƒ¼ã‚¿ã‚’å¤‰æ›´
 	colliderData->isTrigger = isTrigger;
 
-	// kind‚É‰‚¶‚½Collider‚ğ•ÒW
+	// kindã«å¿œã˜ãŸColliderã‚’ç·¨é›†
 	switch (kind) {
-	case PhysicsData::ColliderKind::Sphere:		// Sphere—p‚Ì‘ã“ü
+	case PhysicsData::ColliderKind::Sphere:		// Sphereç”¨ã®ä»£å…¥
 	{
 		auto colliderDataSphere = std::static_pointer_cast<ColliderDataSphere>(colliderData);
 		colliderDataSphere->_radius = rad;
 		colliderData = colliderDataSphere;
 		break;
 	}
-	case PhysicsData::ColliderKind::Capsule:	// Capsule—p‚Ì‘ã“ü
+	case PhysicsData::ColliderKind::Capsule:	// Capsuleç”¨ã®ä»£å…¥
 	{
 		auto colliderDataCapsule = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
 		colliderDataCapsule->_radius = rad;

@@ -16,6 +16,9 @@ public:
 		float totalFrame = 0.0f;	// アニメーションの総再生時間
 		bool  isLoop = false;		// ループするか
 		bool  isEnd = false;		// ループしない場合終了しているか
+
+		float inputAcceptanceStartFrame = 0.0f; // 入力受付開始フレーム
+		float inputAcceptanceEndFrame = 0.0f;   // 入力受付終了フレーム
 	};
 
 	Animator();
@@ -33,9 +36,9 @@ public:
 	/// <summary>
 	/// ゲーム中で使用するアニメーションデータ
 	/// </summary>
-	/// <param name="animName"></param>
-	/// <param name="isLoop"></param>
-	void SetAnimData(const std::wstring animName, const bool isLoop);
+	void SetAnimData(const std::wstring animName, const bool isLoop, 
+		float inputAcceptanceStartRatio = 0.0f, 
+		float inputAcceptanceEndRatio = 1.0f);
 	/// <summary>
 	/// アニメーション名を指定しアタッチ
 	/// (ブレンドの進行状況が止まるため初期化する目的で使用)
@@ -75,6 +78,8 @@ public:
 
 	std::wstring GetCurrentAnimName() const{ return _currentAnimName; }
 	std::wstring GetBlendingAnimName() const{ return _blendingAnimName; }
+
+	float GetCurrentAnimFrame();
 
 	/// <summary>
 	/// 指定のアニメーションが終了しているか

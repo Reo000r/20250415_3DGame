@@ -1,4 +1,4 @@
-#include "Quaternion.h"
+ï»¿#include "Quaternion.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
@@ -6,7 +6,7 @@
 #include <cassert>
 
 namespace {
-	constexpr float kPI = 3.14159265358979;
+	constexpr float kPI = 3.141592653589793238;
 }
 
 Quaternion::Quaternion() :
@@ -52,7 +52,7 @@ void Quaternion::Normalized()
 Quaternion Quaternion::Normalize() const
 {
     float mag = std::sqrt(w * w + x * x + y * y + z * z);
-    if (mag == 0.0f) return *this;  //0œZ‰ñ”ğ
+    if (mag == 0.0f) return *this;  //0é™¤ç®—å›é¿
     return Quaternion(w / mag, x / mag, y / mag, z / mag);
 }
 
@@ -65,7 +65,7 @@ Quaternion operator*(const Quaternion lQ, const Quaternion rQ)
 {
 	Quaternion ret;
 
-	// ƒNƒH[ƒ^ƒjƒIƒ““¯m‚ÌŒvZ
+	// ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³åŒå£«ã®è¨ˆç®—
 	ret.w = lQ.w * rQ.w - lQ.x * rQ.x - lQ.y * rQ.y - lQ.z * rQ.z;
 	ret.x = lQ.w * rQ.x + lQ.x * rQ.w + lQ.y * rQ.z - lQ.z * rQ.y;
 	ret.y = lQ.w * rQ.y + lQ.y * rQ.w + lQ.z * rQ.x - lQ.x * rQ.z;
@@ -85,19 +85,19 @@ Vector3 RotateVector3(const Quaternion qRot, const Vector3 right)
 
     Vector3 vPos;
 
-    // OŸŒ³À•W‚ğƒNƒH[ƒ^ƒjƒIƒ“‚É•ÏŠ·
+    // ä¸‰æ¬¡å…ƒåº§æ¨™ã‚’ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã«å¤‰æ›
     qPos.w = 0.0f;
     qPos.x = right.x;
     qPos.y = right.y;
     qPos.z = right.z;
 
-    // ƒCƒ“ƒo[ƒX
+    // ã‚¤ãƒ³ãƒãƒ¼ã‚¹
     qInv = qRot.Inverse();
 
-    // ‰ñ“]Œã‚ÌƒNƒH[ƒ^ƒjƒIƒ“‚ğì¬
+    // å›è»¢å¾Œã®ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ä½œæˆ
     qPos = qRot * qPos * qInv;
 
-    // OŸŒ³À•W‚É–ß‚·
+    // ä¸‰æ¬¡å…ƒåº§æ¨™ã«æˆ»ã™
     vPos.x = qPos.x;
     vPos.y = qPos.y;
     vPos.z = qPos.z;
@@ -107,16 +107,16 @@ Vector3 RotateVector3(const Quaternion qRot, const Vector3 right)
 
 Quaternion AngleAxis(const Vector3& axis, const float& angle)
 {
-	// ³‹K‰»
+	// æ­£è¦åŒ–
 	Vector3 ax = axis.Normalize();
 	Quaternion q;
-	// ²ƒxƒNƒgƒ‹‚ğƒNƒH[ƒ^ƒjƒIƒ“‚É“–‚Ä‚é
+	// è»¸ãƒ™ã‚¯ãƒˆãƒ«ã‚’ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã«å½“ã¦ã‚‹
 	q.w = cos(angle * 0.5f);
 	q.x = ax.x * sin(angle * 0.5f);
 	q.y = ax.y * sin(angle * 0.5f);
 	q.z = ax.z * sin(angle * 0.5f);
 
-    // ³‹K‰»
+    // æ­£è¦åŒ–
     q.Normalized();
 
 	return q;
@@ -124,19 +124,19 @@ Quaternion AngleAxis(const Vector3& axis, const float& angle)
 
 Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t)
 {
-    // t‚ª0-1‚Å‚Í‚È‚¢‚È‚ç‘Š‰‚µ‚¢’l‚ğ•Ô‚·
-    if (t < 0.0f) return a; // ¬‚³‚¢ê‡
-    if (t > 1.0f) return b; // ‘å‚«‚¢ê‡
+    // tãŒ0-1ã§ã¯ãªã„ãªã‚‰ç›¸å¿œã—ã„å€¤ã‚’è¿”ã™
+    if (t < 0.0f) return a; // å°ã•ã„å ´åˆ
+    if (t > 1.0f) return b; // å¤§ãã„å ´åˆ
 
-    // ƒNƒH[ƒ^ƒjƒIƒ“‚Ì“àÏ‚ğŒvZ
+    // ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å†…ç©ã‚’è¨ˆç®—
     float dot = a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z;
     Quaternion end = b;
-    // “àÏ‚ª•‰‚Ìê‡Ab‚ğ”½“]‚µ‚ÄÅ’ZŒo˜H‚Å•âŠÔ‚·‚é
+    // å†…ç©ãŒè² ã®å ´åˆã€bã‚’åè»¢ã—ã¦æœ€çŸ­çµŒè·¯ã§è£œé–“ã™ã‚‹
     if (dot < 0.0f) {
         dot = -dot;
         end = Quaternion(-b.w, -b.x, -b.y, -b.z);
     }
-    // ƒNƒH[ƒ^ƒjƒIƒ“‚ª‚Ù‚Ú“¯‚¶ê‡‚ÍüŒ`•âŠÔ(Lerp)‚Å‹ß—
+    // ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ãŒã»ã¼åŒã˜å ´åˆã¯ç·šå½¢è£œé–“(Lerp)ã§è¿‘ä¼¼
     if (dot > 0.9995f) {
         return Quaternion(
             a.w + t * (end.w - a.w),
@@ -145,16 +145,16 @@ Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t)
             a.z + t * (end.z - a.z)
         ).Normalize();
     }
-    // ‹…–ÊüŒ`•âŠÔiSlerpj‚ÌŒvZ
-    float theta0 = std::acos(dot);  // 2‚Â‚ÌƒNƒH[ƒ^ƒjƒIƒ“ŠÔ‚ÌŠp“x
-    float theta = theta0 * t;       // t‚É‰‚¶‚½Šp“x
+    // çƒé¢ç·šå½¢è£œé–“ï¼ˆSlerpï¼‰ã®è¨ˆç®—
+    float theta0 = std::acos(dot);  // 2ã¤ã®ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³é–“ã®è§’åº¦
+    float theta = theta0 * t;       // tã«å¿œã˜ãŸè§’åº¦
     float sinTheta = std::sin(theta);
     float sinTheta0 = std::sin(theta0);
 
-    float s0 = std::cos(theta) - dot * sinTheta / sinTheta0;    // a‚ÌŒW”
-    float s1 = sinTheta / sinTheta0;                            // b‚ÌŒW”
+    float s0 = std::cos(theta) - dot * sinTheta / sinTheta0;    // aã®ä¿‚æ•°
+    float s1 = sinTheta / sinTheta0;                            // bã®ä¿‚æ•°
 
-    // •âŠÔŒ‹‰Ê‚ğ³‹K‰»‚µ‚Ä•Ô‚·
+    // è£œé–“çµæœã‚’æ­£è¦åŒ–ã—ã¦è¿”ã™
     return Quaternion(
         a.w * s0 + end.w * s1,
         a.x * s0 + end.x * s1,
@@ -165,32 +165,32 @@ Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t)
 
 Quaternion ConvMatrix4x4ToQuaternion(const Matrix4x4 mat)
 {
-    // Še¬•ª‚²‚Æ‚ÉƒNƒH[ƒ^ƒjƒIƒ“‚Ìx, y, z, w‚ğ‹‚ß‚é‚½‚ß‚Ì’l‚ğŒvZ
+    // å„æˆåˆ†ã”ã¨ã«ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®x, y, z, wã‚’æ±‚ã‚ã‚‹ãŸã‚ã®å€¤ã‚’è¨ˆç®—
     float elem[4];  // 0:x, 1:y, 2:z, 3:w
     elem[0] =  mat.m[0][0] - mat.m[1][1] - mat.m[2][2] + 1.0f;
     elem[1] = -mat.m[0][0] + mat.m[1][1] - mat.m[2][2] + 1.0f;
     elem[2] = -mat.m[0][0] - mat.m[1][1] + mat.m[2][2] + 1.0f;
     elem[3] =  mat.m[0][0] + mat.m[1][1] + mat.m[2][2] + 1.0f;
 
-    // ”’lŒë·‘Îô‚Ì‚½‚ßAÅ‘å’l‚ÌƒCƒ“ƒfƒbƒNƒX‚ğŒŸõ
+    // æ•°å€¤èª¤å·®å¯¾ç­–ã®ãŸã‚ã€æœ€å¤§å€¤ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æ¤œç´¢
     unsigned int biggestIndex = 0;
     for (int i = 1; i < 4; ++i) {
         if (elem[i] > elem[biggestIndex])
             biggestIndex = i;
     }
 
-    // Å‘å’l‚ª0–¢–‚Ìê‡‚ÍˆÙí‚Ès—ñ‚È‚Ì‚Åassert
+    // æœ€å¤§å€¤ãŒ0æœªæº€ã®å ´åˆã¯ç•°å¸¸ãªè¡Œåˆ—ãªã®ã§assert
     if (elem[biggestIndex] < 0.0f) {
-        assert(false && "ˆø”‚Ìs—ñ‚ÉŠÔˆá‚¢‚ª‚ ‚é");
+        assert(false && "å¼•æ•°ã®è¡Œåˆ—ã«é–“é•ã„ãŒã‚ã‚‹");
         return Quaternion();
     }
 
-    // Å‘å—v‘f‚©‚çƒNƒH[ƒ^ƒjƒIƒ“‚Ì’l‚ğŒvZ
+    // æœ€å¤§è¦ç´ ã‹ã‚‰ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å€¤ã‚’è¨ˆç®—
     Quaternion ret;
-    float v = sqrtf(elem[biggestIndex]) * 0.5f; // Å‘å¬•ª‚Ì’l
-    float mult = 0.25f / v;                     // ‘¼¬•ªŒvZ—p‚ÌŒW”
+    float v = sqrtf(elem[biggestIndex]) * 0.5f; // æœ€å¤§æˆåˆ†ã®å€¤
+    float mult = 0.25f / v;                     // ä»–æˆåˆ†è¨ˆç®—ç”¨ã®ä¿‚æ•°
 
-    // Å‘å¬•ª‚É‰‚¶‚ÄŠe’l‚ğŒvZ
+    // æœ€å¤§æˆåˆ†ã«å¿œã˜ã¦å„å€¤ã‚’è¨ˆç®—
     switch (biggestIndex) {
     case 0: // x
         ret.x = v;
@@ -221,7 +221,7 @@ Quaternion ConvMatrix4x4ToQuaternion(const Matrix4x4 mat)
         break;
     }
 
-    // ³‹K‰»
+    // æ­£è¦åŒ–
     ret.Normalized();
 
     return ret;
@@ -231,7 +231,7 @@ Matrix4x4 ConvQuaternionToMatrix4x4(const Quaternion q)
 {
     Matrix4x4 ret = MatIdentity();
 
-    // ‰ñ“]s—ñ¬•ª‚ğİ’è
+    // å›è»¢è¡Œåˆ—æˆåˆ†ã‚’è¨­å®š
     ret.m[0][0] = 1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z;
     ret.m[0][1] =        2.0f * q.x * q.y + 2.0f * q.w * q.z;
     ret.m[0][2] =        2.0f * q.x * q.z - 2.0f * q.w * q.y;
@@ -255,19 +255,19 @@ Vector3 ConvQuaternionToEuler(const Quaternion& q)
     float sqy = qy * qy;
     float sqz = qz * qz;
 
-    // ƒsƒbƒ`iX²‰ñ“]j
+    // ãƒ”ãƒƒãƒï¼ˆXè»¸å›è»¢ï¼‰
     float sinp = 2.0f * (qw * qx + qy * qz);
     float cosp = 1.0f - 2.0f * (sqx + sqy);
     float pitch = std::atan2(sinp, cosp);
 
-    // ƒˆ[iY²‰ñ“]j
+    // ãƒ¨ãƒ¼ï¼ˆYè»¸å›è»¢ï¼‰
     float siny = 2.0f * (qw * qy - qz * qx);
-    // ”ÍˆÍŠO‘Îô
+    // ç¯„å›²å¤–å¯¾ç­–
     if      (siny >  1.0f)  siny =  1.0f;
     else if (siny < -1.0f)  siny = -1.0f;
     float yaw = std::asin(siny);
 
-    // ƒ[ƒ‹iZ²‰ñ“]j
+    // ãƒ­ãƒ¼ãƒ«ï¼ˆZè»¸å›è»¢ï¼‰
     float sinr = 2.0f * (qw * qz + qx * qy);
     float cosr = 1.0f - 2.0f * (sqy + sqz);
     float roll = std::atan2(sinr, cosr);
@@ -277,10 +277,10 @@ Vector3 ConvQuaternionToEuler(const Quaternion& q)
 
 Quaternion ConvEulerToQuaternion(const Vector3& euler)
 {
-    // ƒIƒCƒ‰[Špiƒ‰ƒWƒAƒ“j
-    float pitch = euler.x * 0.5f;   // X²
-    float yaw = euler.y * 0.5f;     // Y²
-    float roll = euler.z * 0.5f;    // Z²
+    // ã‚ªã‚¤ãƒ©ãƒ¼è§’ï¼ˆãƒ©ã‚¸ã‚¢ãƒ³ï¼‰
+    float pitch = euler.x * 0.5f;   // Xè»¸
+    float yaw = euler.y * 0.5f;     // Yè»¸
+    float roll = euler.z * 0.5f;    // Zè»¸
 
     float sinPitch = std::sin(pitch);
     float cosPitch = std::cos(pitch);
@@ -291,7 +291,7 @@ Quaternion ConvEulerToQuaternion(const Vector3& euler)
 
     Quaternion q;
 
-    // Yaw-Pitch-Roll(Y¨X¨Z)‚Ì‡‚Å‡¬
+    // Yaw-Pitch-Roll(Yâ†’Xâ†’Z)ã®é †ã§åˆæˆ
     q.w = cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll;
     q.x = cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll;
     q.y = sinYaw * cosPitch * cosRoll - cosYaw * sinPitch * sinRoll;

@@ -1,12 +1,12 @@
-#include "Animator.h"
+ï»¿#include "Animator.h"
 
 #include <DxLib.h>
 #include <cassert>
 
 namespace {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒhŠÔ(frame)
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ–ãƒ¬ãƒ³ãƒ‰æ™‚é–“(frame)
 	constexpr float kAnimBlendFrame = 8.0f;
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x(60f‚È‚ç1.0A30f‚È‚ç0.5‚ª“™‘¬)
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦(60fãªã‚‰1.0ã€30fãªã‚‰0.5ãŒç­‰é€Ÿ)
 	constexpr float kAnimSpeed = 0.6f;
 }
 
@@ -23,25 +23,25 @@ Animator::~Animator()
 
 void Animator::Init(int model)
 {
-	assert(model >= 0 && "ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹‚ª³‚µ‚­‚È‚¢");
+	assert(model >= 0 && "ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«ãŒæ­£ã—ããªã„");
 	_model = model;
 }
 
 void Animator::Update()
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿ
 	UpdateAnim(FindAnimData(_blendingAnimName));
-	// “¯‚¶ƒAƒjƒ[ƒVƒ‡ƒ“‚Å‚È‚¢‚©‚Â
-	// Ä¶I—¹ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚È‚¢‚È‚ç
+	// åŒã˜ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã§ãªã„ã‹ã¤
+	// å†ç”Ÿçµ‚äº†ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ãªã„ãªã‚‰
 	if (_currentAnimName != _blendingAnimName &&
 		!FindAnimData(_currentAnimName).isEnd) {
-		// Ä¶
+		// å†ç”Ÿ
 		UpdateAnim(FindAnimData(_currentAnimName));
 	}
-	// ƒuƒŒƒ“ƒh”ä—¦XV
+	// ãƒ–ãƒ¬ãƒ³ãƒ‰æ¯”ç‡æ›´æ–°
 	UpdateAnimBlendRate();
 
-#ifdef _DEBUG	// •¡”Š‚Í‘Î‰‚µ‚Ä‚¢‚È‚¢
+#ifdef _DEBUG	// è¤‡æ•°æ‰€æŒã¯å¯¾å¿œã—ã¦ã„ãªã„
 	int y = 16 * 9;
 	DrawFormatString(0, y, 0xffffff, L"ExistState = %s", _currentAnimName.c_str());
 	y += 16;
@@ -59,28 +59,32 @@ void Animator::Update()
 void Animator::SetStartAnim(const std::wstring animName, const bool isLoop)
 {
 	AttachAnim(animName, isLoop);
-	// _blendingAnim‚Ì‚İ‚ğg—p‚·‚é‚½‚ß
+	// _blendingAnimã®ã¿ã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚
 	_blendRate = 1.0f;
 	_currentAnimName = _blendingAnimName;
 }
 
-void Animator::SetAnimData(const std::wstring animName, const bool isLoop)
+void Animator::SetAnimData(const std::wstring animName, const bool isLoop, float inputAcceptanceStartRatio, float inputAcceptanceEndRatio)
 {
-	// ‚·‚Å‚É“¯‚¶ƒAƒjƒ[ƒVƒ‡ƒ“‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚©Šm”F
+	// ã™ã§ã«åŒã˜ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒç™»éŒ²ã•ã‚Œã¦ã„ãªã„ã‹ç¢ºèª
 	for (const auto& anim : _animDataList) {
 		if (animName == anim.animName) {
-			assert(false && "“¯ˆê‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğ“o˜^‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚é");
+			assert(false && "åŒä¸€ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ç™»éŒ²ã—ã‚ˆã†ã¨ã—ã¦ã„ã‚‹");
 			return;
 		}
 	}
 	AnimData animData;
 	animData.animIndex = MV1GetAnimIndex(_model, animName.c_str());
-	animData.attachNo = -1;		// ÀÛ‚Ég‚¤Û‚ÉXV‚·‚é
+	animData.attachNo = -1;		// å®Ÿéš›ã«ä½¿ã†éš›ã«æ›´æ–°ã™ã‚‹
 	animData.animName = animName;
 	animData.frame = 0.0f;
 	animData.totalFrame = MV1GetAnimTotalTime(_model, animData.animIndex);
 	animData.isLoop = isLoop;
 	animData.isEnd = false;
+
+	// æ¯”ç‡ã‚’ãƒ•ãƒ¬ãƒ¼ãƒ å€¤ã«å¤‰æ›
+	animData.inputAcceptanceStartFrame = animData.totalFrame * inputAcceptanceStartRatio;
+	animData.inputAcceptanceEndFrame = animData.totalFrame * inputAcceptanceEndRatio;
 
 	//_animDataList.emplace_back(animData);
 	_animDataList.emplace_front(animData);
@@ -91,9 +95,9 @@ void Animator::AttachAnim(const std::wstring animName, const bool isLoop)
 	_blendingAnimName = animName;
 	AnimData& animData = FindAnimData(_blendingAnimName);
 
-	// ƒ‚ƒfƒ‹‚ÉƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒAƒ^ƒbƒ`
+	// ãƒ¢ãƒ‡ãƒ«ã«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã‚¢ã‚¿ãƒƒãƒ
 	animData.attachNo = MV1AttachAnim(_model, animData.animIndex, -1, false);
-	assert(animData.attachNo >= 0 && "ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒAƒ^ƒbƒ`¸”s");
+	assert(animData.attachNo >= 0 && "ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ã‚¿ãƒƒãƒå¤±æ•—");
 	animData.frame = 0.0f;
 	animData.isLoop = isLoop;
 	animData.isEnd = false;
@@ -102,18 +106,18 @@ void Animator::AttachAnim(const std::wstring animName, const bool isLoop)
 
 void Animator::UpdateAnim(AnimData& data)
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚È‚¢ê‡return
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ãªã„å ´åˆreturn
 	if (data.attachNo == -1) return;
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ği‚ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’é€²ã‚ã‚‹
 	data.frame += kAnimSpeed;
 
-	// Œ»İÄ¶’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‘ŠÔ‚ğæ“¾‚·‚é
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç·æ™‚é–“ã‚’å–å¾—ã™ã‚‹
 	const float totalTime = data.totalFrame;
 	
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìİ’è‚É‚æ‚Á‚Äƒ‹[ƒv‚³‚¹‚é‚©ÅŒã‚ÌƒtƒŒ[ƒ€‚Å~‚ß‚é‚©‚ğ”»’è
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®è¨­å®šã«ã‚ˆã£ã¦ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹ã‹æœ€å¾Œã®ãƒ•ãƒ¬ãƒ¼ãƒ ã§æ­¢ã‚ã‚‹ã‹ã‚’åˆ¤å®š
 	if (data.isLoop)
 	{
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒ‹[ƒv‚³‚¹‚é
+		// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹
 		while (data.frame > totalTime)
 		{
 			data.frame -= totalTime;
@@ -121,7 +125,7 @@ void Animator::UpdateAnim(AnimData& data)
 	}
 	else
 	{
-		// ÅŒã‚ÌƒtƒŒ[ƒ€‚Å’â~‚³‚¹‚é
+		// æœ€å¾Œã®ãƒ•ãƒ¬ãƒ¼ãƒ ã§åœæ­¢ã•ã›ã‚‹
 		if (data.frame > totalTime)
 		{
 			data.frame = totalTime;
@@ -129,22 +133,22 @@ void Animator::UpdateAnim(AnimData& data)
 		}
 	}
 
-	// is‚³‚¹‚½ƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒ‚ƒfƒ‹‚É“K—p‚·‚é
+	// é€²è¡Œã•ã›ãŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ãƒ¢ãƒ‡ãƒ«ã«é©ç”¨ã™ã‚‹
 	MV1SetAttachAnimTime(_model, data.attachNo, data.frame);
 }
 
 void Animator::UpdateAnimBlendRate()
 {
-	// —¼•û‚ÉƒAƒjƒ[ƒVƒ‡ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í•Ï‰»‚³‚¹‚È‚¢
+	// ä¸¡æ–¹ã«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã¯å¤‰åŒ–ã•ã›ãªã„
 	if (FindAnimData(_blendingAnimName).attachNo == -1) return;
 	if (FindAnimData(_currentAnimName).attachNo == -1) return;
 
-	// _blendRate‚ğ0.0f -> 1.0f‚É•Ï‰»‚³‚¹‚é
+	// _blendRateã‚’0.0f -> 1.0fã«å¤‰åŒ–ã•ã›ã‚‹
 	_blendRate += 1.0f / kAnimBlendFrame;
 	
-	// ƒuƒŒƒ“ƒh‚ªI—¹‚µ‚½‚ç
+	// ãƒ–ãƒ¬ãƒ³ãƒ‰ãŒçµ‚äº†ã—ãŸã‚‰
 	if (_blendRate >= 1.0f) {
-		// Œ»İ‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒuƒŒƒ“ƒh’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚É’u‚«Š·‚¦‚é
+		// ç¾åœ¨ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ãƒ–ãƒ¬ãƒ³ãƒ‰ä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã«ç½®ãæ›ãˆã‚‹
 		//_currentAnimName = _blendingAnimName;
 
 		_blendRate = 1.0f;
@@ -156,24 +160,24 @@ void Animator::UpdateAnimBlendRate()
 
 void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
 {
-	// ‚·‚Å‚É–Ú“I‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ÖƒuƒŒƒ“ƒh’†‚È‚çreturn
+	// ã™ã§ã«ç›®çš„ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã¸ãƒ–ãƒ¬ãƒ³ãƒ‰ä¸­ãªã‚‰return
 	if (animName == _blendingAnimName) return;
 
-	// ƒuƒŒƒ“ƒh‚Ég—p‚µ‚È‚¢ŒÃ‚¢ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‰Šú‰»
+	// ãƒ–ãƒ¬ãƒ³ãƒ‰ã«ä½¿ç”¨ã—ãªã„å¤ã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæœŸåŒ–
 	FindAnimData(_currentAnimName).frame = 0.0f;
 	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 0.0f);
 	
-	// Œ»İƒƒCƒ“‚ÅÄ¶’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğØ‚è‘Ö‚¦‚é
+	// ç¾åœ¨ãƒ¡ã‚¤ãƒ³ã§å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
 	_currentAnimName = _blendingAnimName;
 	_blendingAnimName = animName;
 
-	// V‚½‚ÉƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒAƒ^ƒbƒ`‚·‚é
+	// æ–°ãŸã«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã‚¢ã‚¿ãƒƒãƒã™ã‚‹
 	AttachAnim(_blendingAnimName, isLoop);
 
-	// ƒuƒŒƒ“ƒh”ä—¦‰Šú‰»
+	// ãƒ–ãƒ¬ãƒ³ãƒ‰æ¯”ç‡åˆæœŸåŒ–
 	_blendRate = 0.0f;
 
-	// ƒuƒŒƒ“ƒh”ä—¦‚ğƒAƒjƒ[ƒVƒ‡ƒ“‚É“K—p
+	// ãƒ–ãƒ¬ãƒ³ãƒ‰æ¯”ç‡ã‚’ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã«é©ç”¨
 	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 1.0f - _blendRate);
 	MV1SetAttachAnimBlendRate(_model, FindAnimData(_blendingAnimName).attachNo, _blendRate);
 }
@@ -181,13 +185,26 @@ void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
 Animator::AnimData& Animator::FindAnimData(const std::wstring animName)
 {
 	AnimData* firstData = nullptr;
-	// ƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ÅŒŸõ
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åã§æ¤œç´¢
 	for (auto& data : _animDataList) {
 		if (firstData == nullptr)		firstData = &data;
 		if (animName == data.animName)	return data;
 	}
 
-	assert(false && "w’è‚Ì–¼‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚©‚Á‚½");
-	// Œ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚ÍÅ‰‚ÉŒ©‚½ƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^‚ğ•Ô‚·
+	assert(false && "æŒ‡å®šã®åå‰ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒç™»éŒ²ã•ã‚Œã¦ã„ãªã‹ã£ãŸ");
+	// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯æœ€åˆã«è¦‹ãŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™
 	return *(firstData);
+}
+
+float Animator::GetCurrentAnimFrame()
+{
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’è¿”ã™
+	for (const auto& data : _animDataList) {
+		if (data.animName == _currentAnimName) {
+			return data.frame;
+		}
+	}
+	// è¦‹ã¤ã‹ã‚‰ãªã„å ´åˆ
+	assert(false && "ç¾åœ¨ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ãŒè¦‹ã¤ã‹ã‚‰ãªã„");
+	return 0.0f;
 }

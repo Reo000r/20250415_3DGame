@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include "Geometry.h"
 #include "Collider.h"
 
 /// <summary>
-/// ƒvƒŒƒCƒ„[‚â“G‚ªg‚¤•ŠíƒNƒ‰ƒX
+/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚„æ•µãŒä½¿ã†æ­¦å™¨ã‚¯ãƒ©ã‚¹
 /// </summary>
 class Weapon : public Collider
 {
@@ -11,18 +11,20 @@ public:
 	Weapon();
 	~Weapon();
 
-	void Init(int modelHandle, float rad, float dist, Vector3 angle = Vector3Up());
-	void Update(Matrix4x4 worldMatrix);
-	void Draw() ;
+	void Init(int modelHandle, Matrix4x4 localOffsetMatrix, float rad, float dist, Vector3 angle = Vector3Up());
+	void Update(Matrix4x4 parentWorldMatrix);
+	void Draw();
 
 	/// <summary>
-	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+	/// è¡çªã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
 	/// </summary>
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
 private:
-	// ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹
+	// ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«
 	int _modelHandle;
+
+	Matrix4x4 _localOffsetMatrix;
 };
 

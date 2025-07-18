@@ -1,21 +1,21 @@
-#pragma once
+ï»¿#pragma once
 #include <memory>
 #include <list>
 
 class Collider;
 
 /// <summary>
-/// •¨—‹““®‚ği‚é
+/// ç‰©ç†æŒ™å‹•ã‚’å¸ã‚‹
 /// </summary>
 class Physics final {
 public:
 	/// <summary>
-	/// ƒIƒuƒWƒFƒNƒg“o˜^
+	/// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç™»éŒ²
 	/// </summary>
 	void Entry(std::shared_ptr<Collider> collider);
 
 	/// <summary>
-	/// ƒIƒuƒWƒFƒNƒg“o˜^‰ğœ
+	/// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç™»éŒ²è§£é™¤
 	/// </summary>
 	void Release(std::shared_ptr<Collider> collider);
 
@@ -23,34 +23,34 @@ public:
 
 private:
 
-	// OnCollide‚Ì’x‰„’Ê’m‚Ì‚½‚ß‚Ìƒf[ƒ^
+	// OnCollideã®é…å»¶é€šçŸ¥ã®ãŸã‚ã®ãƒ‡ãƒ¼ã‚¿
 	struct OnCollideInfo
 	{
 		std::shared_ptr<Collider> owner;
 		std::shared_ptr<Collider> colider;
 	};
 
-	// “o˜^‚³‚ê‚½Collider‚ÌƒŠƒXƒg
+	// ç™»éŒ²ã•ã‚ŒãŸColliderã®ãƒªã‚¹ãƒˆ
 	std::list<std::shared_ptr<Collider>> _colliders;
 
 	std::list<OnCollideInfo> CheckCollide() const;
 
 	/// <summary>
-	/// “–‚½‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©‚¾‚¯”»’è
+	/// å½“ãŸã£ã¦ã„ã‚‹ã‹ã©ã†ã‹ã ã‘åˆ¤å®š
 	/// </summary>
 	bool IsCollide(const std::shared_ptr<Collider> objA, const std::shared_ptr<Collider> objB) const;
 
 	/// <summary>
-	/// ‘æˆêˆø”‚ÌCollider‚ğ“®‚©‚È‚¢‚à‚Ì‚Æ‚µ‚ÄA
-	/// ‘æ“ñˆø”‚É“ü‚Á‚½Collider‚ÌˆÊ’u‚ğ•â³‚·‚é
-	/// ‘æOˆø”‚Étrue‚ª“ü‚Á‚Ä‚¢‚½ê‡‚Í‚»‚ê‚ç‚ğ–³‹‚µ—¼•û‚ğ‰Ÿ‚µ–ß‚·
+	/// ç¬¬ä¸€å¼•æ•°ã®Colliderã‚’å‹•ã‹ãªã„ã‚‚ã®ã¨ã—ã¦ã€
+	/// ç¬¬äºŒå¼•æ•°ã«å…¥ã£ãŸColliderã®ä½ç½®ã‚’è£œæ­£ã™ã‚‹
+	/// ç¬¬ä¸‰å¼•æ•°ã«trueãŒå…¥ã£ã¦ã„ãŸå ´åˆã¯ãã‚Œã‚‰ã‚’ç„¡è¦–ã—ä¸¡æ–¹ã‚’æŠ¼ã—æˆ»ã™
 	/// </summary>
-	/// <param name="primary">“®‚©‚È‚¢Collider</param>
-	/// <param name="secondary">•â³‚ğs‚¤Collider</param>
-	/// <param name="isMutualPushback">—¼•û‚ğ‰Ÿ‚µ–ß‚·‚©</param>
+	/// <param name="primary">å‹•ã‹ãªã„Collider</param>
+	/// <param name="secondary">è£œæ­£ã‚’è¡Œã†Collider</param>
+	/// <param name="isMutualPushback">ä¸¡æ–¹ã‚’æŠ¼ã—æˆ»ã™ã‹</param>
 	void FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr<Collider> secondary, bool isMutualPushback) const;
 	/// <summary>
-	/// ˆÊ’uŒˆ’è
+	/// ä½ç½®æ±ºå®š
 	/// </summary>
 	void FixPosition();
 };

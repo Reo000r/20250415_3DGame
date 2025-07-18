@@ -1,4 +1,4 @@
-#include <DxLib.h>
+ï»¿#include <DxLib.h>
 
 #include "Application.h"
 
@@ -8,16 +8,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	Application& app = Application::GetInstance();
 
-	// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ì‰Šú‰»
+	// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæœŸåŒ–
 	if (!app.Init())
 	{
 		return -1;
 	}
 
-	// ƒƒCƒ“ƒ‹[ƒv
+	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 	app.Run();
 
-	// Œãˆ—
+	// å¾Œå‡¦ç†
 	app.Terminate();
 
 	return 0;

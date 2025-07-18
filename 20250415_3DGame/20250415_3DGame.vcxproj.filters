@@ -216,7 +216,4 @@
       <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="_memo.txt" />
-  </ItemGroup>
 </Project>

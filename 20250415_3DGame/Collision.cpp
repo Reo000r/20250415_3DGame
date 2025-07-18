@@ -1,79 +1,79 @@
-#include "Collision.h"
+ï»¿#include "Collision.h"
 #include "ProjectSettings.h"
 
 #include <algorithm>
 
 Position3 ClosestPointPointAndSegment(const Position3& point, const Position3& start, const Position3& end)
 {
-	// ü•ª‚Ìn“_‚©‚çI“_‚Ö‚ÌƒxƒNƒgƒ‹
+	// ç·šåˆ†ã®å§‹ç‚¹ã‹ã‚‰çµ‚ç‚¹ã¸ã®ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 segmentVec = end - start;
-	// ü•ª‚Ìn“_‚©‚çw’è‚³‚ê‚½“_‚Ö‚ÌƒxƒNƒgƒ‹
+	// ç·šåˆ†ã®å§‹ç‚¹ã‹ã‚‰æŒ‡å®šã•ã‚ŒãŸç‚¹ã¸ã®ãƒ™ã‚¯ãƒˆãƒ«
     Vector3 pointToStart = point - start;
     
-    // ü•ª‚Ì’·‚³‚Ì2æ
+    // ç·šåˆ†ã®é•·ã•ã®2ä¹—
     float segmentLengthSq = segmentVec.SqrMagnitude();
     
-    // ü•ª‚Ì’·‚³‚ª‚Ù‚Ú0‚Ìê‡An“_‚ªÅ‹ßÚ“_
-	if (segmentLengthSq < 0.000001f) {
+    // ç·šåˆ†ã®é•·ã•ãŒã»ã¼0ã®å ´åˆã€å§‹ç‚¹ãŒæœ€è¿‘æ¥ç‚¹
+	if (segmentLengthSq < PhysicsData::kZeroTolerance) {
 		return start;
 	}
 	
-	// “_‚ğü•ªƒxƒNƒgƒ‹‚ÉË‰e‚µ‚½‚Æ‚«‚Ìƒpƒ‰ƒ[ƒ^t‚ğŒvZ
-	// t = (point - start)E(end - start) / |end - start|^2
+	// ç‚¹ã‚’ç·šåˆ†ãƒ™ã‚¯ãƒˆãƒ«ã«å°„å½±ã—ãŸã¨ãã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿tã‚’è¨ˆç®—
+	// t = (point - start)ãƒ»(end - start) / |end - start|^2
 	float t = Dot(pointToStart, segmentVec) / segmentLengthSq;
 	
-	// ƒpƒ‰ƒ[ƒ^t‚ğ0.0`1.0‚Ì”ÍˆÍ‚ÉƒNƒ‰ƒ“ƒv‚·‚é
+	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿tã‚’0.0ï½1.0ã®ç¯„å›²ã«ã‚¯ãƒ©ãƒ³ãƒ—ã™ã‚‹
 	t = std::clamp(t, 0.0f, 1.0f);
 	
-	// Å‹ßÚ“_‚ğŒvZ‚µ‚Ä•Ô‚·
+	// æœ€è¿‘æ¥ç‚¹ã‚’è¨ˆç®—ã—ã¦è¿”ã™
 	return (start + segmentVec * t);
 }
 
 void ClosestPointSegments(const Position3& startA, const Position3& endA, const Position3& startB, const Position3& endB, Position3& closestPointA, Position3& closestPointB)
 {
-	// 2‚Â‚Ìü•ª‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚éˆ—
-	Vector3 segAVec = endA - startA;	// ü•ªA‚Ì•ûŒüƒxƒNƒgƒ‹
-	Vector3 segBVec = endB - startB;	// ü•ªB‚Ì•ûŒüƒxƒNƒgƒ‹
+	// 2ã¤ã®ç·šåˆ†ã®æœ€è¿‘æ¥ç‚¹ã‚’æ±‚ã‚ã‚‹å‡¦ç†
+	Vector3 segAVec = endA - startA;	// ç·šåˆ†Aã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	Vector3 segBVec = endB - startB;	// ç·šåˆ†Bã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 offsetVec = startA - startB;
 
-	float segALenSq = segAVec.SqrMagnitude();	// ü•ªA‚Ì’·‚³‚Ì2æ
-	float segBLenSq = segBVec.SqrMagnitude();	// ü•ªB‚Ì’·‚³‚Ì2æ
-	float segBDotOffset = Dot(segBVec, offsetVec);	// ü•ªB‚Ì•ûŒüƒxƒNƒgƒ‹‚Æ—¼n“_ŠÔƒxƒNƒgƒ‹‚Ì“àÏ
+	float segALenSq = segAVec.SqrMagnitude();	// ç·šåˆ†Aã®é•·ã•ã®2ä¹—
+	float segBLenSq = segBVec.SqrMagnitude();	// ç·šåˆ†Bã®é•·ã•ã®2ä¹—
+	float segBDotOffset = Dot(segBVec, offsetVec);	// ç·šåˆ†Bã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã¨ä¸¡å§‹ç‚¹é–“ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©
 
-	// —¼•û‚Ìü•ª‚ª“_‚Æ‚İ‚È‚¹‚éê‡
+	// ä¸¡æ–¹ã®ç·šåˆ†ãŒç‚¹ã¨ã¿ãªã›ã‚‹å ´åˆ
 	if (segALenSq <= PhysicsData::kZeroTolerance && segBLenSq <= PhysicsData::kZeroTolerance) {
-		// —¼•û‚ª“_‚Ìê‡
+		// ä¸¡æ–¹ãŒç‚¹ã®å ´åˆ
 		closestPointA = startA;
 		closestPointB = startB;
-		return;		// ˆ—I—¹
+		return;		// å‡¦ç†çµ‚äº†
 	}
-	// ü•ªA‚Ì‚İ‚ª“_‚Ìê‡
+	// ç·šåˆ†Aã®ã¿ãŒç‚¹ã®å ´åˆ
 	else if (segALenSq <= PhysicsData::kZeroTolerance) {
 		closestPointA = startA;
 		closestPointB = ClosestPointPointAndSegment(startA, startB, endB);
-		return;		// ˆ—I—¹
+		return;		// å‡¦ç†çµ‚äº†
 	}
-	// ü•ªB‚ª“_‚Å‚ ‚éê‡
+	// ç·šåˆ†BãŒç‚¹ã§ã‚ã‚‹å ´åˆ
 	else if (segBLenSq <= PhysicsData::kZeroTolerance) {
 		closestPointA = ClosestPointPointAndSegment(startB, startA, endA);
 		closestPointB = startB;
-		return;		// ˆ—I—¹
+		return;		// å‡¦ç†çµ‚äº†
 	}
 
-	// —¼•û‚ªü•ª‚Æ‚µ‚Äˆµ‚¦‚éê‡
-	// ü•ªA‚Ì•ûŒüƒxƒNƒgƒ‹‚Æ—¼n“_ŠÔƒxƒNƒgƒ‹‚Ì“àÏ
+	// ä¸¡æ–¹ãŒç·šåˆ†ã¨ã—ã¦æ‰±ãˆã‚‹å ´åˆ
+	// ç·šåˆ†Aã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã¨ä¸¡å§‹ç‚¹é–“ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©
 	float segADotOffset = Dot(segAVec, offsetVec);
-	// ü•ªA‚Æü•ªB‚Ì•ûŒüƒxƒNƒgƒ‹‚Ì“àÏ
+	// ç·šåˆ†Aã¨ç·šåˆ†Bã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©
 	float segADotSegB = Dot(segAVec, segBVec);
-	// ü•ªã‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é‚½‚ß‚Ì•Ï”(0.0`1.0)
+	// ç·šåˆ†ä¸Šã®æœ€è¿‘æ¥ç‚¹ã‚’æ±‚ã‚ã‚‹ãŸã‚ã®å¤‰æ•°(0.0ï½1.0)
 	float paramA, paramB;
 
-	// Å‹ßÚ“_‚Ìƒpƒ‰ƒ[ƒ^‚ğŒvZ
+	// æœ€è¿‘æ¥ç‚¹ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¨ˆç®—
 	CalculateClosestSegmentParameters(
 		segALenSq, segBLenSq, segADotSegB, segADotOffset, segBDotOffset, 
 		paramA, paramB);
 
-	// ‹‚ß‚½’l‚ğ—p‚¢‚ÄAü•ªã‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é
+	// æ±‚ã‚ãŸå€¤ã‚’ç”¨ã„ã¦ã€ç·šåˆ†ä¸Šã®æœ€è¿‘æ¥ç‚¹ã‚’æ±‚ã‚ã‚‹
 	closestPointA = startA + segAVec * paramA;
 	closestPointB = startB + segBVec * paramB;
 }
@@ -83,40 +83,40 @@ void CalculateClosestSegmentParameters(
 	float segADotOffset, float segBDotOffset,
 	float& paramA, float& paramB)
 {
-	// Å‹ßÚ“_‚ğ‹‚ß‚é®‚Ì•ª•ê
+	// æœ€è¿‘æ¥ç‚¹ã‚’æ±‚ã‚ã‚‹å¼ã®åˆ†æ¯
 	float denom = segALenSq * segBLenSq - segADotSegB * segADotSegB;
 
-	// 2’¼ü‚ª•½s‚Å‚È‚¢ê‡
+	// 2ç›´ç·šãŒå¹³è¡Œã§ãªã„å ´åˆ
 	if (std::abs(denom) > PhysicsData::kZeroTolerance) {
-		// ’¼üã‚ÌÅ‹ßÚ“_‚ğŒvZ
+		// ç›´ç·šä¸Šã®æœ€è¿‘æ¥ç‚¹ã‚’è¨ˆç®—
 		paramA = (segADotSegB * segBDotOffset - segADotOffset * segBLenSq) / denom;
 		paramB = (segALenSq * segBDotOffset - segADotSegB * segADotOffset) / denom;
 	}
-	// ü•ª‚ª•½s‚Èê‡
+	// ç·šåˆ†ãŒå¹³è¡Œãªå ´åˆ
 	else {
-		// ŒvZ‚ğŠÈ—ª‰»‚·‚é‚½‚ßA•Ğ•û‚Ìn“_‚ğŠî€‚ÉŒvZ‚·‚é
+		// è¨ˆç®—ã‚’ç°¡ç•¥åŒ–ã™ã‚‹ãŸã‚ã€ç‰‡æ–¹ã®å§‹ç‚¹ã‚’åŸºæº–ã«è¨ˆç®—ã™ã‚‹
 		paramA = 0.0f;
 		paramB = segBDotOffset / segBLenSq;
 	}
 
-	// ŒvZ‚³‚ê‚½ƒpƒ‰ƒ[ƒ^‚ª—¼•û‚Æ‚à0-1‚Ì”ÍˆÍ“à‚É‚ ‚é‚©ƒ`ƒFƒbƒN
-	// Å‹ßÚ“_‚ª—¼ü•ª‚Ì“à•”‚É‚ ‚éƒP[ƒX
+	// è¨ˆç®—ã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãŒä¸¡æ–¹ã¨ã‚‚0-1ã®ç¯„å›²å†…ã«ã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
+	// æœ€è¿‘æ¥ç‚¹ãŒä¸¡ç·šåˆ†ã®å†…éƒ¨ã«ã‚ã‚‹ã‚±ãƒ¼ã‚¹
 	if (paramA >= 0.0f && paramA <= 1.0f && paramB >= 0.0f && paramB <= 1.0f) {
-		// ”ÍˆÍ“à‚È‚Ì‚Å‰½‚à‚µ‚È‚¢
+		// ç¯„å›²å†…ãªã®ã§ä½•ã‚‚ã—ãªã„
 		return;
 	}
 
-	// ‚»‚êˆÈŠO‚Ìê‡AÅ‹ßÚ“_‚Í­‚È‚­‚Æ‚à•Ğ•û‚Ìü•ª‚Ì’[“_‚É‚ ‚é
-	// Å‹ßÚ“_‚ªü•ª‚ÌŠO‘¤‚É‚ ‚éê‡A’[“_‚ÉƒNƒ‰ƒ“ƒv‚µ‚ÄÄŒvZ‚·‚é
+	// ãã‚Œä»¥å¤–ã®å ´åˆã€æœ€è¿‘æ¥ç‚¹ã¯å°‘ãªãã¨ã‚‚ç‰‡æ–¹ã®ç·šåˆ†ã®ç«¯ç‚¹ã«ã‚ã‚‹
+	// æœ€è¿‘æ¥ç‚¹ãŒç·šåˆ†ã®å¤–å´ã«ã‚ã‚‹å ´åˆã€ç«¯ç‚¹ã«ã‚¯ãƒ©ãƒ³ãƒ—ã—ã¦å†è¨ˆç®—ã™ã‚‹
 
-	// paramA‚ğ0-1‚ÉƒNƒ‰ƒ“ƒv
+	// paramAã‚’0-1ã«ã‚¯ãƒ©ãƒ³ãƒ—
 	paramA = std::clamp(paramA, 0.0f, 1.0f);
-	// ƒNƒ‰ƒ“ƒv‚µ‚½paramA‚ğŒ³‚ÉparamB‚ğÄŒvZ
+	// ã‚¯ãƒ©ãƒ³ãƒ—ã—ãŸparamAã‚’å…ƒã«paramBã‚’å†è¨ˆç®—
 	paramB = (segBDotOffset + segADotSegB * paramA) / segBLenSq;
 	paramB = std::clamp(paramB, 0.0f, 1.0f);
 
-	// ‚³‚ç‚ÉAƒNƒ‰ƒ“ƒv‚µ‚½paramB‚ğŒ³‚ÉparamA‚ğÄXŒvZ
-	// ‚±‚ê‚É‚æ‚èA—¼•û‚Ì”ÍˆÍ‚ªŒİ‚¢‚ÉÅ“K‚Èó‘Ô‚Éû‘©‚·‚é
+	// ã•ã‚‰ã«ã€ã‚¯ãƒ©ãƒ³ãƒ—ã—ãŸparamBã‚’å…ƒã«paramAã‚’å†ã€…è¨ˆç®—
+	// ã“ã‚Œã«ã‚ˆã‚Šã€ä¸¡æ–¹ã®ç¯„å›²ãŒäº’ã„ã«æœ€é©ãªçŠ¶æ…‹ã«åæŸã™ã‚‹
 	paramA = (-segADotOffset + segADotSegB * paramB) / segALenSq;
 	paramA = std::clamp(paramA, 0.0f, 1.0f);
 

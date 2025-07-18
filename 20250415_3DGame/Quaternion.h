@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 
 class Vector3;
 class Matrix4x4;
 
 /// <summary>
-/// ƒNƒH[ƒ^ƒjƒIƒ“(lŒ³”)
+/// ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³(å››å…ƒæ•°)
 /// </summary>
 class Quaternion final {
 public:
@@ -12,31 +12,31 @@ public:
 
 	Quaternion();
 	/// <summary>
-	/// ‡”Ô’ˆÓ
+	/// é †ç•ªæ³¨æ„
 	/// </summary>
 	Quaternion(float _w, float _x, float _y, float _z);
 
-	Quaternion operator*(const float& s) const;	// ‰ñ“]‡¬
-	void operator*=(const float& s);			// ‰ñ“]‡¬
-	bool operator==(const Quaternion& q) const;	// “™‰¿”äŠr
+	Quaternion operator*(const float& s) const;	// å›è»¢åˆæˆ
+	void operator*=(const float& s);			// å›è»¢åˆæˆ
+	bool operator==(const Quaternion& q) const;	// ç­‰ä¾¡æ¯”è¼ƒ
 
 	/// <summary>
-	/// ³‹K‰»‚·‚é
+	/// æ­£è¦åŒ–ã™ã‚‹
 	/// </summary>
 	void Normalized();
 	/// <summary>
-	/// ³‹K‰»‚µ‚½’l‚ğ•Ô‚·
+	/// æ­£è¦åŒ–ã—ãŸå€¤ã‚’è¿”ã™
 	/// </summary>
 	Quaternion Normalize() const;
 
 	/// <summary>
-	/// ‹tlŒ³”(ƒCƒ“ƒo[ƒX)‚ğ•Ô‚·
+	/// é€†å››å…ƒæ•°(ã‚¤ãƒ³ãƒãƒ¼ã‚¹)ã‚’è¿”ã™
 	/// </summary>
 	Quaternion Inverse() const;
 };
 
 /// <summary>
-/// ƒNƒH[ƒ^ƒjƒIƒ““¯m‚Ì‰ñ“]‡¬
+/// ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³åŒå£«ã®å›è»¢åˆæˆ
 /// </summary>
 /// <param name="lQ"></param>
 /// <param name="rQ"></param>
@@ -44,63 +44,63 @@ public:
 Quaternion operator*(const Quaternion lQ, const Quaternion rQ);
 
 /// <summary>
-/// ƒxƒNƒgƒ‹‚É‘Î‚µƒNƒH[ƒ^ƒjƒIƒ“‚Ì‰ñ“]‚ğ“K—p‚·‚é
-/// ‰‰ZqƒI[ƒo[ƒ[ƒh
+/// ãƒ™ã‚¯ãƒˆãƒ«ã«å¯¾ã—ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å›è»¢ã‚’é©ç”¨ã™ã‚‹
+/// æ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
 /// </summary>
 /// <param name="qRot"></param>
 /// <param name="right"></param>
-/// <returns>‰ñ“]Œã‚ÌƒxƒNƒgƒ‹</returns>
+/// <returns>å›è»¢å¾Œã®ãƒ™ã‚¯ãƒˆãƒ«</returns>
 Vector3 operator*(const Quaternion qRot, const Vector3 right);
 
 /// <summary>
-/// ƒxƒNƒgƒ‹‚É‘Î‚µƒNƒH[ƒ^ƒjƒIƒ“‚Ì‰ñ“]‚ğ“K—p‚·‚é
+/// ãƒ™ã‚¯ãƒˆãƒ«ã«å¯¾ã—ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å›è»¢ã‚’é©ç”¨ã™ã‚‹
 /// </summary>
 /// <param name="qRot"></param>
 /// <param name="right"></param>
-/// <returns>‰ñ“]Œã‚ÌƒxƒNƒgƒ‹</returns>
+/// <returns>å›è»¢å¾Œã®ãƒ™ã‚¯ãƒˆãƒ«</returns>
 Vector3 RotateVector3(const Quaternion qRot, const Vector3 right);
 
 /// <summary>
-/// ‰ñ“]²‚Æ‰ñ“]Šp‚©‚ç‰ñ“]ƒNƒH[ƒ^ƒjƒIƒ“‚ğ•Ô‚·
+/// å›è»¢è»¸ã¨å›è»¢è§’ã‹ã‚‰å›è»¢ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’è¿”ã™
 /// </summary>
-/// <param name="axis">‰ñ“]²ƒxƒNƒgƒ‹</param>
-/// <param name="angle">‰ñ“]Šp(ƒ‰ƒWƒAƒ“)</param>
-/// <returns>‰ñ“]ƒNƒH[ƒ^ƒjƒIƒ“</returns>
+/// <param name="axis">å›è»¢è»¸ãƒ™ã‚¯ãƒˆãƒ«</param>
+/// <param name="angle">å›è»¢è§’(ãƒ©ã‚¸ã‚¢ãƒ³)</param>
+/// <returns>å›è»¢ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³</returns>
 Quaternion AngleAxis(const Vector3& axis, const float& angle);
 
 /// <summary>
-/// “ñ‚Â‚ÌlŒ³”ŠÔ‚Ì•âŠÔ
+/// äºŒã¤ã®å››å…ƒæ•°é–“ã®è£œé–“
 /// </summary>
 /// <param name="a">start</param>
 /// <param name="b">end</param>
-/// <param name="t">”ÍˆÍ(0.0-1.0)</param>
-/// <returns>•ÛŠÇ‚³‚ê‚½ƒNƒH[ƒ^ƒjƒIƒ“</returns>
+/// <param name="t">ç¯„å›²(0.0-1.0)</param>
+/// <returns>ä¿ç®¡ã•ã‚ŒãŸã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³</returns>
 Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t);
 
 /// <summary>
-/// s—ñ‚©‚çƒNƒH[ƒ^ƒjƒIƒ“‚Ì•ÏŠ·
-/// ƒˆ‚È‰ñ“]s—ñ‚ğ“n‚³‚È‚¢‚Æ•s‹ï‡‚ªo‚é
+/// è¡Œåˆ—ã‹ã‚‰ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å¤‰æ›
+/// ç´”ç²‹ãªå›è»¢è¡Œåˆ—ã‚’æ¸¡ã•ãªã„ã¨ä¸å…·åˆãŒå‡ºã‚‹
 /// </summary>
 /// <returns></returns>
 Quaternion ConvMatrix4x4ToQuaternion(const Matrix4x4 mat);
 
 /// <summary>
-/// ƒNƒH[ƒ^ƒjƒIƒ“‚©‚çs—ñ‚Ì•ÏŠ·
-/// Ql:http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
+/// ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰è¡Œåˆ—ã®å¤‰æ›
+/// å‚è€ƒ:http://marupeke296.com/DXG_No58_RotQuaternionTrans.html
 /// </summary>
 /// <returns></returns>
 Matrix4x4 ConvQuaternionToMatrix4x4(const Quaternion q);
 
 /// <summary>
-/// ƒNƒH[ƒ^ƒjƒIƒ“‚©‚çƒIƒCƒ‰[Šp(Vector3)‚Ö‚Ì•ÏŠ·‚ğs‚¤
-/// ƒWƒ“ƒoƒ‹ƒƒbƒN‚ª”­¶‚µ‚»‚¤‚È•t‹ß‚Í’ˆÓ
+/// ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰ã‚ªã‚¤ãƒ©ãƒ¼è§’(Vector3)ã¸ã®å¤‰æ›ã‚’è¡Œã†
+/// ã‚¸ãƒ³ãƒãƒ«ãƒ­ãƒƒã‚¯ãŒç™ºç”Ÿã—ãã†ãªä»˜è¿‘ã¯æ³¨æ„
 /// </summary>
 /// <param name="q"></param>
 /// <returns></returns>
 Vector3 ConvQuaternionToEuler(const Quaternion& q);
 
 /// <summary>
-/// ƒIƒCƒ‰[Šp(Vector3)‚©‚çƒNƒH[ƒ^ƒjƒIƒ“‚Ö‚Ì•ÏŠ·‚ğs‚¤
+/// ã‚ªã‚¤ãƒ©ãƒ¼è§’(Vector3)ã‹ã‚‰ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã¸ã®å¤‰æ›ã‚’è¡Œã†
 /// </summary>
 /// <param name="q"></param>
 /// <returns></returns>

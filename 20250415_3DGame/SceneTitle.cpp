@@ -1,5 +1,5 @@
-#include "SceneTitle.h"
-#include "SceneGamePlay.h"  // ‘JˆÚæ‚ÌƒV[ƒ“
+ï»¿#include "SceneTitle.h"
+#include "SceneGamePlay.h"  // é·ç§»å…ˆã®ã‚·ãƒ¼ãƒ³
 #include "SceneController.h"
 
 #include "Input.h"
@@ -20,7 +20,7 @@ void SceneTitle::FadeinUpdate()
 
 void SceneTitle::NormalUpdate()
 {
-	// Œˆ’è‚ğ‰Ÿ‚µ‚½‚ç
+	// æ±ºå®šã‚’æŠ¼ã—ãŸã‚‰
 	if (Input::GetInstance().IsTrigger("next")) {
 		_nowUpdateState = &SceneTitle::FadeoutUpdate;
 		_nowDrawState = &SceneTitle::FadeDraw;
@@ -34,7 +34,7 @@ void SceneTitle::FadeoutUpdate()
 
 	if (_frame >= Statistics::kFadeInterval) {
 		SceneController::GetInstance().ChangeScene(std::make_shared<SceneGamePlay>());
-		return;  // —]Œv‚Èˆ—‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚Ü‚¸‚¢‚Ì‚Åreturn
+		return;  // ä½™è¨ˆãªå‡¦ç†ãŒå…¥ã£ã¦ã„ã‚‹ã¨ã¾ãšã„ã®ã§return
 	}
 }
 
@@ -44,12 +44,12 @@ void SceneTitle::FadeDraw()
 	DrawFormatString(0, 0, 0xffffff, L"Scene Title");
 #endif
 
-	// ƒtƒF[ƒhƒCƒ“/ƒAƒEƒg‚Ìˆ—
-	// ƒtƒF[ƒhŠ„‡‚ÌŒvZ(0.0-1.0)
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³/ã‚¢ã‚¦ãƒˆã®å‡¦ç†
+	// ãƒ•ã‚§ãƒ¼ãƒ‰å‰²åˆã®è¨ˆç®—(0.0-1.0)
 	float rate = static_cast<float>(_frame) / static_cast<float>(Statistics::kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(255 * rate));
 	DrawBox(0, 0, Statistics::kScreenWidth, Statistics::kScreenHeight, 0x000000, true);
-	// BlendMode‚ğg‚Á‚½Œã‚ÍNOBLEND‚É‚µ‚Ä‚¨‚­‚±‚Æ‚ğ–Y‚ê‚¸
+	// BlendModeã‚’ä½¿ã£ãŸå¾Œã¯NOBLENDã«ã—ã¦ãŠãã“ã¨ã‚’å¿˜ã‚Œãš
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 

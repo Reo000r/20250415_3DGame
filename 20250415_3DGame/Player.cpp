@@ -1,4 +1,4 @@
-#include "Player.h"
+ï»¿#include "Player.h"
 #include "Camera.h"
 #include "Animator.h"
 #include "Weapon.h"
@@ -11,7 +11,7 @@
 #include <DxLib.h>
 
 //#define ANIMATION_TEST
-// Quaternion‚ğg—p‚µ‚½‰ñ“]
+// Quaternionã‚’ä½¿ç”¨ã—ãŸå›è»¢
 #define USE_QUATERNION
 // 
 //#define OLD_STATETRANSITION
@@ -43,12 +43,10 @@ namespace {
 	const std::wstring kAnimNameDead = kAnimName + L"Dying";
 	const std::wstring kAnimNameAppeal = kAnimName + L"WinAnim";
 
-	constexpr float kAttackCombo1InputStart = 0.0f;
+	constexpr float kAttackCombo1InputStart = 0.5f;
 	constexpr float kAttackCombo1InputEnd	= 1.0f;
-	constexpr float kAttackCombo2InputStart = 0.0f;
+	constexpr float kAttackCombo2InputStart = 0.5f;
 	constexpr float kAttackCombo2InputEnd	= 1.0f;
-	constexpr float kAttackCombo3InputStart = 0.0f;
-	constexpr float kAttackCombo3InputEnd	= 1.0f;
 
 #else
 	const std::wstring kAnimName		= L"CharacterArmature|";
@@ -78,27 +76,27 @@ Player::Player() :
 {
 	rigidbody->Init(true);
 
-	// ©g‚Ì•Ší‚Æ‚Í“–‚½‚è”»’è‚ğs‚í‚È‚¢
+	// è‡ªèº«ã®æ­¦å™¨ã¨ã¯å½“ãŸã‚Šåˆ¤å®šã‚’è¡Œã‚ãªã„
 	colliderData->AddThroughTag(PhysicsData::GameObjectTag::PlayerAttack);
 
 #ifndef ANIMATION_TEST
-	// ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	// ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
 	_animator->Init(MV1LoadModel(L"data/model/character/Player.mv1"));
 	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * 2.0f);
 #else
-	// ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	// ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
 	_animator->Init(MV1LoadModel(L"data/model/character/Player_test.mv1"));
 #endif
 
 #ifndef ANIMATION_TEST
-	// g—p‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‘S‚Ä“ü‚ê‚é
+	// ä½¿ç”¨ã™ã‚‹ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å…¨ã¦å…¥ã‚Œã‚‹
 	_animator->SetAnimData(kAnimNameIdle, true);
 	_animator->SetAnimData(kAnimNameWalk, true);
 	_animator->SetAnimData(kAnimNameRun, true);
 	_animator->SetAnimData(kAnimNameAttackNormal, false);
 	_animator->SetAnimData(kAnimNameAttackBack, false);
-	_animator->SetAnimData(kAnimNameAttackCombo1, false);
-	_animator->SetAnimData(kAnimNameAttackCombo2, false);
+	_animator->SetAnimData(kAnimNameAttackCombo1, false, kAttackCombo1InputStart, kAttackCombo1InputEnd);
+	_animator->SetAnimData(kAnimNameAttackCombo2, false, kAttackCombo2InputStart, kAttackCombo2InputEnd);
 	_animator->SetAnimData(kAnimNameAttackCombo3, false);
 	_animator->SetAnimData(kAnimNameSpecialAttack1, false);
 	_animator->SetAnimData(kAnimNameSpecialAttack2, false);
@@ -108,10 +106,10 @@ Player::Player() :
 	_animator->SetAnimData(kAnimNameBuff, false);
 	_animator->SetAnimData(kAnimNameDead, false);
 	_animator->SetAnimData(kAnimNameAppeal, false);
-	// Å‰‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğİ’è‚·‚é
+	// æœ€åˆã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã™ã‚‹
 	_animator->SetStartAnim(kAnimNameIdle);
 #else
-	// g—p‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‘S‚Ä“ü‚ê‚é
+	// ä½¿ç”¨ã™ã‚‹ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å…¨ã¦å…¥ã‚Œã‚‹
 	_animator->SetAnimData(kAnimNameIdle, true);
 	_animator->SetAnimData(kAnimNameWalk, true);
 	_animator->SetAnimData(kAnimNameRun, true);
@@ -123,14 +121,14 @@ Player::Player() :
 	_animator->SetAnimData(kAnimNameDamage, false);
 	_animator->SetAnimData(kAnimNameDead, false);
 	
-	// Å‰‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğİ’è‚·‚é
+	// æœ€åˆã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã™ã‚‹
 	_animator->SetStartAnim(kAnimNameIdle);
 #endif
 
-	// •Ší‰Šú‰»
+	// æ­¦å™¨åˆæœŸåŒ–
 	int weaponModelHandle = MV1LoadModel(L"data/model/weapon/PlayerWeapon.mv1");
-	assert(weaponModelHandle >= 0 && "ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹‚ª³‚µ‚­‚È‚¢");
-	_weapon->Init(weaponModelHandle, 100.0f,
+	assert(weaponModelHandle >= 0 && "ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«ãŒæ­£ã—ããªã„");
+	_weapon->Init(weaponModelHandle, MatIdentity(), 100.0f,
 		500, Vector3Up());
 }
 
@@ -146,21 +144,21 @@ void Player::Update() {
 	_animator->Update();
 
 #ifndef OLD_STATETRANSITION
-	// ó‘Ô‘JˆÚŠm”F
+	// çŠ¶æ…‹é·ç§»ç¢ºèª
 	CheckStateTransition();
 #endif
 
-	// Œ»İ‚ÌƒXƒe[ƒg‚É‰‚¶‚½Update‚ªs‚í‚ê‚é
+	// ç¾åœ¨ã®ã‚¹ãƒ†ãƒ¼ãƒˆã«å¿œã˜ãŸUpdateãŒè¡Œã‚ã‚Œã‚‹
 	(this->*_nowUpdateState)();
 
-	// •ŠíXV
+	// æ­¦å™¨æ›´æ–°
 	WeaponUpdate();
 }
 
 void Player::Draw() {
-	// “–‚½‚è”»’è‚ğs‚Á‚Ä‚©‚çƒ‚ƒfƒ‹‚ÌˆÊ’u‚ğİ’è‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’è¡Œã£ã¦ã‹ã‚‰ãƒ¢ãƒ‡ãƒ«ã®ä½ç½®ã‚’è¨­å®šã™ã‚‹
 	MV1SetPosition(_animator->GetModelHandle(), GetPos());
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 	MV1DrawModel(_animator->GetModelHandle());
 
 #ifdef _DEBUG
@@ -176,19 +174,19 @@ void Player::Draw() {
 
 void Player::OnCollide(const std::weak_ptr<Collider> collider)
 {
-	// colider‚ÆÕ“Ë
+	// coliderã¨è¡çª
 
-	// “Á’è‚Ìƒ^ƒO‚Å‚Í‚È‚¢ê‡return
+	// ç‰¹å®šã®ã‚¿ã‚°ã§ã¯ãªã„å ´åˆreturn
 	if (collider.lock()->GetTag() != PhysicsData::GameObjectTag::EnemyAttack) return;
 
-	// (ƒ_ƒ[ƒW‚ğó‚¯)
-	// ”í’eó‘Ô‚Ö
+	// (ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘)
+	// è¢«å¼¾çŠ¶æ…‹ã¸
 	if (_nowUpdateState != &Player::UpdateDamage) {
 		_nowUpdateState = &Player::UpdateDamage;
 		_animator->ChangeAnim(kAnimNameReact, false);
 		_hasDerivedAttackInput = false;
 
-		// ƒ_ƒ[ƒW‚ğó‚¯‚é
+		// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã‚‹
 
 		return;
 	}
@@ -196,14 +194,15 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 
 void Player::CheckStateTransition()
 {
-	Input& input = Input::GetInstance();
+	/*
+		Input& input = Input::GetInstance();
 	Vector3 stick = input.GetPadLeftSitck();
 	
 	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
 	bool isLoopAnim = _animator->IsLoop(_animator->GetCurrentAnimName());
 
-	// ƒ‹[ƒv‚Å‚ ‚é
-	// ‚à‚µ‚­‚Íƒ‹[ƒv‚Å‚È‚¢‚©‚ÂƒAƒjƒ[ƒVƒ‡ƒ“Ä¶‚ªI‚í‚Á‚Ä‚¢‚é‚©
+	// ãƒ«ãƒ¼ãƒ—ã§ã‚ã‚‹
+	// ã‚‚ã—ãã¯ãƒ«ãƒ¼ãƒ—ã§ãªã„ã‹ã¤ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”ŸãŒçµ‚ã‚ã£ã¦ã„ã‚‹ã‹
 	bool canChangeState = (!isLoopAnim && isEndAnim) || (isLoopAnim);
 
 	bool isAttack = 
@@ -211,7 +210,7 @@ void Player::CheckStateTransition()
 		_nowUpdateState == &Player::UpdateAttackSecond ||
 		_nowUpdateState == &Player::UpdateAttackThird);
 
-	// Œ»İ‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚Ä‚¢‚é‚©‚ÂŒ»İ‚ÌƒXƒe[ƒg‚ªUŒ‚ŠÖ˜A‚È‚çtrue
+	// ç¾åœ¨ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ã¦ã„ã‚‹ã‹ã¤ç¾åœ¨ã®ã‚¹ãƒ†ãƒ¼ãƒˆãŒæ”»æ’ƒé–¢é€£ãªã‚‰true
 	bool isEndAttack = (
 		((!isLoopAnim && isEndAnim) || (isLoopAnim)) &&
 		(_nowUpdateState == &Player::UpdateAttackFirst ||
@@ -219,29 +218,29 @@ void Player::CheckStateTransition()
 		_nowUpdateState == &Player::UpdateAttackThird)
 		);
 
-	// Œ»İUŒ‚ŠÖ˜A‚ÌƒXƒe[ƒg‚Å‚È‚¢‚©‚Â
-	// UŒ‚“ü—Í‚ª‚ ‚Á‚½‚©‚Â
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ˆ—‚ª–â‘è‚È‚¢‚È‚ç
-	// ˆê’i–Ú‚ÌUŒ‚ó‘Ô‚Ö
+	// ç¾åœ¨æ”»æ’ƒé–¢é€£ã®ã‚¹ãƒ†ãƒ¼ãƒˆã§ãªã„ã‹ã¤
+	// æ”»æ’ƒå…¥åŠ›ãŒã‚ã£ãŸã‹ã¤
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å‡¦ç†ãŒå•é¡Œãªã„ãªã‚‰
+	// ä¸€æ®µç›®ã®æ”»æ’ƒçŠ¶æ…‹ã¸
 	if (!isAttack && input.IsPress("action") && canChangeState) {
 		_nowUpdateState = &Player::UpdateAttackFirst;
 		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
 		_hasDerivedAttackInput = false;
 	}
-	// UŒ‚’†‚É”h¶“ü—Í‚ª‚ ‚Á‚½‚©‚Â
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚Ä‚¢‚é‚©‚Â
-	// Œ»İUŒ‚‚Ìˆê’i–Ú‚È‚ç
-	// “ñ’i–Ú‚ÌUŒ‚ó‘Ô‚Ö
+	// æ”»æ’ƒä¸­ã«æ´¾ç”Ÿå…¥åŠ›ãŒã‚ã£ãŸã‹ã¤
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ã¦ã„ã‚‹ã‹ã¤
+	// ç¾åœ¨æ”»æ’ƒã®ä¸€æ®µç›®ãªã‚‰
+	// äºŒæ®µç›®ã®æ”»æ’ƒçŠ¶æ…‹ã¸
 	if (_hasDerivedAttackInput && isEndAnim &&
 		_nowUpdateState == &Player::UpdateAttackFirst) {
 		_nowUpdateState = &Player::UpdateAttackSecond;
 		_animator->ChangeAnim(kAnimNameAttackCombo2, false);
 		_hasDerivedAttackInput = false;
 	}
-	// UŒ‚’†‚É”h¶“ü—Í‚ª‚ ‚Á‚½‚©‚Â
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚Ä‚¢‚é‚©‚Â
-	// Œ»İUŒ‚‚Ì“ñ’i–Ú‚È‚ç
-	// O’i–Ú‚ÌUŒ‚ó‘Ô‚Ö
+	// æ”»æ’ƒä¸­ã«æ´¾ç”Ÿå…¥åŠ›ãŒã‚ã£ãŸã‹ã¤
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ã¦ã„ã‚‹ã‹ã¤
+	// ç¾åœ¨æ”»æ’ƒã®äºŒæ®µç›®ãªã‚‰
+	// ä¸‰æ®µç›®ã®æ”»æ’ƒçŠ¶æ…‹ã¸
 	if (_hasDerivedAttackInput && isEndAnim &&
 		_nowUpdateState == &Player::UpdateAttackSecond) {
 		_nowUpdateState = &Player::UpdateAttackThird;
@@ -251,53 +250,155 @@ void Player::CheckStateTransition()
 
 
 
-	//// ’nã‚É‚¢‚ÄA
-	//// ƒWƒƒƒ“ƒvƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç
-	//// ƒWƒƒƒ“ƒvó‘Ô‚Ö
+	//// åœ°ä¸Šã«ã„ã¦ã€
+	//// ã‚¸ãƒ£ãƒ³ãƒ—ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã‚‰
+	//// ã‚¸ãƒ£ãƒ³ãƒ—çŠ¶æ…‹ã¸
 	//if (input.IsTrigger("jump") && GetPos().y <= kGround) {
 	//	_nowUpdateState = &Player::UpdateJump;
-	//	_animator->ChangeAnim(kAnimNameJump, true); // ƒAƒjƒ[ƒVƒ‡ƒ“‚à‚±‚±‚Å•ÏX
-	//	// ƒWƒƒƒ“ƒv‰‘¬‚ğ—^‚¦‚éˆ—‚È‚Ç‚à‚±‚±‚É‘‚­
+	//	_animator->ChangeAnim(kAnimNameJump, true); // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚‚ã“ã“ã§å¤‰æ›´
+	//	// ã‚¸ãƒ£ãƒ³ãƒ—åˆé€Ÿã‚’ä¸ãˆã‚‹å‡¦ç†ãªã©ã‚‚ã“ã“ã«æ›¸ã
 	//	Vector3 vel = GetVel();
 	//	vel.y += kJumpForce;
 	//	rigidbody->SetVel(vel);
-	//	return; // ó‘Ô‚ª•Ï‚í‚Á‚½‚Ì‚ÅAˆÈ~‚Ì”»’è‚Í‚µ‚È‚¢
+	//	return; // çŠ¶æ…‹ãŒå¤‰ã‚ã£ãŸã®ã§ã€ä»¥é™ã®åˆ¤å®šã¯ã—ãªã„
 	//}
 
-	// ’nã‚É‚¢‚é‚©‚Â
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ˆ—‚ª–â‘è‚È‚¢‚©‚Â
-	// ˆê’èˆÈã‚ÌƒXƒeƒBƒbƒN“ü—Í‚ª‚ ‚é‚È‚ç
-	// ƒ_ƒbƒVƒ…ó‘Ô‚Ö
+	// åœ°ä¸Šã«ã„ã‚‹ã‹ã¤
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å‡¦ç†ãŒå•é¡Œãªã„ã‹ã¤
+	// ä¸€å®šä»¥ä¸Šã®ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›ãŒã‚ã‚‹ãªã‚‰
+	// ãƒ€ãƒƒã‚·ãƒ¥çŠ¶æ…‹ã¸
 	if (GetPos().y <= kGround && 
 		canChangeState &&
 		(stick.Normalize().Magnitude() >= 0.8f) &&
 		input.IsPress("dash")) {
-		if (_nowUpdateState != &Player::UpdateDash) { // Œ»İƒ_ƒbƒVƒ…‚Å‚È‚¯‚ê‚Î
+		if (_nowUpdateState != &Player::UpdateDash) { // ç¾åœ¨ãƒ€ãƒƒã‚·ãƒ¥ã§ãªã‘ã‚Œã°
 			_nowUpdateState = &Player::UpdateDash;
 			_animator->ChangeAnim(kAnimNameRun, true);
 		}
 		return;
 	}
 
-	// ’nã‚É‚¢‚é‚©‚Â
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ˆ—‚ª–â‘è‚È‚¢‚©‚Â
-	// ƒWƒƒƒ“ƒvó‘Ô‚Å‚È‚¢‚©‚Â
-	// ƒXƒeƒBƒbƒN“ü—Í‚ª‚ ‚ê‚Î
-	// •à‚«ó‘Ô‚Ö
+	// åœ°ä¸Šã«ã„ã‚‹ã‹ã¤
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å‡¦ç†ãŒå•é¡Œãªã„ã‹ã¤
+	// ã‚¸ãƒ£ãƒ³ãƒ—çŠ¶æ…‹ã§ãªã„ã‹ã¤
+	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›ãŒã‚ã‚Œã°
+	// æ­©ãçŠ¶æ…‹ã¸
 	if (GetPos().y <= kGround && 
 		canChangeState &&
 		(stick.Magnitude() != 0.0f)) {
-		if (_nowUpdateState != &Player::UpdateWalk) { // Œ»İ•à‚«‚Å‚È‚¯‚ê‚Î
+		if (_nowUpdateState != &Player::UpdateWalk) { // ç¾åœ¨æ­©ãã§ãªã‘ã‚Œã°
 			_nowUpdateState = &Player::UpdateWalk;
 			_animator->ChangeAnim(kAnimNameWalk, true);
 		}
 		return;
 	}
 
-	// ã‹L‚Ì‚¢‚¸‚ê‚Å‚à‚È‚¢‚©‚Â
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ˆ—‚ª–â‘è‚È‚¯‚ê‚Î
-	// ‘Ò‹@ó‘Ô‚Ö
+	// ä¸Šè¨˜ã®ã„ãšã‚Œã§ã‚‚ãªã„ã‹ã¤
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å‡¦ç†ãŒå•é¡Œãªã‘ã‚Œã°
+	// å¾…æ©ŸçŠ¶æ…‹ã¸
 	if (GetPos().y <= kGround && 
+		canChangeState) {
+		if (_nowUpdateState != &Player::UpdateIdle) {
+			_nowUpdateState = &Player::UpdateIdle;
+			_animator->ChangeAnim(kAnimNameIdle, true);
+		}
+		return;
+	}
+	*/
+
+	Input& input = Input::GetInstance();
+	Vector3 stick = input.GetPadLeftSitck();
+
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ã¦ã„ã‚‹ã‹
+	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒãƒ«ãƒ¼ãƒ—å¯èƒ½ã‹
+	bool isLoopAnim = _animator->IsLoop(_animator->GetCurrentAnimName());
+
+	// ã‚¹ãƒ†ãƒ¼ãƒˆãŒé·ç§»å¯èƒ½ã‹ã©ã†ã‹
+	bool canChangeState = (!isLoopAnim && isEndAnim) || (isLoopAnim);
+
+	// æ”»æ’ƒä¸­ã‹ã©ã†ã‹
+	bool isAttack =
+	(_nowUpdateState == &Player::UpdateAttackFirst ||
+		_nowUpdateState == &Player::UpdateAttackSecond ||
+		_nowUpdateState == &Player::UpdateAttackThird);
+
+	// æ”»æ’ƒé–‹å§‹
+	// æ”»æ’ƒã‚’è¡Œã£ã¦ã„ãªã„ã‹ã¤
+	// æ”»æ’ƒå…¥åŠ›ãŒã‚ã£ãŸã‹ã¤
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¤‰ãˆã‚‰ã‚Œã‚‹çŠ¶æ…‹ãªã‚‰
+	if (!isAttack && input.IsTrigger("action") && canChangeState) {
+		_nowUpdateState = &Player::UpdateAttackFirst;
+		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
+		_hasDerivedAttackInput = false;	// åˆæœŸåŒ–
+		return; // é·ç§»ã—ãŸã‚‰ä»–ã®æ¡ä»¶ã¯ãƒã‚§ãƒƒã‚¯ã—ãªã„
+	}
+
+	// æ”»æ’ƒã‚³ãƒ³ãƒœã®æ´¾ç”Ÿ
+	// æ”»æ’ƒä¸­ã«æ”»æ’ƒé·ç§»å…¥åŠ›ãŒã‚ã‚Œã°ã€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®çµ‚äº†ã‚’å¾…ãŸãšã«é·ç§»
+	if (_hasDerivedAttackInput) {
+		if (_nowUpdateState == &Player::UpdateAttackFirst) {
+			_nowUpdateState = &Player::UpdateAttackSecond;
+			_animator->ChangeAnim(kAnimNameAttackCombo2, false);
+			_hasDerivedAttackInput = false;	// æ¶ˆè²»
+			return;
+		}
+		else if (_nowUpdateState == &Player::UpdateAttackSecond) {
+			_nowUpdateState = &Player::UpdateAttackThird;
+			_animator->ChangeAnim(kAnimNameAttackCombo3, false);
+			_hasDerivedAttackInput = false;	// æ¶ˆè²»
+			return;
+		}
+	}
+
+	// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†å¾Œã®å¾©å¸°å‡¦ç†
+	// æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã§ã‚ã‚Šã€
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ã€
+	// ã‹ã¤æ¬¡ã®æ”»æ’ƒå…¥åŠ›ãŒãªã„å ´åˆ
+	if (isAttack && isEndAnim && !_hasDerivedAttackInput) {
+		// ç§»å‹•å…¥åŠ›ãŒã‚ã‚Œã°Walkã€ãªã‘ã‚Œã°Idleã¸
+		if (stick.Magnitude() != 0.0f) {
+			_nowUpdateState = &Player::UpdateWalk;
+			_animator->ChangeAnim(kAnimNameWalk, true);
+		}
+		else {
+			_nowUpdateState = &Player::UpdateIdle;
+			_animator->ChangeAnim(kAnimNameIdle, true);
+		}
+		return;
+	}
+
+	// ãƒ€ãƒƒã‚·ãƒ¥
+	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ãŒä¸€å®šä»¥ä¸Šå‚¾ã„ã¦ã„ã‚‹ã‹ã¤
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¤‰ãˆã‚‰ã‚Œã‚‹çŠ¶æ…‹ãªã‚‰
+	else if (GetPos().y <= kGround &&
+		canChangeState &&
+		(stick.Normalize().Magnitude() >= 0.8f) &&
+		input.IsPress("dash")) {
+		if (_nowUpdateState != &Player::UpdateDash) {
+			_nowUpdateState = &Player::UpdateDash;
+			_animator->ChangeAnim(kAnimNameRun, true);
+		}
+		return;
+	}
+
+	// æ­©è¡Œ
+	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›ãŒã‚ã‚‹ã‹ã¤
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¤‰ãˆã‚‰ã‚Œã‚‹çŠ¶æ…‹ãªã‚‰
+	else if (GetPos().y <= kGround &&
+		canChangeState &&
+		(stick.Magnitude() != 0.0f)) {
+		if (_nowUpdateState != &Player::UpdateWalk) {
+			_nowUpdateState = &Player::UpdateWalk;
+			_animator->ChangeAnim(kAnimNameWalk, true);
+		}
+		return;
+	}
+
+	// å¾…æ©Ÿ
+	// ãã‚Œä»¥å¤–ã‹ã¤
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¤‰ãˆã‚‰ã‚Œã‚‹çŠ¶æ…‹ãªã‚‰
+	else if (GetPos().y <= kGround &&
 		canChangeState) {
 		if (_nowUpdateState != &Player::UpdateIdle) {
 			_nowUpdateState = &Player::UpdateIdle;
@@ -309,15 +410,21 @@ void Player::CheckStateTransition()
 
 void Player::WeaponUpdate()
 {
-	// è‚Ìs—ñ‚ğ•Ší‚Ìƒ[ƒ‹ƒhs—ñ‚Æ‚·‚é
+	// æ‰‹ã®è¡Œåˆ—ã‚’æ­¦å™¨ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã¨ã™ã‚‹
+	std::wstring handName = L"FrameName";
+	// æ­¦å™¨ã‚’ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ•ãƒ¬ãƒ¼ãƒ ã®ç•ªå·ã‚’æ¤œç´¢
+	int frameIndex = MV1SearchFrame(_animator->GetModelHandle(), handName.c_str());
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãŒæœ‰åŠ¹ã‹ãƒã‚§ãƒƒã‚¯
+	if (frameIndex == -1) {
+		assert(false && "æŒ‡å®šã•ã‚ŒãŸãƒ•ãƒ¬ãƒ¼ãƒ ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ");
+		return;
+	}
+	// æ‰‹ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’å–å¾—
+	Matrix4x4 handWorldMatrix = MV1GetFrameLocalWorldMatrix(
+		_animator->GetModelHandle(),frameIndex);
 
-	// •Ší‚ğƒAƒ^ƒbƒ`‚·‚éƒtƒŒ[ƒ€‚Ì”Ô†‚ğŒŸõ
-	int frameIndex = MV1SearchFrame(_animator->GetModelHandle(), L"FrameName");
-	// •Ší‚ğƒAƒ^ƒbƒ`‚·‚éƒtƒŒ[ƒ€‚Ìƒ[ƒJƒ‹¨ƒ[ƒ‹ƒh•ÏŠ·s—ñ‚ğæ“¾‚·‚é
-	Matrix4x4 frameMatrix = MV1GetFrameLocalWorldMatrix(_animator->GetModelHandle(), frameIndex);
-
-	// ƒtƒŒ[ƒ€‚Ìs—ñ‚ğ“ü‚ê‚é
-	_weapon->Update(frameMatrix);
+	// æ‰‹ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’æ¸¡ã™
+	_weapon->Update(handWorldMatrix);
 }
 
 void Player::UpdateIdle()
@@ -326,9 +433,9 @@ void Player::UpdateIdle()
 	Input& input = Input::GetInstance();
 	Vector3 stick = input.GetPadLeftSitck();
 
-	// “ü—Í‚ª‚ ‚ê‚ÎƒXƒe[ƒg‚ğ•ÏX‚·‚é
+	// å…¥åŠ›ãŒã‚ã‚Œã°ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¤‰æ›´ã™ã‚‹
 	if ((int)stick.x != 0 || (int)stick.z != 0) {
-		// ’Ç‰Á‚Ì“ü—Í‚ª‚ ‚ê‚Îƒ_ƒbƒVƒ…
+		// è¿½åŠ ã®å…¥åŠ›ãŒã‚ã‚Œã°ãƒ€ãƒƒã‚·ãƒ¥
 		if (input.IsPress("dash")) {
 			_animator->ChangeAnim(kAnimNameRun, true);
 			_nowUpdateState = &Player::UpdateDash;
@@ -340,7 +447,7 @@ void Player::UpdateIdle()
 	}
 
 	Vector3 vel = GetVel();
-	// ƒWƒƒƒ“ƒvˆ—
+	// ã‚¸ãƒ£ãƒ³ãƒ—å‡¦ç†
 	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
 		vel.y += kJumpForce;
 		_animator->ChangeAnim(kAnimNameJump, true);
@@ -350,7 +457,7 @@ void Player::UpdateIdle()
 	const float cameraRot = _camera.lock()->GetRotAngleY();
 
 #ifndef USE_QUATERNION
-	// ƒJƒƒ‰‚©‚çŒ©‚½ˆÚ“®‚É•ÏŠ·‚·‚é
+	// ã‚«ãƒ¡ãƒ©ã‹ã‚‰è¦‹ãŸç§»å‹•ã«å¤‰æ›ã™ã‚‹
 	_rotMtx = MatRotateY(cameraRot);
 	vel = VecMultiple(_rotMtx, vel);
 #else
@@ -358,26 +465,26 @@ void Player::UpdateIdle()
 	vel = VecMultiple(ConvQuaternionToMatrix4x4(_quaternion), vel);
 #endif
 
-	// rigidbody‚É•ÒW‚µ‚½ˆÚ“®—Ê‚ğ‘ã“ü
+	// rigidbodyã«ç·¨é›†ã—ãŸç§»å‹•é‡ã‚’ä»£å…¥
 	rigidbody->SetVel(vel);
 #endif // OLD_STATETRANSITION
 
-	// ˆ—‚È‚µ
+	// å‡¦ç†ãªã—
 }
 
 void Player::UpdateWalk()
 {
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	Move(kWalkSpeed);
-	// is•ûŒü‚Ö‚Ì•ûŒü“]Š·ˆ—
+	// é€²è¡Œæ–¹å‘ã¸ã®æ–¹å‘è»¢æ›å‡¦ç†
 	Rotate();
 }
 
 void Player::UpdateDash()
 {
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	Move(kDashSpeed);
-	// is•ûŒü‚Ö‚Ì•ûŒü“]Š·ˆ—
+	// é€²è¡Œæ–¹å‘ã¸ã®æ–¹å‘è»¢æ›å‡¦ç†
 	Rotate();
 }
 
@@ -387,9 +494,9 @@ void Player::UpdateJump()
 	if (GetPos().y <= kGround) {
 		Input& input = Input::GetInstance();
 		Vector3 stick = input.GetPadLeftSitck();
-		// “ü—Í‚ª‚ ‚ê‚ÎƒXƒe[ƒg‚ğ•ÏX‚·‚é
+		// å…¥åŠ›ãŒã‚ã‚Œã°ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¤‰æ›´ã™ã‚‹
 		if ((int)stick.x != 0 || (int)stick.z != 0) {
-			// ’Ç‰Á‚Ì“ü—Í‚ª‚ ‚ê‚Îƒ_ƒbƒVƒ…
+			// è¿½åŠ ã®å…¥åŠ›ãŒã‚ã‚Œã°ãƒ€ãƒƒã‚·ãƒ¥
 			if (input.IsPress("dash")) {
 				_animator->ChangeAnim(kAnimNameRun, true);
 				_nowUpdateState = &Player::UpdateDash;
@@ -406,36 +513,49 @@ void Player::UpdateJump()
 	}
 #endif // OLD_STATETRANSITION
 
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	Move(kDashSpeed);
-	// is•ûŒü‚Ö‚Ì•ûŒü“]Š·ˆ—
+	// é€²è¡Œæ–¹å‘ã¸ã®æ–¹å‘è»¢æ›å‡¦ç†
 	Rotate();
 }
 
 void Player::UpdateAttackFirst()
 {
-	// “ü—Íó•t”ÍˆÍ“à‚ÅUŒ‚“ü—Í‚ª“ü‚ê‚Î
-	// UŒ‚second‚ğ—\–ñ‚·‚é
-	Input& input = Input::GetInstance();
-	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
-	if (!isEndAnim && input.IsTrigger("action")) {
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç¾åœ¨ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’å–å¾—
+	float currentFrame = _animator->GetCurrentAnimFrame();
+	// ç¾åœ¨ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰å…¥åŠ›å—ä»˜æœŸé–“ã‚’å–å¾—
+	const Animator::AnimData & currentAnimData = _animator->FindAnimData(_animator->
+		GetCurrentAnimName());
+	
+	// å…¥åŠ›å—ä»˜æœŸé–“å†…ã‹ã¤ã€æ”»æ’ƒãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã‚‰æ¬¡ã®æ”»æ’ƒã¸æ´¾ç”Ÿå¯èƒ½ã«ã™ã‚‹
+	if (currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
+		currentFrame <= currentAnimData.inputAcceptanceEndFrame &&
+		Input::GetInstance().IsTrigger("action"))
+	{
 		_hasDerivedAttackInput = true;
 	}
 }
 
 void Player::UpdateAttackSecond()
 {
-	// “ü—Íó•t”ÍˆÍ“à‚ÅUŒ‚“ü—Í‚ª“ü‚ê‚Î
-	// UŒ‚third‚ğ—\–ñ‚·‚é
-	Input& input = Input::GetInstance();
-	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
-	if (!isEndAnim && input.IsTrigger("action")) {
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç¾åœ¨ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
+	float currentFrame = _animator->GetCurrentAnimFrame();
+	// ç¾åœ¨ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿(å…¥åŠ›å—ä»˜æœŸé–“å–å¾—ç”¨)
+	const Animator::AnimData & currentAnimData = 
+		_animator->FindAnimData(_animator->GetCurrentAnimName());
+
+	// å…¥åŠ›å—ä»˜æœŸé–“å†…ã‹ã¤ã€æ”»æ’ƒãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã‚‰æ¬¡ã®æ”»æ’ƒã¸æ´¾ç”Ÿå¯èƒ½ã«ã™ã‚‹
+	if (currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
+		currentFrame <= currentAnimData.inputAcceptanceEndFrame &&
+		Input::GetInstance().IsTrigger("action"))
+	{
 		_hasDerivedAttackInput = true;
 	}
 }
 
 void Player::UpdateAttackThird()
 {
+	// æ´¾ç”Ÿã¯ä¸è¦
 }
 
 void Player::UpdateDamage()
@@ -450,17 +570,17 @@ void Player::Move(const float speed)
 {
 	Vector3 dir = {};
 	Vector3 vel = GetVel();
-	Position3 pos = GetPos();	// ˆÚ“®—\’èˆÊ’u
+	Position3 pos = GetPos();	// ç§»å‹•äºˆå®šä½ç½®
 	Input& input = Input::GetInstance();
 	const float cameraRot = _camera.lock()->GetRotAngleY() * -1;
 
-	// ƒXƒeƒBƒbƒN‚É‚æ‚é•½–ÊˆÚ“®
+	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã«ã‚ˆã‚‹å¹³é¢ç§»å‹•
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
 	
 
 #ifdef OLD_STATETRANSITION
 	if (GetPos().y <= kGround) {
-		// ‚à‚µ“ü—Í‚ª‚È‚¢‚©‚ÂˆÚ“®—Ê‚à‚È‚¢‚È‚ç
+		// ã‚‚ã—å…¥åŠ›ãŒãªã„ã‹ã¤ç§»å‹•é‡ã‚‚ãªã„ãªã‚‰
 		if (((int)stick.x == 0 && (int)stick.z == 0) &&
 			vel.SqrMagnitude() < PhysicsData::sleepThreshold) {
 			_animator->ChangeAnim(kAnimNameIdle, true);
@@ -483,13 +603,13 @@ void Player::Move(const float speed)
 #endif // OLD_STATETRANSITION
 
 
-	// “ü—Í‚ª“ü‚Á‚Ä‚¢‚È‚¢‚Å‚àx‚É-0.0f‚ª“ü‚Á‚Ä‚¢‚é
+	// å…¥åŠ›ãŒå…¥ã£ã¦ã„ãªã„æ™‚ã§ã‚‚xã«-0.0fãŒå…¥ã£ã¦ã„ã‚‹
 	dir.x = -stick.x;
 	dir.z = stick.z;
 
 
 #ifdef OLD_STATETRANSITION
-	// ƒWƒƒƒ“ƒvˆ—
+	// ã‚¸ãƒ£ãƒ³ãƒ—å‡¦ç†
 	if (input.IsTrigger("jump") && GetPos().y <= kGround) {
 		vel.y += kJumpForce;
 		_animator->ChangeAnim(kAnimNameJump, true);
@@ -500,9 +620,9 @@ void Player::Move(const float speed)
 	
 	dir.Normalized();
 
-	// ƒJƒƒ‰‚©‚çŒ©‚½ˆÚ“®•ûŒü‚É•ÏŠ·‚·‚é
-	_quaternion = AngleAxis(Vector3Up(), cameraRot);	// Y²‰ñ“]Q‚ğì¬
-	dir = RotateVector3(_quaternion, dir);				// ‰ñ“]Q‚ğ“K—p
+	// ã‚«ãƒ¡ãƒ©ã‹ã‚‰è¦‹ãŸç§»å‹•æ–¹å‘ã«å¤‰æ›ã™ã‚‹
+	_quaternion = AngleAxis(Vector3Up(), cameraRot);	// Yè»¸å›è»¢Qã‚’ä½œæˆ
+	dir = RotateVector3(_quaternion, dir);				// å›è»¢Qã‚’é©ç”¨
 	//_quaternion = ConvMatrix4x4ToQuaternion(MatRotateY(cameraRot));
 	//dir = VecMultiple(ConvQuaternionToMatrix4x4(_quaternion), dir);
 
@@ -515,15 +635,15 @@ void Player::Move(const float speed)
 		vel.y = 0.0f;
 	}
 
-	// rigidbody‚É•ÒW‚µ‚½ˆÚ“®—Ê‚ğ‘ã“ü
+	// rigidbodyã«ç·¨é›†ã—ãŸç§»å‹•é‡ã‚’ä»£å…¥
 	rigidbody->SetVel(vel);
 }
 
 void Player::Rotate() {
 #ifdef USE_STICK
-	// ƒXƒeƒBƒbƒN‚É‚æ‚é•½–ÊˆÚ“®
+	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã«ã‚ˆã‚‹å¹³é¢ç§»å‹•
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
-	// “ü—Í‚ª‚ ‚Á‚½ê‡‚Ì‚İƒLƒƒƒ‰ƒNƒ^[‚ÌŒü‚«‚ğ•ÏX
+	// å…¥åŠ›ãŒã‚ã£ãŸå ´åˆã®ã¿ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®å‘ãã‚’å¤‰æ›´
 	if (stick.x != 0.0f || stick.z != 0.0f) {
 		const float cameraRot = _camera.lock()->GetRotAngleY();
 		float a = atan2f(stick.z, stick.x) + -cameraRot + DX_PI_F * 0.5f;

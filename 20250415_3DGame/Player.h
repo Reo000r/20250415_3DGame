@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Geometry.h"
 #include "Collider.h"
 #include <memory>
@@ -20,7 +20,7 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// Õ“Ë‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+	/// è¡çªã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
 	/// </summary>
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
@@ -28,19 +28,19 @@ public:
 	float GetHitPoint() { return _hitpoint; }
 	
 private:
-	// Update‚ÌStateƒpƒ^[ƒ“
-	// _nowUpdateState‚ª•Ï”‚Å‚ ‚é‚±‚Æ‚ğ•ª‚©‚è‚â‚·‚­‚µ‚Ä‚¢‚é
+	// Updateã®Stateãƒ‘ã‚¿ãƒ¼ãƒ³
+	// _nowUpdateStateãŒå¤‰æ•°ã§ã‚ã‚‹ã“ã¨ã‚’åˆ†ã‹ã‚Šã‚„ã™ãã—ã¦ã„ã‚‹
 	using UpdateFunc_t = void(Player::*)();
 	UpdateFunc_t _nowUpdateState;
 
 private:
 	/// <summary>
-	/// ƒXƒe[ƒg‚Ì‘JˆÚğŒ‚ğŠm”F‚µA•ÏX‰Â”\‚ÈƒXƒe[ƒg‚ª‚ ‚ê‚Î‚»‚ê‚É‘JˆÚ‚·‚é
+	/// ã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»æ¡ä»¶ã‚’ç¢ºèªã—ã€å¤‰æ›´å¯èƒ½ãªã‚¹ãƒ†ãƒ¼ãƒˆãŒã‚ã‚Œã°ãã‚Œã«é·ç§»ã™ã‚‹
 	/// </summary>
 	void CheckStateTransition();
 
 	/// <summary>
-	/// •ŠíXV
+	/// æ­¦å™¨æ›´æ–°
 	/// </summary>
 	void WeaponUpdate();
 
@@ -55,11 +55,11 @@ private:
 	void UpdateDead();
 
 	/// <summary>
-	/// ˆÚ“®ˆ—
+	/// ç§»å‹•å‡¦ç†
 	/// </summary>
 	void Move(const float speed);
 	/// <summary>
-	/// is•ûŒü‚Ö‚Ì•ûŒü“]Š·ˆ—
+	/// é€²è¡Œæ–¹å‘ã¸ã®æ–¹å‘è»¢æ›å‡¦ç†
 	/// </summary>
 	void Rotate();
 
@@ -73,7 +73,7 @@ private:
 	//Matrix4x4 _rotMtx;
 	Quaternion _quaternion;
 
-	// UŒ‚‚Ì”h¶“ü—Í‚ª‚ ‚Á‚½‚©‚Ç‚¤‚©
+	// æ”»æ’ƒã®æ´¾ç”Ÿå…¥åŠ›ãŒã‚ã£ãŸã‹ã©ã†ã‹
 	bool  _hasDerivedAttackInput;
 
 	float _hitpoint;

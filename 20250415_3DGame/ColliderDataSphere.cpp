@@ -1,4 +1,4 @@
-#include "ColliderDataSphere.h"
+﻿#include "ColliderDataSphere.h"
 
 ColliderDataSphere::ColliderDataSphere(bool isTrigger, float rad) :
 	ColliderData(PhysicsData::ColliderKind::Sphere, isTrigger),

@@ -1,10 +1,10 @@
-#include "SceneController.h"
+ï»¿#include "SceneController.h"
 //#include "SceneTitle.h"
 #include "SceneGamePlay.h"
 
 SceneController::SceneController()
 {
-	// ˆê”ÔÅ‰‚ÌƒV[ƒ“‚¾‚¯‚ÍŠ„‚è“–‚Ä‚Ä‚¨‚­
+	// ä¸€ç•ªæœ€åˆã®ã‚·ãƒ¼ãƒ³ã ã‘ã¯å‰²ã‚Šå½“ã¦ã¦ãŠã
 	ChangeScene(std::make_shared<SceneGamePlay>());
 }
 
@@ -16,14 +16,14 @@ SceneController& SceneController::GetInstance()
 
 void SceneController::Update()
 {
-	// ˆê”Ôã‚ÌUpdate‚Ì‚İÀs
-	// ‰º‘w‚ÌUpdate‚Í–°‚Á‚Ä‚¨‚¢‚Ä‚à‚ç‚¤
+	// ä¸€ç•ªä¸Šã®Updateã®ã¿å®Ÿè¡Œ
+	// ä¸‹å±¤ã®Updateã¯çœ ã£ã¦ãŠã„ã¦ã‚‚ã‚‰ã†
 	_scenes.back()->Update();
 }
 
 void SceneController::Draw()
 {
-	// Draw‚Í‘S‚ÄÀs
+	// Drawã¯å…¨ã¦å®Ÿè¡Œ
 	for (auto& scene : _scenes)
 	{
 		scene->Draw();
@@ -34,12 +34,12 @@ void SceneController::ChangeScene(std::shared_ptr<SceneBase> scene)
 {
 	if (_scenes.empty())
 	{
-		// ‹ó‚¾‚Á‚½ê‡‚Íæ“ª‚É’u‚­
+		// ç©ºã ã£ãŸå ´åˆã¯å…ˆé ­ã«ç½®ã
 		_scenes.push_back(scene);
 	}
 	else
 	{
-		// ‚È‚É‚©‚ ‚éê‡‚ÍÅŒã‚Ì—v‘f‚ğ’u‚«Š·‚¦‚é
+		// ãªã«ã‹ã‚ã‚‹å ´åˆã¯æœ€å¾Œã®è¦ç´ ã‚’ç½®ãæ›ãˆã‚‹
 		_scenes.back() = scene;
 	}
 	scene->Init();
@@ -47,22 +47,22 @@ void SceneController::ChangeScene(std::shared_ptr<SceneBase> scene)
 
 void SceneController::PushScene(std::shared_ptr<SceneBase> scene)
 {
-	// ÅŒã”ö‚É’Ç‰Á
+	// æœ€å¾Œå°¾ã«è¿½åŠ 
 	_scenes.push_back(scene);
 
-	// ‰Šú‰»ˆ—
+	// åˆæœŸåŒ–å‡¦ç†
 	scene->Init();
 }
 
 void SceneController::PopScene()
 {
-	// Às’†‚ÌƒV[ƒ“‚ª1‚ÂˆÈ‰º‚È‚ç
+	// å®Ÿè¡Œä¸­ã®ã‚·ãƒ¼ãƒ³ãŒ1ã¤ä»¥ä¸‹ãªã‚‰
 	if (_scenes.size() <= 1)
 	{
-		// Às‚·‚×‚«ƒV[ƒ“‚ª‚È‚­‚È‚é‚½‚ß‹–‰Â‚µ‚È‚¢
+		// å®Ÿè¡Œã™ã¹ãã‚·ãƒ¼ãƒ³ãŒãªããªã‚‹ãŸã‚è¨±å¯ã—ãªã„
 		return;
 	}
 
-	// ÅŒã”ö‚ğæ‚èœ‚­
+	// æœ€å¾Œå°¾ã‚’å–ã‚Šé™¤ã
 	_scenes.pop_back();
 }

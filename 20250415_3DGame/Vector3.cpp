@@ -1,7 +1,7 @@
-#include "Vector3.h"
+ï»¿#include "Vector3.h"
 #include "Vector2.h"
 
-#include <cmath>		// ŠeíŒvZ—p
+#include <cmath>		// å„ç¨®è¨ˆç®—ç”¨
 
 #include <DxLib.h>
 
@@ -34,7 +34,7 @@ Vector3 Vector3::operator*(const float& m) const {
 Vector3 Vector3::operator/(const float& d) const {
 	if (d == 0.0f) {
 #ifdef USE_ASSERT_GEOMETRY
-		assert(false && "0œZ");
+		assert(false && "0é™¤ç®—");
 #endif // USE_ASSERT_GEOMETRY
 		return Vector3(0.0f, 0.0f, 0.0f);
 	}
@@ -62,7 +62,7 @@ void Vector3::operator*=(const float& m) {
 void Vector3::operator/=(const float& d) {
 	if (d == 0.0f) {
 #ifdef USE_ASSERT_GEOMETRY
-		assert(false && "0œZ");
+		assert(false && "0é™¤ç®—");
 #endif // USE_ASSERT_GEOMETRY
 		x = 0.0f;
 		y = 0.0f;
@@ -104,7 +104,7 @@ float Vector3::Magnitude(const Vector3& v) const {
 
 float Vector3::Magnitude(const float& x_, const float& y_, const float& z_) const {
 	return sqrtf(SqrMagnitude(x_, y_, z_));
-	// •ª‰ğ«
+	// åˆ†è§£â†“
 	//float temp = SqrMagnitude(Vector3(x_,y_,z_));
 	//float abs = sqrtf(temp);
 	//return abs;
@@ -124,7 +124,7 @@ float Vector3::SqrMagnitude(const float& x_, const float& y_, const float& z_) c
 
 float Vector3::Distance(const Vector3& a, const Vector3& b) const {
 	return sqrtf(SqrMagnitude(a - b));
-	// •ª‰ğ«
+	// åˆ†è§£â†“
 	//float fTemp = SqrMagnitude(Vector3(a - b));
 	//float abs = sqrtf(fTemp);
 	//return abs;
@@ -138,7 +138,7 @@ Vector3 Vector3::Normalize() const {
 	float abs = sqrtf(SqrMagnitude());
 	if (abs == 0.0f) {
 		//#ifdef USE_ASSERT_GEOMETRY
-		//		assert(false && "0œZ");
+		//		assert(false && "0é™¤ç®—");
 		//#endif // USE_ASSERT_GEOMETRY
 		return *this;
 	}
@@ -152,9 +152,9 @@ void Vector3::VecScale(const float& scale) {
 }
 
 Vector3 Lerp(const Vector3& va, const Vector3& vb, const float& t) {
-	// ’·‚³‚ª0-1‚Å‚Í‚È‚¢‚È‚ç‘Š‰‚µ‚¢’l‚ğ•Ô‚·
-	if (t < 0.0f) return va;	// ’Z‚¢ê‡
-	if (t > 1.0f) return vb;	// ’·‚¢ê‡
+	// é•·ã•ãŒ0-1ã§ã¯ãªã„ãªã‚‰ç›¸å¿œã—ã„å€¤ã‚’è¿”ã™
+	if (t < 0.0f) return va;	// çŸ­ã„å ´åˆ
+	if (t > 1.0f) return vb;	// é•·ã„å ´åˆ
 	return va + (vb - va) * t;
 }
 
@@ -185,9 +185,9 @@ Vector3 operator%(const Vector3& va, const Vector3& vb) {
 
 Vector3 Reflect(const Vector3 v, Vector3 normal)
 {
-	// ³‹K‰»‚³‚ê‚Ä‚¢‚È‚¢ê‡‚É”õ‚¦‚Ä³‹K‰»
+	// æ­£è¦åŒ–ã•ã‚Œã¦ã„ãªã„å ´åˆã«å‚™ãˆã¦æ­£è¦åŒ–
 	normal.Normalized();
-	// ”½ËƒxƒNƒgƒ‹‚ğŒvZ
+	// åå°„ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
 	return v - normal * 2.0f * Dot(v, normal);
 }
 

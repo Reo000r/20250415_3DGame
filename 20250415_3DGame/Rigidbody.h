@@ -1,15 +1,15 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Vector3.h"
 
 /// <summary>
-/// •¨—AÕ“Ë”»’è‚É•K—v‚Èƒf[ƒ^‚Ì‰ò
+/// ç‰©ç†ã€è¡çªåˆ¤å®šã«å¿…è¦ãªãƒ‡ãƒ¼ã‚¿ã®å¡Š
 /// </summary>
 class Rigidbody
 {
 public:
 	Rigidbody();
-	void Init(bool useGravity_ = false);	// ‰Šú‰»
+	void Init(bool useGravity_ = false);	// åˆæœŸåŒ–
 
 	// getter
 	const Position3& GetPos() const { return pos; }

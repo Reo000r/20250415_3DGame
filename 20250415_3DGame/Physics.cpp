@@ -1,4 +1,4 @@
-#include "Physics.h"
+ï»¿#include "Physics.h"
 #include "Collider.h"
 #include "ColliderData.h"
 #include "ColliderDataSphere.h"
@@ -12,82 +12,82 @@
 
 void Physics::Entry(std::shared_ptr<Collider> collider)
 {
-	// (Œ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚Íend)
+	// (è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯end)
 	auto it = (
 		std::find(
 			_colliders.begin(),
 			_colliders.end(),
 			collider));
-	// Œ©‚Â‚©‚ç‚È‚¯‚ê‚Î(“o˜^‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î)
+	// è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°(ç™»éŒ²ã•ã‚Œã¦ã„ãªã‘ã‚Œã°)
 	if (it == _colliders.end())
 	{
-		_colliders.emplace_back(collider);	// “o˜^
+		_colliders.emplace_back(collider);	// ç™»éŒ²
 	}
-	// Šù‚É“o˜^‚³‚ê‚Ä‚¢‚½‚çassert
+	// æ—¢ã«ç™»éŒ²ã•ã‚Œã¦ã„ãŸã‚‰assert
 	else
 	{
-		assert(false && "w’è‚Ìcollider‚Í“o˜^Ï");
+		assert(false && "æŒ‡å®šã®colliderã¯ç™»éŒ²æ¸ˆ");
 	}
 }
 
 void Physics::Release(std::shared_ptr<Collider> collider)
 {
-	// “o˜^‰ğœ(eraseif —vC++20)
+	// ç™»éŒ²è§£é™¤(eraseif è¦C++20)
 	auto count = std::erase_if(
 		_colliders,
 		[collider](std::shared_ptr<Collider> target) { return target == collider; });
-	// “o˜^‚³‚ê‚Ä‚È‚©‚Á‚½‚çassert
+	// ç™»éŒ²ã•ã‚Œã¦ãªã‹ã£ãŸã‚‰assert
 	if (count <= 0)
 	{
-		assert(false && "w’è‚Ìcollider‚Í–¢“o˜^");
+		assert(false && "æŒ‡å®šã®colliderã¯æœªç™»éŒ²");
 	}
 }
 
 void Physics::Update()
 {
-	// ˆÚ“®
+	// ç§»å‹•
 	for (auto& collider : _colliders) {
-		// ˆÊ’u‚ÉˆÚ“®—Ê‚ğ‘«‚·
+		// ä½ç½®ã«ç§»å‹•é‡ã‚’è¶³ã™
 		Position3 pos = collider->rigidbody->GetPos();
 		Vector3 vel = collider->rigidbody->GetVel();
 
-		// Œ¸‘¬—Ê‚ğŠ|‚¯‚é
+		// æ¸›é€Ÿé‡ã‚’æ›ã‘ã‚‹
 		vel.x *= PhysicsData::decelerationRate * 0.5f;
 		vel.z *= PhysicsData::decelerationRate * 0.5f;
 
-		// d—Í‚ğ—˜—p‚·‚é‚È‚çd—Í‚ğ—^‚¦‚é
+		// é‡åŠ›ã‚’åˆ©ç”¨ã™ã‚‹ãªã‚‰é‡åŠ›ã‚’ä¸ãˆã‚‹
 		if (collider->rigidbody->UseGravity()) {
 			vel += PhysicsData::Gravity;
 
-			// Å‘åd—Í‰Á‘¬“x‚æ‚è¬‚³‚©‚Á‚½‚ç•â³
-			// (d—Í‚Íƒ}ƒCƒiƒX‚Ì‚½‚ß)
+			// æœ€å¤§é‡åŠ›åŠ é€Ÿåº¦ã‚ˆã‚Šå°ã•ã‹ã£ãŸã‚‰è£œæ­£
+			// (é‡åŠ›ã¯ãƒã‚¤ãƒŠã‚¹ã®ãŸã‚)
 			if (vel.y < PhysicsData::MaxGravityAccel.y) {
 				vel.y = PhysicsData::MaxGravityAccel.y;
 			}
 		}
 
-		// ˆÚ“®—ÊØ‚èÌ‚Äˆ—
+		// ç§»å‹•é‡åˆ‡ã‚Šæ¨ã¦å‡¦ç†
 		Vector3 velXZ = vel;
 		velXZ.y = 0.0f;
-		// ˆÚ“®‚µ‚Ä‚¢‚È‚¢‚Æ‚İ‚È‚³‚ê‚éè‡’l‚æ‚è‚à¬‚³‚¯‚ê‚Î
+		// ç§»å‹•ã—ã¦ã„ãªã„ã¨ã¿ãªã•ã‚Œã‚‹é–¾å€¤ã‚ˆã‚Šã‚‚å°ã•ã‘ã‚Œã°
 		if (vel.Magnitude() < PhysicsData::sleepThreshold) {
 			vel = {};
 		}
-		// XZ‚Ì‚İ‚ğŒ©‚Äè‡’l‚æ‚è‚à¬‚³‚¯‚ê‚Î
+		// XZã®ã¿ã‚’è¦‹ã¦é–¾å€¤ã‚ˆã‚Šã‚‚å°ã•ã‘ã‚Œã°
 		else if (velXZ.Magnitude() < PhysicsData::sleepThreshold) {
 			vel.x = vel.z = 0.0f;
 		}
 
-		// ‚à‚Æ‚à‚Æ‚Ìî•ñA—\’èî•ñ‚ğƒfƒoƒbƒO•\¦
+		// ã‚‚ã¨ã‚‚ã¨ã®æƒ…å ±ã€äºˆå®šæƒ…å ±ã‚’ãƒ‡ãƒãƒƒã‚°è¡¨ç¤º
 #if _DEBUG
-		// ‹…
+		// çƒ
 		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
 		{
 			auto sphereData = std::static_pointer_cast<ColliderDataSphere>(collider->colliderData);
 			float radius = sphereData->_radius;
 			DebugDraw::GetInstance().DrawSphere(pos, radius, 0xff00ff);
 		}
-		// ƒJƒvƒZƒ‹
+		// ã‚«ãƒ—ã‚»ãƒ«
 		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule)
 		{
 			auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(collider->colliderData);
@@ -101,19 +101,19 @@ void Physics::Update()
 		}
 #endif
 
-		// —\’èˆÊ’uAˆÚ“®—Êİ’è
+		// äºˆå®šä½ç½®ã€ç§»å‹•é‡è¨­å®š
 		Position3 nextPos = pos + vel;
 		collider->rigidbody->SetVel(vel);
 		collider->nextPos = nextPos;
 	}
 
-	// “–‚½‚è”»’èƒ`ƒFƒbƒNinextPosw’èj
+	// å½“ãŸã‚Šåˆ¤å®šãƒã‚§ãƒƒã‚¯ï¼ˆnextPosæŒ‡å®šï¼‰
 	std::list<OnCollideInfo> onCollideInfo = CheckCollide();
 
-	// ˆÊ’uŠm’è
+	// ä½ç½®ç¢ºå®š
 	FixPosition();
 
-	// “–‚½‚è’Ê’m
+	// å½“ãŸã‚Šé€šçŸ¥
 	for (auto& info : onCollideInfo)
 	{
 		info.owner->OnCollide(info.colider);
@@ -123,19 +123,19 @@ void Physics::Update()
 std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 {
 	std::list<OnCollideInfo> onCollideInfo;
-	// Õ“Ë’Ê’mAƒ|ƒWƒVƒ‡ƒ“•â³
+	// è¡çªé€šçŸ¥ã€ãƒã‚¸ã‚·ãƒ§ãƒ³è£œæ­£
 	bool doCheck = true;
-	int	checkCount = 0;	// ƒ`ƒFƒbƒN‰ñ”
+	int	checkCount = 0;	// ãƒã‚§ãƒƒã‚¯å›æ•°
 	while (doCheck) {
 		doCheck = false;
 		++checkCount;
 
-		// 2dƒ‹[ƒv‚Å‘SƒIƒuƒWƒFƒNƒg“–‚½‚è”»’è
-		// d‚¢‚Ì‚Å‹ß‚¢ƒIƒuƒWƒFƒNƒg“¯m‚Ì‚İ“–‚½‚è”»’è‚·‚é‚È‚ÇH•v‚ª‚¢‚é
+		// 2é‡ãƒ«ãƒ¼ãƒ—ã§å…¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå½“ãŸã‚Šåˆ¤å®š
+		// é‡ã„ã®ã§è¿‘ã„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŒå£«ã®ã¿å½“ãŸã‚Šåˆ¤å®šã™ã‚‹ãªã©å·¥å¤«ãŒã„ã‚‹
 		for (auto& objA : _colliders) {
 			for (auto& objB : _colliders) {
 				if (objA != objB) {
-					// ‚Ô‚Â‚©‚Á‚Ä‚¢‚ê‚Î
+					// ã¶ã¤ã‹ã£ã¦ã„ã‚Œã°
 					if (IsCollide(objA, objB)) {
 						auto priorityA = objA->GetPriority();
 						auto priorityB = objB->GetPriority();
@@ -143,25 +143,25 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 						std::shared_ptr<Collider> primary = objA;
 						std::shared_ptr<Collider> secondary = objB;
 
-						// ‚Ç‚¿‚ç‚àƒgƒŠƒK[‚Å‚È‚¯‚ê‚ÎŸ–Ú•WˆÊ’uC³
-						// (‚Ç‚¿‚ç‚©‚ªƒgƒŠƒK[‚È‚ç•â³ˆ—‚ğ”ò‚Î‚·)
+						// ã©ã¡ã‚‰ã‚‚ãƒˆãƒªã‚¬ãƒ¼ã§ãªã‘ã‚Œã°æ¬¡ç›®æ¨™ä½ç½®ä¿®æ­£
+						// (ã©ã¡ã‚‰ã‹ãŒãƒˆãƒªã‚¬ãƒ¼ãªã‚‰è£œæ­£å‡¦ç†ã‚’é£›ã°ã™)
 						bool isTriggerAorB = objA->colliderData->IsTrigger() || objB->colliderData->IsTrigger();
 						if (!isTriggerAorB) {
-							// ˆÚ“®—Dæ“x‚ğ”š‚É’¼‚µ‚½‚Æ‚«‚É‚‚¢•û‚ğˆÚ“®
+							// ç§»å‹•å„ªå…ˆåº¦ã‚’æ•°å­—ã«ç›´ã—ãŸã¨ãã«é«˜ã„æ–¹ã‚’ç§»å‹•
 							if (priorityA > priorityB) {
 								primary = objB;
 								secondary = objA;
 							}
-							// ˆÊ’u•â³‚ğs‚¤
-							// priority‚ª“¯‚¶‚¾‚Á‚½ê‡‚Í—¼•û‰Ÿ‚µ–ß‚·
+							// ä½ç½®è£œæ­£ã‚’è¡Œã†
+							// priorityãŒåŒã˜ã ã£ãŸå ´åˆã¯ä¸¡æ–¹æŠ¼ã—æˆ»ã™
 							FixNextPosition(primary, secondary, (priorityA == priorityB));
 						}
 
-						// Õ“Ë’Ê’mî•ñ‚ÌXV
+						// è¡çªé€šçŸ¥æƒ…å ±ã®æ›´æ–°
 						bool hasPrimaryInfo = false;
 						bool hasSecondaryInfo = false;
 						for (const auto& item : onCollideInfo) {
-							// Šù‚É’Ê’mƒŠƒXƒg‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚½‚çŒÄ‚Î‚È‚¢
+							// æ—¢ã«é€šçŸ¥ãƒªã‚¹ãƒˆã«å«ã¾ã‚Œã¦ã„ãŸã‚‰å‘¼ã°ãªã„
 							if (item.owner == primary) {
 								hasPrimaryInfo = true;
 							}
@@ -170,15 +170,15 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 							}
 						}
 						if (!hasPrimaryInfo) {
-							// MEMO:(À‘Ìì‚Á‚Ä“ü‚ê‚é‚æ‚è‚±‚Á‚¿‚Ì•û‚ª‘¬‚»‚¤)
+							// MEMO:(å®Ÿä½“ä½œã£ã¦å…¥ã‚Œã‚‹ã‚ˆã‚Šã“ã£ã¡ã®æ–¹ãŒé€Ÿãã†)
 							onCollideInfo.push_back({ primary, secondary });
 						}
 						if (!hasSecondaryInfo) {
 							onCollideInfo.push_back({ secondary, primary });
 						}
 
-						// ˆê“x‚Å‚àƒqƒbƒg+•â³‚µ‚½‚çÕ“Ë”»’è‚Æ•â³‚â‚è‚È‚¨‚µ
-						if (!isTriggerAorB) {	// •Ğ•û‚ªƒgƒŠƒK[‚È‚çƒqƒbƒg‚Æ‚è‚È‚¨‚³‚È‚¢
+						// ä¸€åº¦ã§ã‚‚ãƒ’ãƒƒãƒˆ+è£œæ­£ã—ãŸã‚‰è¡çªåˆ¤å®šã¨è£œæ­£ã‚„ã‚ŠãªãŠã—
+						if (!isTriggerAorB) {	// ç‰‡æ–¹ãŒãƒˆãƒªã‚¬ãƒ¼ãªã‚‰ãƒ’ãƒƒãƒˆã¨ã‚ŠãªãŠã•ãªã„
 							doCheck = true;
 						}
 						break;
@@ -190,10 +190,10 @@ std::list<Physics::OnCollideInfo> Physics::CheckCollide() const
 			}
 		}
 
-		// –³ŒÀƒ‹[ƒv”ğ‚¯
+		// ç„¡é™ãƒ«ãƒ¼ãƒ—é¿ã‘
 		if (checkCount > PhysicsData::kCheckCollideMaxCount && doCheck) {
 #if _DEBUG
-			//printfDx("“–‚½‚è”»’èƒ`ƒFƒbƒN‰ñ”‚ªÅ‘å”(%d)‚ğ’´‚¦‚½\n",
+			//printfDx("å½“ãŸã‚Šåˆ¤å®šãƒã‚§ãƒƒã‚¯å›æ•°ãŒæœ€å¤§æ•°(%d)ã‚’è¶…ãˆãŸ\n",
 			//	PhysicsData::kCheckCollideMaxCount);
 #endif
 			break;
@@ -206,98 +206,98 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 {
 	bool isHit = false;
 
-	// Collider‚Ìí—Ş‚É‚æ‚Á‚ÄA“–‚½‚è”»’è‚ğ•ª‚¯‚é
+	// Colliderã®ç¨®é¡ã«ã‚ˆã£ã¦ã€å½“ãŸã‚Šåˆ¤å®šã‚’åˆ†ã‘ã‚‹
 	auto aKind = objA->colliderData->GetKind();
 	auto bKind = objB->colliderData->GetKind();
 
 	auto aTag = objA->GetTag();
 	auto bTag = objB->GetTag();
 
-	// ‚Ç‚¿‚ç‚©‚ÌƒIƒuƒWƒFƒNƒg‚ª‘Šè‚Ìƒ^ƒO‚ğ–³‹‚·‚éİ’è‚É‚È‚Á‚Ä‚¢‚½‚çreturn
+	// ã©ã¡ã‚‰ã‹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒç›¸æ‰‹ã®ã‚¿ã‚°ã‚’ç„¡è¦–ã™ã‚‹è¨­å®šã«ãªã£ã¦ã„ãŸã‚‰return
 	if (objA->colliderData->IsThroughTarget(bTag) ||
 		objB->colliderData->IsThroughTarget(aTag)) return false;
 
-	// ‹…“¯m
+	// çƒåŒå£«
 	if (aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Sphere)
 	{
 		auto atob = objB->nextPos - objA->nextPos;
 		auto atobLength = atob.Magnitude();
 
-		// ‚¨Œİ‚¢‚Ì‹——£‚ªA‚»‚ê‚¼‚ê‚Ì”¼Œa‚ğ‘«‚µ‚½‚à‚Ì‚æ‚è¬‚³‚¯‚ê‚Î“–‚½‚é
+		// ãŠäº’ã„ã®è·é›¢ãŒã€ãã‚Œãã‚Œã®åŠå¾„ã‚’è¶³ã—ãŸã‚‚ã®ã‚ˆã‚Šå°ã•ã‘ã‚Œã°å½“ãŸã‚‹
 		auto objAColliderData = std::static_pointer_cast<ColliderDataSphere>(objA->colliderData);
 		auto objBColliderData = std::static_pointer_cast<ColliderDataSphere>(objB->colliderData);
 		isHit = (atobLength < objAColliderData->_radius + objBColliderData->_radius);
 	}
-	// ƒJƒvƒZƒ‹“¯m
+	// ã‚«ãƒ—ã‚»ãƒ«åŒå£«
 	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
 	{
 		auto capsuleA = std::static_pointer_cast<ColliderDataCapsule>(objA->colliderData);
 		auto capsuleB = std::static_pointer_cast<ColliderDataCapsule>(objB->colliderData);
 		
-		// ƒJƒvƒZƒ‹A‚Ìü•ª‚Æ”¼Œa
+		// ã‚«ãƒ—ã‚»ãƒ«Aã®ç·šåˆ†ã¨åŠå¾„
 		Vector3 startA = capsuleA->GetStartPos(objA->nextPos);
 		Vector3 endA = capsuleA->GetEndPos(objA->nextPos);
 		float radiusA = capsuleA->_radius;
 		
-		// ƒJƒvƒZƒ‹B‚Ìü•ª‚Æ”¼Œa
+		// ã‚«ãƒ—ã‚»ãƒ«Bã®ç·šåˆ†ã¨åŠå¾„
 		Vector3 startB = capsuleB->GetStartPos(objB->nextPos);
 		Vector3 endB = capsuleB->GetEndPos(objB->nextPos);
 		float radiusB = capsuleB->_radius;
 		
-		// 2‚Â‚Ìü•ª‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é
+		// 2ã¤ã®ç·šåˆ†ã®æœ€è¿‘æ¥ç‚¹ã‚’æ±‚ã‚ã‚‹
 		Vector3 pA, pB;
 		ClosestPointSegments(startA, endA, startB, endB, pA, pB);
 
-		// Å‹ßÚ“_ŠÔ‚Ì‹——£‚Ì2æ‚ğŒvZ
+		// æœ€è¿‘æ¥ç‚¹é–“ã®è·é›¢ã®2ä¹—ã‚’è¨ˆç®—
 		float distSq = (pA - pB).SqrMagnitude();
 		float radSum = radiusA + radiusB;
 		
-		// Å‹ßÚ“_ŠÔ‚Ì‹——£‚ªA”¼Œa‚Ì‡Œv‚æ‚è¬‚³‚¢‚©‚Ç‚¤‚©‚ÅÕ“Ë‚ğ”»’è
+		// æœ€è¿‘æ¥ç‚¹é–“ã®è·é›¢ãŒã€åŠå¾„ã®åˆè¨ˆã‚ˆã‚Šå°ã•ã„ã‹ã©ã†ã‹ã§è¡çªã‚’åˆ¤å®š
 		isHit = distSq < (radSum * radSum);
 	}
-	// ‹…‚ÆƒJƒvƒZƒ‹
+	// çƒã¨ã‚«ãƒ—ã‚»ãƒ«
 	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) || 
 			(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
 	{
-		// ‹…‚ÆƒJƒvƒZƒ‹‚ğ”»’è‚·‚é
+		// çƒã¨ã‚«ãƒ—ã‚»ãƒ«ã‚’åˆ¤å®šã™ã‚‹
 		std::shared_ptr<Collider> sphereObj;
 		std::shared_ptr<Collider> capsuleObj;
-		// objA‚ª‹…‚Å‚ ‚é‚©‚ğƒ`ƒFƒbƒN
+		// objAãŒçƒã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 		if (aKind == PhysicsData::ColliderKind::Sphere) {
 			sphereObj = objA;
 			capsuleObj = objB;
 		}
-		// ‚Å‚È‚¯‚ê‚ÎobjA‚ÍƒJƒvƒZƒ‹AobjB‚ª‹…
+		// ã§ãªã‘ã‚Œã°objAã¯ã‚«ãƒ—ã‚»ãƒ«ã€objBãŒçƒ
 		else {
 			sphereObj = objB;
 			capsuleObj = objA;
 		}
 
-		// ‚»‚ê‚¼‚ê‚ÌƒRƒ‰ƒCƒ_[î•ñ‚ğæ“¾
+		// ãã‚Œãã‚Œã®ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼æƒ…å ±ã‚’å–å¾—
 		auto sphereData = std::static_pointer_cast<ColliderDataSphere>(sphereObj->colliderData);
 		auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(capsuleObj->colliderData);
 		
-		// ‹…‚Ìî•ñ‚ğæ“¾
+		// çƒã®æƒ…å ±ã‚’å–å¾—
 		Vector3 sphereCenter = sphereObj->nextPos;
 		float sphereRadius = sphereData->_radius;
 		
-		// ƒJƒvƒZƒ‹‚Ìî•ñ‚ğæ“¾
+		// ã‚«ãƒ—ã‚»ãƒ«ã®æƒ…å ±ã‚’å–å¾—
 		Vector3 capsuleStart = capsuleData->GetStartPos(capsuleObj->nextPos);
 		Vector3 capsuleEnd = capsuleData->GetEndPos(capsuleObj->nextPos);
 		float capsuleRadius = capsuleData->_radius;
 		
-		// “_‚Æü•ª‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é
+		// ç‚¹ã¨ç·šåˆ†ã®æœ€è¿‘æ¥ç‚¹ã‚’æ±‚ã‚ã‚‹
 		Vector3 closestPointOnCapsuleAxis = 
 			ClosestPointPointAndSegment(
 				sphereCenter, 
 				capsuleStart, capsuleEnd);
 		
-		// Å‹ßÚ“_ŠÔ‚Ì‹——£‚Ì2æ‚ğŒvZ
+		// æœ€è¿‘æ¥ç‚¹é–“ã®è·é›¢ã®2ä¹—ã‚’è¨ˆç®—
 		float distSq = (sphereCenter - closestPointOnCapsuleAxis).SqrMagnitude();
-		// ”¼Œa‚Ì‡Œv‚ğŒvZ
+		// åŠå¾„ã®åˆè¨ˆã‚’è¨ˆç®—
 		float radSum = sphereRadius + capsuleRadius;
 		
-		// ‹——£‚ª”¼Œa‚Ì‡Œv‚æ‚è¬‚³‚¢‚©”»’è
+		// è·é›¢ãŒåŠå¾„ã®åˆè¨ˆã‚ˆã‚Šå°ã•ã„ã‹åˆ¤å®š
 		isHit = distSq < (radSum * radSum);
 	}
 
@@ -306,149 +306,149 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 
 void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr<Collider> secondary, bool isMutualPushback) const
 {
-	// collidable‚Ìí—Ş‚É‚æ‚Á‚ÄA“–‚½‚è”»’è‚ğ•ª‚¯‚é
+	// collidableã®ç¨®é¡ã«ã‚ˆã£ã¦ã€å½“ãŸã‚Šåˆ¤å®šã‚’åˆ†ã‘ã‚‹
 	auto aKind = primary->colliderData->GetKind();
 	auto bKind = secondary->colliderData->GetKind();
 
-	// ‹…“¯m
+	// çƒåŒå£«
 	if (aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Sphere)
 	{
-		// “–‚½‚è”»’èƒf[ƒ^æ“¾
+		// å½“ãŸã‚Šåˆ¤å®šãƒ‡ãƒ¼ã‚¿å–å¾—
 		auto priColliderData = std::static_pointer_cast<ColliderDataSphere>(primary->colliderData);
 		auto secColliderData = std::static_pointer_cast<ColliderDataSphere>(secondary->colliderData);
 
-		// ‰Ÿ‚µ–ß‚µ•ûŒü‚ÌŒˆ’è
-		// secondary‚©‚çprimary‚ÖŒü‚©‚¤ƒxƒNƒgƒ‹‚ğŒvZ‚µA³‹K‰»‚·‚é
+		// æŠ¼ã—æˆ»ã—æ–¹å‘ã®æ±ºå®š
+		// secondaryã‹ã‚‰primaryã¸å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—ã—ã€æ­£è¦åŒ–ã™ã‚‹
 		Vector3 pushBackVec = primary->nextPos - secondary->nextPos;
-		// ‹——£‚ªƒ[ƒ‚É‹ß‚¢ê‡‚ÍA‰Ÿ‚µ–ß‚µ•ûŒü‚ª•s’è‚É‚È‚é‚½‚ßˆ—‚ğƒXƒLƒbƒv
+		// è·é›¢ãŒã‚¼ãƒ­ã«è¿‘ã„å ´åˆã¯ã€æŠ¼ã—æˆ»ã—æ–¹å‘ãŒä¸å®šã«ãªã‚‹ãŸã‚å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
 		if (pushBackVec.SqrMagnitude() < PhysicsData::kZeroTolerance) {
 			return;
 		}
 		pushBackVec.Normalized();
 
-		// ‰Ÿ‚µ–ß‚µ‹——£(ŠÑ’Ê[“x)‚ÌŒvZ
-		// Œ»İ‚Ì’†SŠÔ‚Ì‹——£‚ğŒvZ
+		// æŠ¼ã—æˆ»ã—è·é›¢(è²«é€šæ·±åº¦)ã®è¨ˆç®—
+		// ç¾åœ¨ã®ä¸­å¿ƒé–“ã®è·é›¢ã‚’è¨ˆç®—
 		float currentDist = (primary->nextPos - secondary->nextPos).Magnitude();
-		// 2‚Â‚Ì‹…‚Ì”¼Œa‚Ì‡Œv
+		// 2ã¤ã®çƒã®åŠå¾„ã®åˆè¨ˆ
 		float radiusSum = priColliderData->_radius + secColliderData->_radius;
-		// ŠÑ’Ê[“x‚ÉƒIƒtƒZƒbƒg‚ğ‰Á‚¦‚½AÅI“I‚È‰Ÿ‚µ–ß‚µ‹——£‚ğŒvZ
+		// è²«é€šæ·±åº¦ã«ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’åŠ ãˆãŸã€æœ€çµ‚çš„ãªæŠ¼ã—æˆ»ã—è·é›¢ã‚’è¨ˆç®—
 		float pushBackDist = (radiusSum - currentDist) + PhysicsData::kFixPositionOffset;
 
-		// ˆÊ’u‚ÌC³
-		// ŒvZ‚µ‚½•ûŒü‚Æ‹——£‚©‚çA‰Ÿ‚µ–ß‚µƒxƒNƒgƒ‹‚ğ¶¬
+		// ä½ç½®ã®ä¿®æ­£
+		// è¨ˆç®—ã—ãŸæ–¹å‘ã¨è·é›¢ã‹ã‚‰ã€æŠ¼ã—æˆ»ã—ãƒ™ã‚¯ãƒˆãƒ«ã‚’ç”Ÿæˆ
 		Vector3 fixVec = pushBackVec * pushBackDist;
 
-		// —Dæ“x‚ª“¯‚¶‚Å‚¨Œİ‚¢‚É‰Ÿ‚µ–ß‚·ê‡
+		// å„ªå…ˆåº¦ãŒåŒã˜ã§ãŠäº’ã„ã«æŠ¼ã—æˆ»ã™å ´åˆ
 		if (isMutualPushback) {
-			// ‰Ÿ‚µ–ß‚µ—Ê‚ğ”¼•ª‚¸‚Â‚É•ª‚¯‚é
+			// æŠ¼ã—æˆ»ã—é‡ã‚’åŠåˆ†ãšã¤ã«åˆ†ã‘ã‚‹
 			Vector3 halfFixVec = fixVec * 0.5f;
 			primary->nextPos += halfFixVec;
 			secondary->nextPos -= halfFixVec;
 		}
-		// secondary‚Ì‚İ‚ğ‰Ÿ‚µ–ß‚·ê‡
+		// secondaryã®ã¿ã‚’æŠ¼ã—æˆ»ã™å ´åˆ
 		else {
-			// secondary‚ğAprimary‚©‚ç—£‚ê‚é•ûŒü(pushBackVec‚Ì‹t•ûŒü)‚É‰Ÿ‚µ–ß‚·
+			// secondaryã‚’ã€primaryã‹ã‚‰é›¢ã‚Œã‚‹æ–¹å‘(pushBackVecã®é€†æ–¹å‘)ã«æŠ¼ã—æˆ»ã™
 			secondary->nextPos -= fixVec;
 		}
 	}
-	// ƒJƒvƒZƒ‹“¯m
+	// ã‚«ãƒ—ã‚»ãƒ«åŒå£«
 	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
 	{
 		/*
-		1. Õ“Ëî•ñ‚Ìæ“¾
-      ‚Ü‚¸AÕ“Ë‚µ‚Ä‚¢‚é2‚Â‚ÌƒJƒvƒZƒ‹i‰¼‚ÉAAB‚Æ‚µ‚Ü‚·j‚»‚ê‚¼‚ê‚ÌŸ‚ÌƒtƒŒ[ƒ€‚Ì—\‘ªˆÊ’uA’†Sü‚Ìn“_‚ÆI
-  “_A‚»‚µ‚Ä”¼Œa‚ğæ“¾‚µ‚Ü‚·B
+		1. è¡çªæƒ…å ±ã®å–å¾—
+      ã¾ãšã€è¡çªã—ã¦ã„ã‚‹2ã¤ã®ã‚«ãƒ—ã‚»ãƒ«ï¼ˆä»®ã«Aã€Bã¨ã—ã¾ã™ï¼‰ãã‚Œãã‚Œã®æ¬¡ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®äºˆæ¸¬ä½ç½®ã€ä¸­å¿ƒç·šã®å§‹ç‚¹ã¨çµ‚
+  ç‚¹ã€ãã—ã¦åŠå¾„ã‚’å–å¾—ã—ã¾ã™ã€‚
 
 
-   2. Å‹ß–T“_‚ÌŒvZ
-      “–‚½‚è”»’è‚Ì‚Æ“¯—l‚ÉAƒJƒvƒZƒ‹A‚Ì’†Süiü•ªj‚ÆƒJƒvƒZƒ‹B‚Ì’†Sü‚ÌŠÔ‚ÅAÅ‚à‹——£‚ª‹ß‚­‚È‚é2‚Â‚Ì“_
-  iA‚Ì’†Süã‚Ì“_PaAB‚Ì’†Süã‚Ì“_Pbj‚ğŒvZ‚µ‚Ü‚·B‚±‚ê‚Í ClosestPointSegments
-  ŠÖ”‚ğg‚¦‚Î‹‚ß‚ç‚ê‚Ü‚·B
+   2. æœ€è¿‘å‚ç‚¹ã®è¨ˆç®—
+      å½“ãŸã‚Šåˆ¤å®šã®æ™‚ã¨åŒæ§˜ã«ã€ã‚«ãƒ—ã‚»ãƒ«Aã®ä¸­å¿ƒç·šï¼ˆç·šåˆ†ï¼‰ã¨ã‚«ãƒ—ã‚»ãƒ«Bã®ä¸­å¿ƒç·šã®é–“ã§ã€æœ€ã‚‚è·é›¢ãŒè¿‘ããªã‚‹2ã¤ã®ç‚¹
+  ï¼ˆAã®ä¸­å¿ƒç·šä¸Šã®ç‚¹Paã€Bã®ä¸­å¿ƒç·šä¸Šã®ç‚¹Pbï¼‰ã‚’è¨ˆç®—ã—ã¾ã™ã€‚ã“ã‚Œã¯ ClosestPointSegments
+  é–¢æ•°ã‚’ä½¿ãˆã°æ±‚ã‚ã‚‰ã‚Œã¾ã™ã€‚
 
 
-   3. ‰Ÿ‚µ–ß‚µ•ûŒü‚ÌŒˆ’è
-      ƒXƒeƒbƒv2‚Å‹‚ß‚½2‚Â‚ÌÅ‹ß–T“_iPa ‚Æ Pbj‚ğŒ‹‚ÔƒxƒNƒgƒ‹‚ğŒvZ‚µ‚Ü‚·B‚±‚ÌƒxƒNƒgƒ‹‚ªA‚¨Œİ‚¢‚ğˆø‚«—£‚·
-  ‚½‚ß‚ÌÅ‚àŒø—¦“I‚Èu‰Ÿ‚µ–ß‚µ•ûŒüv‚É‚È‚è‚Ü‚·B‚±‚ÌƒxƒNƒgƒ‹‚ğ³‹K‰»i’·‚³‚ğ1‚Éj‚µ‚Ä‚¨‚«‚Ü‚·B
+   3. æŠ¼ã—æˆ»ã—æ–¹å‘ã®æ±ºå®š
+      ã‚¹ãƒ†ãƒƒãƒ—2ã§æ±‚ã‚ãŸ2ã¤ã®æœ€è¿‘å‚ç‚¹ï¼ˆPa ã¨ Pbï¼‰ã‚’çµã¶ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—ã—ã¾ã™ã€‚ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ãŒã€ãŠäº’ã„ã‚’å¼•ãé›¢ã™
+  ãŸã‚ã®æœ€ã‚‚åŠ¹ç‡çš„ãªã€ŒæŠ¼ã—æˆ»ã—æ–¹å‘ã€ã«ãªã‚Šã¾ã™ã€‚ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ï¼ˆé•·ã•ã‚’1ã«ï¼‰ã—ã¦ãŠãã¾ã™ã€‚
 
 
-   4. ‰Ÿ‚µ–ß‚µ‹——£iŠÑ’Ê[“xj‚ÌŒvZ
-      Ÿ‚ÉA‚Ç‚ê‚¾‚¯‚Ì‹——£‚ğ‰Ÿ‚µ–ß‚¹‚Î‚æ‚¢‚©‚ğŒvZ‚µ‚Ü‚·B
-       * ‚Ü‚¸A2‚Â‚ÌƒJƒvƒZƒ‹‚ª‚Ç‚ê‚¾‚¯‚ß‚è‚ñ‚Å‚¢‚é‚©iŠÑ’Ê[“xj‚ğ‹‚ß‚Ü‚·B‚±‚ê‚ÍuƒJƒvƒZƒ‹A‚ÆB‚Ì”¼Œa‚Ì‡
-         Œvv‚©‚çuÅ‹ß–T“_Pa‚ÆPb‚ÌŒ»İ‚Ì‹——£v‚ğˆø‚­‚±‚Æ‚ÅŒvZ‚Å‚«‚Ü‚·B
-       * ‰Ÿ‚µ–ß‚µ‚½Œã‚ÉÄ‚ÑÚG‚µ‚È‚¢‚æ‚¤AŒvZ‚µ‚½ŠÑ’Ê[“x‚ÉA‚²‚­‚í‚¸‚©‚ÈƒIƒtƒZƒbƒg’liPhysicsData::kFixPosi
-         tionOffset‚È‚Çj‚ğ‰Á‚¦‚Ü‚·B‚±‚ê‚ªÅI“I‚Èu‰Ÿ‚µ–ß‚µ‹——£v‚Æ‚È‚è‚Ü‚·B
+   4. æŠ¼ã—æˆ»ã—è·é›¢ï¼ˆè²«é€šæ·±åº¦ï¼‰ã®è¨ˆç®—
+      æ¬¡ã«ã€ã©ã‚Œã ã‘ã®è·é›¢ã‚’æŠ¼ã—æˆ»ã›ã°ã‚ˆã„ã‹ã‚’è¨ˆç®—ã—ã¾ã™ã€‚
+       * ã¾ãšã€2ã¤ã®ã‚«ãƒ—ã‚»ãƒ«ãŒã©ã‚Œã ã‘ã‚ã‚Šè¾¼ã‚“ã§ã„ã‚‹ã‹ï¼ˆï¼è²«é€šæ·±åº¦ï¼‰ã‚’æ±‚ã‚ã¾ã™ã€‚ã“ã‚Œã¯ã€Œã‚«ãƒ—ã‚»ãƒ«Aã¨Bã®åŠå¾„ã®åˆ
+         è¨ˆã€ã‹ã‚‰ã€Œæœ€è¿‘å‚ç‚¹Paã¨Pbã®ç¾åœ¨ã®è·é›¢ã€ã‚’å¼•ãã“ã¨ã§è¨ˆç®—ã§ãã¾ã™ã€‚
+       * æŠ¼ã—æˆ»ã—ãŸå¾Œã«å†ã³æ¥è§¦ã—ãªã„ã‚ˆã†ã€è¨ˆç®—ã—ãŸè²«é€šæ·±åº¦ã«ã€ã”ãã‚ãšã‹ãªã‚ªãƒ•ã‚»ãƒƒãƒˆå€¤ï¼ˆPhysicsData::kFixPosi
+         tionOffsetãªã©ï¼‰ã‚’åŠ ãˆã¾ã™ã€‚ã“ã‚ŒãŒæœ€çµ‚çš„ãªã€ŒæŠ¼ã—æˆ»ã—è·é›¢ã€ã¨ãªã‚Šã¾ã™ã€‚
 
 
-   5. ˆÊ’u‚ÌC³
-      ÅŒã‚ÉAŒvZ‚µ‚½u‰Ÿ‚µ–ß‚µ•ûŒüv‚Æu‰Ÿ‚µ–ß‚µ‹——£v‚ğg‚Á‚ÄAƒJƒvƒZƒ‹‚ÌˆÊ’u‚ğC³‚µ‚Ü‚·B
-       * —Dæ“x‚É‰‚¶‚Ä•Ğ•û‚¾‚¯‚ğ“®‚©‚·ê‡F
-         —Dæ“x‚Ì’á‚¢•û‚ÌƒJƒvƒZƒ‹‚Ì—\‘ªˆÊ’uinextPosj‚ğAZo‚µ‚½•ûŒü‚Æ‹——£‚¾‚¯ˆÚ“®‚³‚¹‚Ü‚·B
-       * —Dæ“x‚ª“¯‚¶‚Å‚¨Œİ‚¢‚É‰Ÿ‚µ–ß‚·ê‡F ‰Ÿ‚µ–ß‚·ƒxƒNƒgƒ‹‚ğ”¼•ª‚¸‚Â‚É•ª‚¯A•Ğ•û‚Í‚»‚Ì•ûŒü‚ÉA‚à‚¤•Ğ•û‚Í‚»
-         ‚Ì‹t•ûŒü‚ÉA‚»‚ê‚¼‚ê—\‘ªˆÊ’u‚ğˆÚ“®‚³‚¹‚Ü‚·B
+   5. ä½ç½®ã®ä¿®æ­£
+      æœ€å¾Œã«ã€è¨ˆç®—ã—ãŸã€ŒæŠ¼ã—æˆ»ã—æ–¹å‘ã€ã¨ã€ŒæŠ¼ã—æˆ»ã—è·é›¢ã€ã‚’ä½¿ã£ã¦ã€ã‚«ãƒ—ã‚»ãƒ«ã®ä½ç½®ã‚’ä¿®æ­£ã—ã¾ã™ã€‚
+       * å„ªå…ˆåº¦ã«å¿œã˜ã¦ç‰‡æ–¹ã ã‘ã‚’å‹•ã‹ã™å ´åˆï¼š
+         å„ªå…ˆåº¦ã®ä½ã„æ–¹ã®ã‚«ãƒ—ã‚»ãƒ«ã®äºˆæ¸¬ä½ç½®ï¼ˆnextPosï¼‰ã‚’ã€ç®—å‡ºã—ãŸæ–¹å‘ã¨è·é›¢ã ã‘ç§»å‹•ã•ã›ã¾ã™ã€‚
+       * å„ªå…ˆåº¦ãŒåŒã˜ã§ãŠäº’ã„ã«æŠ¼ã—æˆ»ã™å ´åˆï¼š æŠ¼ã—æˆ»ã™ãƒ™ã‚¯ãƒˆãƒ«ã‚’åŠåˆ†ãšã¤ã«åˆ†ã‘ã€ç‰‡æ–¹ã¯ãã®æ–¹å‘ã«ã€ã‚‚ã†ç‰‡æ–¹ã¯ã
+         ã®é€†æ–¹å‘ã«ã€ãã‚Œãã‚Œäºˆæ¸¬ä½ç½®ã‚’ç§»å‹•ã•ã›ã¾ã™ã€‚
 
 		*/
 
 
-		// “–‚½‚è”»’èƒf[ƒ^æ“¾
+		// å½“ãŸã‚Šåˆ¤å®šãƒ‡ãƒ¼ã‚¿å–å¾—
 		auto priCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(primary->colliderData);
 		auto secCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(secondary->colliderData);
 
-		// primaryƒJƒvƒZƒ‹‚Ìî•ñ‚ğæ“¾
+		// primaryã‚«ãƒ—ã‚»ãƒ«ã®æƒ…å ±ã‚’å–å¾—
 		Position3 priStart = priCapsuleData->GetStartPos(primary->nextPos);
 		Position3 priEnd = priCapsuleData->GetEndPos(primary->nextPos);
 		float priRadius = priCapsuleData->_radius;
 
-		// secondaryƒJƒvƒZƒ‹‚Ìî•ñ‚ğæ“¾
+		// secondaryã‚«ãƒ—ã‚»ãƒ«ã®æƒ…å ±ã‚’å–å¾—
 		Position3 secStart = secCapsuleData->GetStartPos(secondary->nextPos);
 		Position3 secEnd = secCapsuleData->GetEndPos(secondary->nextPos);
 		float secRadius = secCapsuleData->_radius;
 
-		// Å‹ß–T“_‚ÌŒvZ
-		// 2‚Â‚ÌƒJƒvƒZƒ‹‚Ì’†Süã‚ÅÅ‚à‹ß‚¢“_(pPri, pSec)‚ğŒvZ
+		// æœ€è¿‘å‚ç‚¹ã®è¨ˆç®—
+		// 2ã¤ã®ã‚«ãƒ—ã‚»ãƒ«ã®ä¸­å¿ƒç·šä¸Šã§æœ€ã‚‚è¿‘ã„ç‚¹(pPri, pSec)ã‚’è¨ˆç®—
 		Position3 pPri, pSec;
 		ClosestPointSegments(priStart, priEnd, secStart, secEnd, pPri, pSec);
 
-		// ‰Ÿ‚µ–ß‚µ•ûŒü‚ÌŒˆ’è
-		// Å‹ß–T“_ŠÔ‚ÌƒxƒNƒgƒ‹‚ğŒvZ‚µA‰Ÿ‚µ–ß‚µ•ûŒü‚ğŒˆ’è
+		// æŠ¼ã—æˆ»ã—æ–¹å‘ã®æ±ºå®š
+		// æœ€è¿‘å‚ç‚¹é–“ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—ã—ã€æŠ¼ã—æˆ»ã—æ–¹å‘ã‚’æ±ºå®š
 		Vector3 pushBackVec = pSec - pPri;
-		// ‹——£‚ªƒ[ƒ‚É‹ß‚¢ê‡‚ÍAƒJƒvƒZƒ‹‚Ì’†SˆÊ’u‚©‚ç•ûŒü‚ğ‰¼Œˆ‚ß‚·‚éi‚ß‚è‚İ‚«‚Á‚Ä‚¢‚éê‡‚È‚Çj
+		// è·é›¢ãŒã‚¼ãƒ­ã«è¿‘ã„å ´åˆã¯ã€ã‚«ãƒ—ã‚»ãƒ«ã®ä¸­å¿ƒä½ç½®ã‹ã‚‰æ–¹å‘ã‚’ä»®æ±ºã‚ã™ã‚‹ï¼ˆã‚ã‚Šè¾¼ã¿ãã£ã¦ã„ã‚‹å ´åˆãªã©ï¼‰
 		if (pushBackVec.SqrMagnitude() < PhysicsData::kZeroTolerance) {
 			pushBackVec = secondary->nextPos - primary->nextPos;
 		}
 		pushBackVec.Normalized();
 
-		// ‰Ÿ‚µ–ß‚µ‹——£(ŠÑ’Ê[“x)‚ÌŒvZ
-		// Å‹ß–T“_ŠÔ‚ÌŒ»İ‚Ì‹——£‚ğŒvZ
+		// æŠ¼ã—æˆ»ã—è·é›¢(è²«é€šæ·±åº¦)ã®è¨ˆç®—
+		// æœ€è¿‘å‚ç‚¹é–“ã®ç¾åœ¨ã®è·é›¢ã‚’è¨ˆç®—
 		float currentDist = (pSec - pPri).Magnitude();
-		// 2‚Â‚ÌƒJƒvƒZƒ‹‚Ì”¼Œa‚Ì‡Œv
+		// 2ã¤ã®ã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„ã®åˆè¨ˆ
 		float radiusSum = priRadius + secRadius;
-		// ŠÑ’Ê[“x‚ÉƒIƒtƒZƒbƒg‚ğ‰Á‚¦‚½AÅI“I‚È‰Ÿ‚µ–ß‚µ‹——£‚ğŒvZ
+		// è²«é€šæ·±åº¦ã«ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’åŠ ãˆãŸã€æœ€çµ‚çš„ãªæŠ¼ã—æˆ»ã—è·é›¢ã‚’è¨ˆç®—
 		float pushBackDist = (radiusSum - currentDist) + PhysicsData::kFixPositionOffset;
 
-		// ˆÊ’u‚ÌC³
-		// ŒvZ‚µ‚½•ûŒü‚Æ‹——£‚ğg‚Á‚ÄAƒJƒvƒZƒ‹‚ÌˆÊ’u‚ğC³
+		// ä½ç½®ã®ä¿®æ­£
+		// è¨ˆç®—ã—ãŸæ–¹å‘ã¨è·é›¢ã‚’ä½¿ã£ã¦ã€ã‚«ãƒ—ã‚»ãƒ«ã®ä½ç½®ã‚’ä¿®æ­£
 		Vector3 fixVec = pushBackVec * pushBackDist;
 
-		// —Dæ“x‚ª“¯‚¶‚Å‚¨Œİ‚¢‚É‰Ÿ‚µ–ß‚·ê‡
+		// å„ªå…ˆåº¦ãŒåŒã˜ã§ãŠäº’ã„ã«æŠ¼ã—æˆ»ã™å ´åˆ
 		if (isMutualPushback) {
-			// ‰Ÿ‚µ–ß‚µ—Ê‚ğ”¼•ª‚¸‚Â‚É•ª‚¯‚é
+			// æŠ¼ã—æˆ»ã—é‡ã‚’åŠåˆ†ãšã¤ã«åˆ†ã‘ã‚‹
 			Vector3 halfFixVec = fixVec * 0.5f;
 			primary->nextPos -= halfFixVec;
 			secondary->nextPos += halfFixVec;
 		}
-		// secondary‚Ì‚İ‚ğ‰Ÿ‚µ–ß‚·ê‡
+		// secondaryã®ã¿ã‚’æŠ¼ã—æˆ»ã™å ´åˆ
 		else {
 			secondary->nextPos += fixVec;
 		}
 	}
-	// ‹…‚ÆƒJƒvƒZƒ‹
+	// çƒã¨ã‚«ãƒ—ã‚»ãƒ«
 	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) ||
 		(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
 	{
-		// “–‚½‚è”»’èƒf[ƒ^æ“¾
+		// å½“ãŸã‚Šåˆ¤å®šãƒ‡ãƒ¼ã‚¿å–å¾—
 		std::shared_ptr<Collider> sphereObj;
 		std::shared_ptr<Collider> capsuleObj;
-		// primary‚Æsecondary‚ª‚»‚ê‚¼‚ê‹…‚©ƒJƒvƒZƒ‹‚©‚ğ”»•Ê
+		// primaryã¨secondaryãŒãã‚Œãã‚Œçƒã‹ã‚«ãƒ—ã‚»ãƒ«ã‹ã‚’åˆ¤åˆ¥
 		if (primary->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere) {
 			sphereObj = primary;
 			capsuleObj = secondary;
@@ -458,60 +458,60 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 			capsuleObj = primary;
 		}
 
-		// ‚»‚ê‚¼‚ê‚ÌCollider‚©‚çƒf[ƒ^‚ğæ“¾
+		// ãã‚Œãã‚Œã®Colliderã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
 		auto sphereData = std::static_pointer_cast<ColliderDataSphere>(sphereObj->colliderData);
 		auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(capsuleObj->colliderData);
 
-		// ‹…‚Ìî•ñ‚ğæ“¾
+		// çƒã®æƒ…å ±ã‚’å–å¾—
 		Vector3 sphereCenter = sphereObj->nextPos;
 		float sphereRadius = sphereData->_radius;
 
-		// ƒJƒvƒZƒ‹‚Ìî•ñ‚ğæ“¾
+		// ã‚«ãƒ—ã‚»ãƒ«ã®æƒ…å ±ã‚’å–å¾—
 		Vector3 capsuleStart = capsuleData->GetStartPos(capsuleObj->nextPos);
 		Vector3 capsuleEnd = capsuleData->GetEndPos(capsuleObj->nextPos);
 		float capsuleRadius = capsuleData->_radius;
 
-		// Å‹ß–T“_‚ÌŒvZ
-		// ‹…‚Ì’†S‚ÆƒJƒvƒZƒ‹‚Ì’†Sü‚Æ‚ÌÅ‹ß–T“_‚ğŒvZ
+		// æœ€è¿‘å‚ç‚¹ã®è¨ˆç®—
+		// çƒã®ä¸­å¿ƒã¨ã‚«ãƒ—ã‚»ãƒ«ã®ä¸­å¿ƒç·šã¨ã®æœ€è¿‘å‚ç‚¹ã‚’è¨ˆç®—
 		Vector3 closestPointOnCapsuleAxis = ClosestPointPointAndSegment(sphereCenter, capsuleStart, capsuleEnd);
 
-		// ‰Ÿ‚µ–ß‚µ•ûŒü‚ÌŒˆ’è
-		// ƒJƒvƒZƒ‹‚ÌÅ‹ß–T“_‚©‚ç‹…‚Ì’†S‚ÖŒü‚©‚¤ƒxƒNƒgƒ‹‚ğA‰Ÿ‚µ–ß‚µ•ûŒü‚Æ‚·‚é
+		// æŠ¼ã—æˆ»ã—æ–¹å‘ã®æ±ºå®š
+		// ã‚«ãƒ—ã‚»ãƒ«ã®æœ€è¿‘å‚ç‚¹ã‹ã‚‰çƒã®ä¸­å¿ƒã¸å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’ã€æŠ¼ã—æˆ»ã—æ–¹å‘ã¨ã™ã‚‹
 		Vector3 pushBackVec = sphereCenter - closestPointOnCapsuleAxis;
-		// ‹——£‚ªƒ[ƒ‚É‹ß‚¢ê‡‚ÍAƒIƒuƒWƒFƒNƒg‚Ì’†SˆÊ’u‚©‚ç•ûŒü‚ğ‰¼Œˆ‚ß‚·‚é
+		// è·é›¢ãŒã‚¼ãƒ­ã«è¿‘ã„å ´åˆã¯ã€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä¸­å¿ƒä½ç½®ã‹ã‚‰æ–¹å‘ã‚’ä»®æ±ºã‚ã™ã‚‹
 		if (pushBackVec.SqrMagnitude() < PhysicsData::kZeroTolerance) {
 			pushBackVec = sphereObj->nextPos - capsuleObj->nextPos;
 		}
 		pushBackVec.Normalized();
 
-		// ‰Ÿ‚µ–ß‚µ‹——£(ŠÑ’Ê[“x)‚ÌŒvZ
-		// Å‹ß–T“_ŠÔ‚ÌŒ»İ‚Ì‹——£‚ğŒvZ
+		// æŠ¼ã—æˆ»ã—è·é›¢(è²«é€šæ·±åº¦)ã®è¨ˆç®—
+		// æœ€è¿‘å‚ç‚¹é–“ã®ç¾åœ¨ã®è·é›¢ã‚’è¨ˆç®—
 		float currentDist = (sphereCenter - closestPointOnCapsuleAxis).Magnitude();
-		// 2‚Â‚ÌƒIƒuƒWƒFƒNƒg‚Ì”¼Œa‚Ì‡Œv
+		// 2ã¤ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åŠå¾„ã®åˆè¨ˆ
 		float radiusSum = sphereRadius + capsuleRadius;
-		// ŠÑ’Ê[“x‚ÉƒIƒtƒZƒbƒg‚ğ‰Á‚¦‚½AÅI“I‚È‰Ÿ‚µ–ß‚µ‹——£‚ğŒvZ
+		// è²«é€šæ·±åº¦ã«ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’åŠ ãˆãŸã€æœ€çµ‚çš„ãªæŠ¼ã—æˆ»ã—è·é›¢ã‚’è¨ˆç®—
 		float pushBackDist = (radiusSum - currentDist) + PhysicsData::kFixPositionOffset;
 
-		// ˆÊ’u‚ÌC³
-		// ŒvZ‚µ‚½•ûŒü‚Æ‹——£‚ğg‚Á‚ÄAƒIƒuƒWƒFƒNƒg‚ÌˆÊ’u‚ğC³
+		// ä½ç½®ã®ä¿®æ­£
+		// è¨ˆç®—ã—ãŸæ–¹å‘ã¨è·é›¢ã‚’ä½¿ã£ã¦ã€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½ç½®ã‚’ä¿®æ­£
 		Vector3 fixVec = pushBackVec * pushBackDist;
 
-		// —Dæ“x‚ª“¯‚¶‚Å‚¨Œİ‚¢‚É‰Ÿ‚µ–ß‚·ê‡
+		// å„ªå…ˆåº¦ãŒåŒã˜ã§ãŠäº’ã„ã«æŠ¼ã—æˆ»ã™å ´åˆ
 		if (isMutualPushback) {
-			// ‰Ÿ‚µ–ß‚µ—Ê‚ğ”¼•ª‚¸‚Â‚É•ª‚¯A‚»‚ê‚¼‚ê‚ğ‰Ÿ‚µ–ß‚·
+			// æŠ¼ã—æˆ»ã—é‡ã‚’åŠåˆ†ãšã¤ã«åˆ†ã‘ã€ãã‚Œãã‚Œã‚’æŠ¼ã—æˆ»ã™
 			Vector3 halfFixVec = fixVec * 0.5f;
-			sphereObj->nextPos += halfFixVec;	// ‹…‚ğ‰Ÿ‚µ–ß‚µ
-			capsuleObj->nextPos -= halfFixVec;	// ƒJƒvƒZƒ‹‚ğ‰Ÿ‚µ–ß‚µ
+			sphereObj->nextPos += halfFixVec;	// çƒã‚’æŠ¼ã—æˆ»ã—
+			capsuleObj->nextPos -= halfFixVec;	// ã‚«ãƒ—ã‚»ãƒ«ã‚’æŠ¼ã—æˆ»ã—
 		}
-		// —Dæ“x‚É]‚Á‚Ä•Ğ•û‚Ì‚İ‚ğ‰Ÿ‚µ–ß‚·ê‡
+		// å„ªå…ˆåº¦ã«å¾“ã£ã¦ç‰‡æ–¹ã®ã¿ã‚’æŠ¼ã—æˆ»ã™å ´åˆ
 		else {
-			// —Dæ“x‚Ì’á‚¢•û(secondary)‚ğ‰Ÿ‚µ–ß‚·
-			// (fixVec‚ÍƒJƒvƒZƒ‹‚©‚ç‹…‚Ö‚ÌƒxƒNƒgƒ‹‚Ì‚½‚ßA‘«‚µˆø‚«‚ğg‚¢•ª‚¯‚é)
+			// å„ªå…ˆåº¦ã®ä½ã„æ–¹(secondary)ã‚’æŠ¼ã—æˆ»ã™
+			// (fixVecã¯ã‚«ãƒ—ã‚»ãƒ«ã‹ã‚‰çƒã¸ã®ãƒ™ã‚¯ãƒˆãƒ«ã®ãŸã‚ã€è¶³ã—å¼•ãã‚’ä½¿ã„åˆ†ã‘ã‚‹)
 			if (secondary == sphereObj) {
-				secondary->nextPos += fixVec;	// secondary(‹…)‚ğ‰Ÿ‚µ–ß‚·
+				secondary->nextPos += fixVec;	// secondary(çƒ)ã‚’æŠ¼ã—æˆ»ã™
 			}
 			else {	// secondary == capsuleObj
-				secondary->nextPos -= fixVec;	// secondary(ƒJƒvƒZƒ‹)‚ğ‰Ÿ‚µ–ß‚·
+				secondary->nextPos -= fixVec;	// secondary(ã‚«ãƒ—ã‚»ãƒ«)ã‚’æŠ¼ã—æˆ»ã™
 			}
 		}
 	}
@@ -522,7 +522,7 @@ void Physics::FixPosition()
 	for (auto& collider : _colliders) {
 		Vector3 toFixedPos;
 		if (true) {
-			// °”»’è‚ğ–³—‚â‚èì‚é
+			// åºŠåˆ¤å®šã‚’ç„¡ç†ã‚„ã‚Šä½œã‚‹
 			if (collider->nextPos.y <= 0.0f) {
 				collider->nextPos.y = 0.0f;
 			}
@@ -530,12 +530,12 @@ void Physics::FixPosition()
 		else {
 			
 		}
-		// Pos‚ğXV‚·‚é‚Ì‚ÅAvelocity‚à‚»‚±‚ÉˆÚ“®‚·‚évelocity‚ÉC³
+		// Posã‚’æ›´æ–°ã™ã‚‹ã®ã§ã€velocityã‚‚ãã“ã«ç§»å‹•ã™ã‚‹velocityã«ä¿®æ­£
 		toFixedPos = collider->nextPos - collider->rigidbody->GetPos();
 
 		collider->rigidbody->SetVel(toFixedPos);
 
-		// ˆÊ’uŠm’è
+		// ä½ç½®ç¢ºå®š
 		collider->rigidbody->SetPos(collider->nextPos);
 	}
 }

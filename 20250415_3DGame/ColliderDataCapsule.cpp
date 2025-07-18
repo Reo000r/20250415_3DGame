@@ -1,4 +1,4 @@
-#include "ColliderDataCapsule.h"
+﻿#include "ColliderDataCapsule.h"
 
 ColliderDataCapsule::ColliderDataCapsule(bool isTrigger, float rad, float dist
 	, Vector3 angle) :

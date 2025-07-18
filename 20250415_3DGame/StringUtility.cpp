@@ -1,30 +1,30 @@
-#include "StringUtility.h"
+ï»¿#include "StringUtility.h"
 
 std::wstring StringUtility::GetWStringFromString(const std::string& str)
 {
-	// ‚Ü‚¸‚Í•ÏŠ·Œã‚ÌƒTƒCƒY‚ğ‘ª‚Á‚Ä‚¨‚­
-		// (•ÏŠ·‘O‚Æ•ÏŠ·Œã‚ÅƒTƒCƒY‚ªˆÙ‚È‚éê‡‚ª‚ ‚é‚½‚ß)
+	// ã¾ãšã¯å¤‰æ›å¾Œã®ã‚µã‚¤ã‚ºã‚’æ¸¬ã£ã¦ãŠã
+		// (å¤‰æ›å‰ã¨å¤‰æ›å¾Œã§ã‚µã‚¤ã‚ºãŒç•°ãªã‚‹å ´åˆãŒã‚ã‚‹ãŸã‚)
 	auto size = MultiByteToWideChar(
-		CP_ACP,  // Œ»İ‚ÌƒR[ƒhƒy[ƒW
-		MB_PRECOMPOSED | MB_ERR_INVALID_CHARS,  // 0‚Å‚à’Ê‚é‚ç‚µ‚¢
+		CP_ACP,  // ç¾åœ¨ã®ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
+		MB_PRECOMPOSED | MB_ERR_INVALID_CHARS,  // 0ã§ã‚‚é€šã‚‹ã‚‰ã—ã„
 		str.c_str(),
 		str.size(),
 		nullptr,
 		0
 	);
 
-	// ‚»‚ÌƒTƒCƒY‚ğŒ³‚É•Ô‚·‚×‚«string‚ğƒŠƒTƒCƒY
+	// ãã®ã‚µã‚¤ã‚ºã‚’å…ƒã«è¿”ã™ã¹ãstringã‚’ãƒªã‚µã‚¤ã‚º
 	std::wstring wstr;
 	wstr.resize(size);
 
-	// ƒTƒCƒY‚ªŠm’è‚µ‚½‚Ì‚Å‚à‚¤ˆê“xMultiByteToWideChar‚ğŒÄ‚Ño‚·(ÀÛ‚É•ÏŠ·)
+	// ã‚µã‚¤ã‚ºãŒç¢ºå®šã—ãŸã®ã§ã‚‚ã†ä¸€åº¦MultiByteToWideCharã‚’å‘¼ã³å‡ºã™(å®Ÿéš›ã«å¤‰æ›)
 	MultiByteToWideChar(
-		CP_ACP,  // Œ»İ‚ÌƒR[ƒhƒy[ƒW
+		CP_ACP,  // ç¾åœ¨ã®ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
 		MB_PRECOMPOSED | MB_ERR_INVALID_CHARS,
 		str.c_str(),
 		str.size(),
-		wstr.data(),  // wstr‚Ìƒf[ƒ^–{‘Ì‚Ìæ“ªƒAƒhƒŒƒX
-		wstr.size()   // wstr‚Ìƒf[ƒ^ƒTƒCƒY
+		wstr.data(),  // wstrã®ãƒ‡ãƒ¼ã‚¿æœ¬ä½“ã®å…ˆé ­ã‚¢ãƒ‰ãƒ¬ã‚¹
+		wstr.size()   // wstrã®ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚º
 	);
 
 	return wstr;
@@ -32,8 +32,8 @@ std::wstring StringUtility::GetWStringFromString(const std::string& str)
 
 std::string StringUtility::GetStringFromWString(const std::wstring& wstr)
 {
-	// CP_UTF8 ‚Í•ÏŠ·æ‚Ì•¶šƒR[ƒh‚ğUTF-8‚Éw’è
-	// •ÏŠ·Œã‚Ì•¶š—ñ’·‚ğæ“¾
+	// CP_UTF8 ã¯å¤‰æ›å…ˆã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’UTF-8ã«æŒ‡å®š
+	// å¤‰æ›å¾Œã®æ–‡å­—åˆ—é•·ã‚’å–å¾—
 	int buffer_size = WideCharToMultiByte(
 		CP_UTF8, 
 		0, 
@@ -44,13 +44,13 @@ std::string StringUtility::GetStringFromWString(const std::wstring& wstr)
 		NULL, 
 		NULL);
 	if (buffer_size == 0) {
-	    return ""; // •ÏŠ·¸”s
+	    return ""; // å¤‰æ›å¤±æ•—
 	}
 	
-	// ƒoƒbƒtƒ@‚ğŠm•Û
-	std::string str(buffer_size - 1, '\0'); // -1‚Íƒkƒ‹I’[•¶š•ª
+	// ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
+	std::string str(buffer_size - 1, '\0'); // -1ã¯ãƒŒãƒ«çµ‚ç«¯æ–‡å­—åˆ†
 	
-	// •ÏŠ·Às
+	// å¤‰æ›å®Ÿè¡Œ
 	WideCharToMultiByte(
 		CP_UTF8, 
 		0, 

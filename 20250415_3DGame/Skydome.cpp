@@ -1,4 +1,4 @@
-#include "SkyDome.h"
+ï»¿#include "SkyDome.h"
 #include "Camera.h"
 
 #include <DxLib.h>
@@ -19,10 +19,10 @@ void Skydome::Init(std::weak_ptr<Camera> camera)
 {
 	_camera = camera;
 
-	// ƒXƒJƒCƒh[ƒ€“Ç‚Ýž‚Ý
+	// ã‚¹ã‚«ã‚¤ãƒ‰ãƒ¼ãƒ èª­ã¿è¾¼ã¿
 	_handle = MV1LoadModel(L"data/skydome/Sky_Daylight01.mv1");
 	assert(_handle >= 0);
-	// ’²®
+	// èª¿æ•´
 	MV1SetScale(_handle, Vector3(1,1,1)*4.0f);
 	MV1SetPosition(_handle, _camera.lock()->GetPos());
 }

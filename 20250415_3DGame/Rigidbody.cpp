@@ -1,4 +1,4 @@
-#include "Rigidbody.h"
+ï»¿#include "Rigidbody.h"
 
 Rigidbody::Rigidbody() :
 	pos(),
@@ -19,10 +19,10 @@ void Rigidbody::Init(bool useGravity_)
 void Rigidbody::SetVel(const Vector3& set)
 {
 	vel = set;
-	// ’·‚³‚ª‚ ‚é‚È‚ç
+	// é•·ã•ãŒã‚ã‚‹ãªã‚‰
 	if (vel.SqrMagnitude() > 0)
 	{
-		// ³‹K‰»‚µ‚½ƒxƒNƒgƒ‹‚ðŒü‚«‚Æ‚µ‚Ä‘ã“ü
+		// æ­£è¦åŒ–ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’å‘ãã¨ã—ã¦ä»£å…¥
 		dir = vel.Normalize();
 	}
 }

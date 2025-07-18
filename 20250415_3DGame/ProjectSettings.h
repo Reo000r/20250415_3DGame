@@ -1,23 +1,23 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector3.h"
 
 namespace PhysicsData {
 	/// <summary>
-	/// “–‚½‚Á‚½‚à‚Ì‚Ì”»•Ê‚ğs‚¤‚½‚ß‚Ìƒ^ƒO
+	/// å½“ãŸã£ãŸã‚‚ã®ã®åˆ¤åˆ¥ã‚’è¡Œã†ãŸã‚ã®ã‚¿ã‚°
 	/// </summary>
 	enum class GameObjectTag
 	{
-		None,			// ƒ^ƒO‚È‚µ
-		Player,			// ƒvƒŒƒCƒ„[
+		None,			// ã‚¿ã‚°ãªã—
+		Player,			// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 		PlayerAttack,
-		Enemy,			// “G
+		Enemy,			// æ•µ
 		EnemyAttack,
-		SystemWall,		// ƒVƒXƒeƒ€•Ç
-		StepGround,		// ‘«ê‚Ì’n–Ê
+		SystemWall,		// ã‚·ã‚¹ãƒ†ãƒ å£
+		StepGround,		// è¶³å ´ã®åœ°é¢
 	};
 
 	/// <summary>
-	/// “–‚½‚è”»’èí•Ê
+	/// å½“ãŸã‚Šåˆ¤å®šç¨®åˆ¥
 	/// </summary>
 	enum class ColliderKind {
 		Sphere,
@@ -25,37 +25,37 @@ namespace PhysicsData {
 	};
 
 	/// <summary>
-	/// ˆÊ’u•â³‚Ì—Dæ‡ˆÊ
-	/// ”’l‚ª’á‚¢’ö“®‚«‚É‚­‚¢
+	/// ä½ç½®è£œæ­£ã®å„ªå…ˆé †ä½
+	/// æ•°å€¤ãŒä½ã„ç¨‹å‹•ãã«ãã„
 	/// </summary>
 	enum class Priority : int{
-		Static,		// ‰Ÿ‚µo‚³‚ê‚È‚¢
+		Static,		// æŠ¼ã—å‡ºã•ã‚Œãªã„
 		High,
 		Middle,
 		Low,
 	};
 
 	/// <summary>
-	/// ¢ŠE‚Ìd—Í
-	/// ”½‰f‚Í‰ÁZ‚ÅŒvZ
+	/// ä¸–ç•Œã®é‡åŠ›
+	/// åæ˜ æ™‚ã¯åŠ ç®—ã§è¨ˆç®—
 	/// </summary>
 	const Vector3 Gravity = { 0.0f, -9.81f * 0.1f, 0.0f };
 	const Vector3 MaxGravityAccel = Gravity * 15;
 	
-	// Œ¸‘¬—Ê
+	// æ¸›é€Ÿé‡
 	const float decelerationRate = 0.98f;
-	// ˆÚ“®‚µ‚Ä‚¢‚È‚¢‚Æ‚İ‚È‚³‚ê‚éè‡’l
+	// ç§»å‹•ã—ã¦ã„ãªã„ã¨ã¿ãªã•ã‚Œã‚‹é–¾å€¤
 	const float sleepThreshold = 0.005f;
 
-	// “–‚½‚è”»’è‰ñ”‚ÌÅ‘å”
+	// å½“ãŸã‚Šåˆ¤å®šå›æ•°ã®æœ€å¤§æ•°
 	constexpr int kCheckCollideMaxCount = 1000;
 
-	// ƒ[ƒ‚ÆŒ©‚È‚·‹–—e”ÍˆÍ
+	// ã‚¼ãƒ­ã¨è¦‹ãªã™è¨±å®¹ç¯„å›²
 	constexpr float kZeroTolerance = 0.00001f;
-	// “–‚½‚è”»’è‚É‰Ÿ‚µ–ß‚·’Ç‰Á•â³—Ê
-	// (‚»‚Ì‚Ü‚Ü–ß‚·‚Æ‚¿‚å‚¤‚Ç“–‚½‚Á‚Ä‚µ‚Ü‚¤ˆÊ’u‚É‚È‚é‚½‚ß)
+	// å½“ãŸã‚Šåˆ¤å®šæ™‚ã«æŠ¼ã—æˆ»ã™è¿½åŠ è£œæ­£é‡
+	// (ãã®ã¾ã¾æˆ»ã™ã¨ã¡ã‚‡ã†ã©å½“ãŸã£ã¦ã—ã¾ã†ä½ç½®ã«ãªã‚‹ãŸã‚)
 	constexpr float kFixPositionOffset = kZeroTolerance;
 
-	// ‰¼‚Ì’n–Ê‚Ì‚‚³
+	// ä»®ã®åœ°é¢ã®é«˜ã•
 	constexpr float kTempGroundHeight = 0.0f;
 }

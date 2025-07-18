@@ -1,41 +1,41 @@
-#include "ColliderData.h"
+ï»¿#include "ColliderData.h"
 
 #include <cassert>
 
 void ColliderData::AddThroughTag(PhysicsData::GameObjectTag tag)
 {
-	// ‚È‚¯‚ê‚Îend‚ª‹A‚Á‚Ä‚­‚é
+	// ãªã‘ã‚Œã°endãŒå¸°ã£ã¦ãã‚‹
 	auto it = std::find(
 		throughTags.begin(), 
 		throughTags.end(), 
 		tag);
-	// end‚Å‚ ‚ê‚Î(“o˜^‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î)
+	// endã§ã‚ã‚Œã°(ç™»éŒ²ã•ã‚Œã¦ã„ãªã‘ã‚Œã°)
 	if (it == throughTags.end())
 	{
 		throughTags.emplace_back(tag);
 	}
 	else
 	{
-		assert(false && "w’è‚Ìƒ^ƒO‚Í“o˜^Ï");
+		assert(false && "æŒ‡å®šã®ã‚¿ã‚°ã¯ç™»éŒ²æ¸ˆ");
 	}
 }
 
 void ColliderData::RemoveThroughTag(PhysicsData::GameObjectTag tag)
 {
-	// “o˜^‰ğœ(eraseif —vC++20)
+	// ç™»éŒ²è§£é™¤(eraseif è¦C++20)
 	auto count = std::erase_if(
 		throughTags,
 		[tag](PhysicsData::GameObjectTag target) { return target == tag; });
-	// “o˜^‚³‚ê‚Ä‚È‚©‚Á‚½‚çassert
+	// ç™»éŒ²ã•ã‚Œã¦ãªã‹ã£ãŸã‚‰assert
 	if (count <= 0)
 	{
-		assert(false && "w’è‚Ìƒ^ƒO‚Í–¢“o˜^");
+		assert(false && "æŒ‡å®šã®ã‚¿ã‚°ã¯æœªç™»éŒ²");
 	}
 }
 
 bool ColliderData::IsThroughTarget(const PhysicsData::GameObjectTag target) const
 {
 	auto it = std::find(throughTags.begin(), throughTags.end(), target);
-	// end‚Å‚È‚¯‚ê‚Î(Œ©‚Â‚©‚ê‚Î)trueA‚»‚¤‚Å‚È‚¯‚ê‚Îfalse
+	// endã§ãªã‘ã‚Œã°(è¦‹ã¤ã‹ã‚Œã°)trueã€ãã†ã§ãªã‘ã‚Œã°false
 	return (it != throughTags.end());
 }

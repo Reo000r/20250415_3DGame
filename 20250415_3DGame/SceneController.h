@@ -1,61 +1,61 @@
-#pragma once
+ï»¿#pragma once
 #include <memory>
 #include <list>
 
 class SceneBase;
 
 /// <summary>
-/// ŠeƒV[ƒ“‚ğŠÇ—‚·‚é
-/// ƒVƒ“ƒOƒ‹ƒgƒ“‰»‚·‚é
+/// å„ã‚·ãƒ¼ãƒ³ã‚’ç®¡ç†ã™ã‚‹
+/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–ã™ã‚‹
 /// </summary>
 class SceneController
 {
 private:
 
-	// ƒVƒ“ƒOƒ‹ƒgƒ“‚É‚µ‚½
+	// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã«ã—ãŸ
 	SceneController();
 	SceneController(const SceneController&) = delete;
 	void operator=(const SceneController&) = delete;
 
 	/// <summary>
-	/// Às’†‚ÌƒV[ƒ“‚Ìƒ|ƒCƒ“ƒ^
+	/// å®Ÿè¡Œä¸­ã®ã‚·ãƒ¼ãƒ³ã®ãƒã‚¤ãƒ³ã‚¿
 	/// </summary>
 	using SceneStace_t = std::list<std::shared_ptr<SceneBase>>;
 	SceneStace_t _scenes;
 
 public:
 	/// <summary>
-	/// ƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg‚ğ•Ô‚·
+	/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™
 	/// </summary>
-	/// <returns>SceneControllerƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg</returns>
+	/// <returns>SceneControllerã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ</returns>
 	static SceneController& GetInstance();
 
 	/// <summary>
-	/// Application‚©‚çŒÄ‚Ño‚³‚ê‚éUpdate
-	/// “à•”‚ÌScene‚ÌUpdate‚ğŒÄ‚Ño‚·
+	/// Applicationã‹ã‚‰å‘¼ã³å‡ºã•ã‚Œã‚‹Update
+	/// å†…éƒ¨ã®Sceneã®Updateã‚’å‘¼ã³å‡ºã™
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// Application‚©‚çŒÄ‚Ño‚³‚ê‚éDraw
-	/// “à•”‚ÌScene‚ÌDraw‚ğŒÄ‚Ño‚·
+	/// Applicationã‹ã‚‰å‘¼ã³å‡ºã•ã‚Œã‚‹Draw
+	/// å†…éƒ¨ã®Sceneã®Drawã‚’å‘¼ã³å‡ºã™
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// Ÿ‚Ìó‘Ô‚ğƒZƒbƒg‚·‚é(ƒZƒbƒg‚·‚é‚Ì‚ÍŠeó‘Ô‚Ì–ğŠ„)
+	/// æ¬¡ã®çŠ¶æ…‹ã‚’ã‚»ãƒƒãƒˆã™ã‚‹(ã‚»ãƒƒãƒˆã™ã‚‹ã®ã¯å„çŠ¶æ…‹ã®å½¹å‰²)
 	/// </summary>
-	/// <param name="scene">Ÿ‚Ìó‘Ô</param>
+	/// <param name="scene">æ¬¡ã®çŠ¶æ…‹</param>
 	void ChangeScene(std::shared_ptr<SceneBase> scene);
 
 	/// <summary>
-	/// Œ»İÀs’†‚ÌƒV[ƒ“‚Ìã‚É•Ê‚ÌƒV[ƒ“‚ğæ‚¹‚é
+	/// ç¾åœ¨å®Ÿè¡Œä¸­ã®ã‚·ãƒ¼ãƒ³ã®ä¸Šã«åˆ¥ã®ã‚·ãƒ¼ãƒ³ã‚’ä¹—ã›ã‚‹
 	/// </summary>
-	/// <param name="scene">æ‚¹‚½‚¢ƒV[ƒ“</param>
+	/// <param name="scene">ä¹—ã›ãŸã„ã‚·ãƒ¼ãƒ³</param>
 	void PushScene(std::shared_ptr<SceneBase> scene);
 
 	/// <summary>
-	/// Œ»İ•\–Ê(Åã•”)‚É‚ ‚éÀs’†‚ÌƒV[ƒ“‚ğæ‚èœ‚­
+	/// ç¾åœ¨è¡¨é¢(æœ€ä¸Šéƒ¨)ã«ã‚ã‚‹å®Ÿè¡Œä¸­ã®ã‚·ãƒ¼ãƒ³ã‚’å–ã‚Šé™¤ã
 	/// </summary>
 	void PopScene();
 };

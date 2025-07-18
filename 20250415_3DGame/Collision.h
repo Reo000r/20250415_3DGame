@@ -1,45 +1,45 @@
-#pragma once
+﻿#pragma once
 #include "Geometry.h"
 
-// �����蔻��n�̏������s���֐����܂Ƃ߂��t�@�C��
+// 当たり判定系の処理を行う関数をまとめたファイル
 
 
 
 /// <summary>
-/// �_�Ɛ����̍ŋߐړ_�����߂�
+/// 点と線分の最近接点を求める
 /// </summary>
-/// <param name="point">�_</param>
-/// <param name="start">�����̎n�_</param>
-/// <param name="end">�����̏I�_</param>
-/// <returns>������̍ŋߐړ_</returns>
+/// <param name="point">点</param>
+/// <param name="start">線分の始点</param>
+/// <param name="end">線分の終点</param>
+/// <returns>線分上の最近接点</returns>
 Position3 ClosestPointPointAndSegment(const Position3& point, 
 	const Position3& start, const Position3& end);
 
 /// <summary>
-/// 2�̐����̍ŋߐړ_�����߂�
+/// 2つの線分の最近接点を求める
 /// </summary>
-/// <param name="startA">����A�n�_</param>
-/// <param name="endA">����A�I�_</param>
-/// <param name="startB">����B�n�_</param>
-/// <param name="endB">����B�I�_</param>
-/// <param name="closestPointA">A��̍ŋߐړ_</param>
-/// <param name="closestPointB">B��̍ŋߐړ_</param>
+/// <param name="startA">線分A始点</param>
+/// <param name="endA">線分A終点</param>
+/// <param name="startB">線分B始点</param>
+/// <param name="endB">線分B終点</param>
+/// <param name="closestPointA">A上の最近接点</param>
+/// <param name="closestPointB">B上の最近接点</param>
 void ClosestPointSegments(
 	const Position3& startA, const Position3& endA,
 	const Position3& startB, const Position3& endB,
 	Position3& closestPointA, Position3& closestPointB);
 
 /// <summary>
-/// 2�̐����̍ŋߐړ_�����߂邽�߂̃p�����[�^���v�Z����
-/// (ClosestPointSegments�̕⏕�֐�)
+/// 2つの線分の最近接点を求めるためのパラメータを計算する
+/// (ClosestPointSegmentsの補助関数)
 /// </summary>
-/// <param name="lenSq1">����1�̒�����2��</param>
-/// <param name="lenSq2">����2�̒�����2��</param>
-/// <param name="dot12">�����x�N�g�����m�̓���</param>
-/// <param name="dot1r">����1�ƃI�t�Z�b�g�x�N�g���̓���</param>
-/// <param name="dot2r">����2�ƃI�t�Z�b�g�x�N�g���̓���</param>
-/// <param name="param1">�o�͗p�̃p�����[�^1</param>
-/// <param name="param2">�o�͗p�̃p�����[�^2</param>
+/// <param name="lenSq1">線分1の長さの2乗</param>
+/// <param name="lenSq2">線分2の長さの2乗</param>
+/// <param name="dot12">線分ベクトル同士の内積</param>
+/// <param name="dot1r">線分1とオフセットベクトルの内積</param>
+/// <param name="dot2r">線分2とオフセットベクトルの内積</param>
+/// <param name="param1">出力用のパラメータ1</param>
+/// <param name="param2">出力用のパラメータ2</param>
 void CalculateClosestSegmentParameters(
 	float lenSq1, float lenSq2, float dot12,
 	float dot1r, float dot2r,

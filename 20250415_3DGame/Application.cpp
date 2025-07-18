@@ -1,4 +1,4 @@
-#include "Application.h"
+ï»¿#include "Application.h"
 #include "Input.h"
 #include "SceneController.h"
 #include "Statistics.h"
@@ -10,27 +10,27 @@
 
 Application& Application::GetInstance()
 {
-	// ‰Às‚Éƒƒ‚ƒŠŠm•Û
+	// åˆå®Ÿè¡Œæ™‚ã«ãƒ¡ãƒ¢ãƒªç¢ºä¿
 	static Application app;
 	return app;
 }
 
 bool Application::Init()
 {
-#ifdef _DEBUG	// ƒRƒ“ƒ\[ƒ‹Debug—p
-	AllocConsole();							// ƒRƒ“ƒ\[ƒ‹
+#ifdef _DEBUG	// ã‚³ãƒ³ã‚½ãƒ¼ãƒ«Debugç”¨
+	AllocConsole();							// ã‚³ãƒ³ã‚½ãƒ¼ãƒ«
 	_out = 0;
 	freopen_s(&_out, "CON", "w", stdout);	// stdout
 	_in = 0;
 	freopen_s(&_in, "CON", "r", stdin);		// stdin
 #endif	// _DEBUG
 
-	// ƒXƒNƒŠ[ƒ“‰Šú‰»ˆ—
+	// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åˆæœŸåŒ–å‡¦ç†
 	SetGraphMode(Statistics::kScreenWidth, Statistics::kScreenHeight, 32);
 	ChangeWindowMode(true);
 	SetWindowText(L"Window");
 
-	// DxLib‚Ì‰Šú‰»ˆ—
+	// DxLibã®åˆæœŸåŒ–å‡¦ç†
 	if (DxLib_Init()) {
 		assert(false && "DxLib_Init_Error");
 		return false;
@@ -38,52 +38,52 @@ bool Application::Init()
 
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	// 3DŠÖ˜Aİ’è
-	SetUseZBuffer3D(true);		// Zƒoƒbƒtƒ@—LŒø‰»
-	SetWriteZBuffer3D(true);	// Zƒoƒbƒtƒ@‚Ö‚Ì‘‚«‚İ‚ğs‚¤
-	SetUseBackCulling(true);	// ƒoƒbƒNƒJƒŠƒ“ƒO‚ğ—LŒø‚É‚·‚é
+	// 3Dé–¢é€£è¨­å®š
+	SetUseZBuffer3D(true);		// Zãƒãƒƒãƒ•ã‚¡æœ‰åŠ¹åŒ–
+	SetWriteZBuffer3D(true);	// Zãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãè¾¼ã¿ã‚’è¡Œã†
+	SetUseBackCulling(true);	// ãƒãƒƒã‚¯ã‚«ãƒªãƒ³ã‚°ã‚’æœ‰åŠ¹ã«ã™ã‚‹
 
 	return true;
 }
 
 void Application::Run()
 {
-	// ƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg‚ğæ“¾
+	// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—
 	SceneController& sceneController = SceneController::GetInstance();
 	Input& input = Input::GetInstance();
 	DebugDraw& debugDraw = DebugDraw::GetInstance();
 
 	while (ProcessMessage() != -1) {
-		// ¡‰ñ‚Ìƒ‹[ƒv‚ªn‚Ü‚Á‚½ŠÔ‚ğŠo‚¦‚Ä‚¨‚­
+		// ä»Šå›ã®ãƒ«ãƒ¼ãƒ—ãŒå§‹ã¾ã£ãŸæ™‚é–“ã‚’è¦šãˆã¦ãŠã
 		LONGLONG time = GetNowHiPerformanceCount();
 
 		ClearDrawScreen();
 
 #ifdef _DEBUG
-		// ƒfƒoƒbƒO•`‰æî•ñ‚ğ‰Šú‰»
+		// ãƒ‡ãƒãƒƒã‚°æç”»æƒ…å ±ã‚’åˆæœŸåŒ–
 		debugDraw.Clear();
 #endif // _DEBUG
 
-		// “ü—ÍXV
+		// å…¥åŠ›æ›´æ–°
 		input.Update();
 
-		// ƒQ[ƒ€•”•ª
+		// ã‚²ãƒ¼ãƒ éƒ¨åˆ†
 		sceneController.Update();
 		sceneController.Draw();
 
 #ifdef _DEBUG
-		// ƒfƒoƒbƒO•`‰æ
+		// ãƒ‡ãƒãƒƒã‚°æç”»
 		debugDraw.Draw();
 #endif // _DEBUG
 
 		ScreenFlip();
 
-		// esc‚ª‰Ÿ‚³‚ê‚½‚ç
+		// escãŒæŠ¼ã•ã‚ŒãŸã‚‰
 		if (CheckHitKey(KEY_INPUT_ESCAPE)) {
-			break;	// ˆ—‚ğ”²‚¯‚é
+			break;	// å‡¦ç†ã‚’æŠœã‘ã‚‹
 		}
 
-		// FPS60‚ÉŒÅ’è‚·‚é
+		// FPS60ã«å›ºå®šã™ã‚‹
 		while (GetNowHiPerformanceCount() - time < 16667) {
 		}
 	}
@@ -92,7 +92,7 @@ void Application::Run()
 void Application::Terminate()
 {
 	DxLib_End();
-#ifdef _DEBUG	// ƒRƒ“ƒ\[ƒ‹Debug—p
-	fclose(_out); fclose(_in); FreeConsole();//ƒRƒ“ƒ\[ƒ‹‰ğ•ú
+#ifdef _DEBUG	// ã‚³ãƒ³ã‚½ãƒ¼ãƒ«Debugç”¨
+	fclose(_out); fclose(_in); FreeConsole();//ã‚³ãƒ³ã‚½ãƒ¼ãƒ«è§£æ”¾
 #endif	// _debug
 }

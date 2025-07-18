@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Geometry.h"
 #include "Collider.h"
 #include <memory>
@@ -10,11 +10,11 @@ class EnemyBase abstract : public Collider
 {
 public:
 	/// <summary>
-	/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	/// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	/// </summary>
 	/// <param name="hitPoint">HP</param>
-	/// <param name="transferAttackRad">UŒ‚ˆÚs”ÍˆÍ</param>
-	/// <param name="attackMul">UŒ‚—Í•â³’l(•Ší‚ÉŠ|‚¯‚é’l)</param>
+	/// <param name="transferAttackRad">æ”»æ’ƒç§»è¡Œç¯„å›²</param>
+	/// <param name="attackMul">æ”»æ’ƒåŠ›è£œæ­£å€¤(æ­¦å™¨ã«æ›ã‘ã‚‹å€¤)</param>
 	EnemyBase(float hitPoint, float transferAttackRad, float attackMul);
 	virtual ~EnemyBase();
 
@@ -26,7 +26,7 @@ public:
 
 protected:
 	/// <summary>
-	/// ƒXƒe[ƒg‚Ì‘JˆÚğŒ‚ğŠm”F‚µA•ÏX‰Â”\‚ÈƒXƒe[ƒg‚ª‚ ‚ê‚Î‚»‚ê‚É‘JˆÚ‚·‚é
+	/// ã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»æ¡ä»¶ã‚’ç¢ºèªã—ã€å¤‰æ›´å¯èƒ½ãªã‚¹ãƒ†ãƒ¼ãƒˆãŒã‚ã‚Œã°ãã‚Œã«é·ç§»ã™ã‚‹
 	/// </summary>
 	virtual void CheckStateTransition() abstract;
 
@@ -41,8 +41,8 @@ protected:
 	// HP
 	float _hitPoint;
 
-	// UŒ‚ˆÚs”ÍˆÍ
+	// æ”»æ’ƒç§»è¡Œç¯„å›²
 	float _transferAttackRad;
-	// UŒ‚—Í•â³’l(•Ší‚ÉŠ|‚¯‚é’l)
+	// æ”»æ’ƒåŠ›è£œæ­£å€¤(æ­¦å™¨ã«æ›ã‘ã‚‹å€¤)
 	float _attackMul;
 };

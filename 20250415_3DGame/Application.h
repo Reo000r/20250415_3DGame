@@ -1,38 +1,38 @@
-#pragma once
+ï»¿#pragma once
 #include <DxLib.h>
 
 class Application final {
-	// ƒVƒ“ƒOƒ‹ƒgƒ“‰»
+	// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
 private:
 	Application() {}
 	Application(const Application&) = delete;
 	void operator=(const Application&) = delete;
 
-#ifdef _DEBUG	// ƒRƒ“ƒ\[ƒ‹Debug—p•Ï”
+#ifdef _DEBUG	// ã‚³ãƒ³ã‚½ãƒ¼ãƒ«Debugç”¨å¤‰æ•°
 	FILE* _out;
 	FILE* _in;
 #endif	// _DEBUG
 
 public:
 	/// <summary>
-	/// ƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg‚ğ•Ô‚·
+	/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™
 	/// </summary>
-	/// <returns>ApplicationƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg</returns>
+	/// <returns>Applicationã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ</returns>
 	static Application& GetInstance();
 
 	/// <summary>
-	/// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ì‰Šú‰»
+	/// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæœŸåŒ–
 	/// </summary>
-	/// <returns>true:‰Šú‰»¬Œ÷ / false:‰Šú‰»¸”s</returns>
+	/// <returns>true:åˆæœŸåŒ–æˆåŠŸ / false:åˆæœŸåŒ–å¤±æ•—</returns>
 	bool Init();
 
 	/// <summary>
-	/// ƒƒCƒ“ƒ‹[ƒv‚ğ‹N“®
+	/// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ã‚’èµ·å‹•
 	/// </summary>
 	void Run();
 
 	/// <summary>
-	/// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌŒãˆ—
+	/// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®å¾Œå‡¦ç†
 	/// </summary>
 	void Terminate();
 };

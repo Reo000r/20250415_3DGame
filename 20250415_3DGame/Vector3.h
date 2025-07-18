@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-// ˆÃ–Ù“IŒ^•ÏŠ·‚Ì‚½‚ß‚Ìƒvƒƒgƒ^ƒCƒvéŒ¾
+// æš—é»™çš„å‹å¤‰æ›ã®ãŸã‚ã®ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 namespace DxLib {
 	struct tagVECTOR;
 }
@@ -15,18 +15,18 @@ public:
 
 	Vector3() : x(0.0f), y(0.0f), z(0.0f) {};
 	Vector3(float x_, float y_, float z_) :
-		x(x_), y(y_), z(z_) // (_x“™‚¾‚Æƒƒ“ƒo‚Ì–½–¼‚Æ”í‚é‚½‚ß)
+		x(x_), y(y_), z(z_) // (_xç­‰ã ã¨ãƒ¡ãƒ³ãƒã®å‘½åã¨è¢«ã‚‹ãŸã‚)
 	{
 	};
 
-	// VECTOR‚©‚çVector3AVector3‚©‚çVECTOR‚Ö
-	// ˆÃ–Ù“I‚ÉŒ^•ÏŠ·‚·‚é‚½‚ß‚Ì‚à‚Ì
+	// VECTORã‹ã‚‰Vector3ã€Vector3ã‹ã‚‰VECTORã¸
+	// æš—é»™çš„ã«å‹å¤‰æ›ã™ã‚‹ãŸã‚ã®ã‚‚ã®
 	operator DxLib::tagVECTOR();
 	operator DxLib::tagVECTOR() const;
 	Vector3(const DxLib::tagVECTOR vector);
 
-	// ƒIƒyƒŒ[ƒ^ƒI[ƒo[ƒ[ƒh
-	// (œZ‚Íassertg—p)
+	// ã‚ªãƒšãƒ¬ãƒ¼ã‚¿ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
+	// (é™¤ç®—ã¯assertä½¿ç”¨)
 	Vector3 operator+(const Vector3& v) const;
 	Vector3 operator-(const Vector3& v) const;
 	Vector3 operator*(const float& m) const;
@@ -41,56 +41,56 @@ public:
 	Vector3 operator+(const Vector2& vec2) const;
 
 	/// <summary>
-	/// •„†”½“]
+	/// ç¬¦å·åè»¢
 	/// </summary>
 	/// <returns></returns>
 	Vector3 operator-() const;
 
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float Magnitude() const;
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float Magnitude(const Vector3& v) const;
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float Magnitude(const float& x_, const float& y_, const float& z_) const;
 
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì“ñæ‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®äºŒä¹—ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float SqrMagnitude() const;
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì“ñæ‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®äºŒä¹—ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float SqrMagnitude(const Vector3& v) const;
 	/// <summary>
-	/// ƒxƒNƒgƒ‹‚Ì“ñæ‚Ì’·‚³‚ğ•Ô‚·
+	/// ãƒ™ã‚¯ãƒˆãƒ«ã®äºŒä¹—ã®é•·ã•ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	float SqrMagnitude(const float& x_, const float& y_, const float& z_) const;
 
 	/// <summary>
-	/// a‚Æb‚ÌŠÔ‚Ì‹——£‚ğ•Ô‚·
-	/// (Distance(a, b) ‚Í (a-b).magnitude‚Æ“¯‚¶)
+	/// aã¨bã®é–“ã®è·é›¢ã‚’è¿”ã™
+	/// (Distance(a, b) ã¯ (a-b).magnitudeã¨åŒã˜)
 	/// </summary>
 	/// <returns></returns>
 	float Distance(const Vector3& a, const Vector3& b) const;
 
 	/// <summary>
-	/// ³‹K‰»‚·‚é
+	/// æ­£è¦åŒ–ã™ã‚‹
 	/// </summary>
 	void Normalized();
 	/// <summary>
-	/// ³‹K‰»‚µ‚½ƒxƒNƒgƒ‹‚ğ•Ô‚·
+	/// æ­£è¦åŒ–ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	Vector3 Normalize() const;
@@ -105,22 +105,22 @@ public:
 };
 
 /// <summary>
-/// a‚©‚çb ‚Ö t‚ÌŠ„‡‚¾‚¯‹ß‚Ã‚¢‚½“_‚ğ•Ô‚·
-/// t‚Í 0-1 ‚Ì”ÍˆÍ
-/// t‚ª 0   ‚Ìê‡Aa ‚ğ•Ô‚·
-/// t‚ª 1   ‚Ìê‡Ab ‚ğ•Ô‚·
-/// t‚ª 0.5 ‚Ìê‡Aa ‚Æ b ‚Ì’†“_‚ª•Ô‚³‚ê‚é
-/// t‚ª 0ˆÈ‰º ‚Ìê‡ a ‚ğ•Ô‚·(t=0‚Æ“¯‚¶)
-/// t‚ª 1ˆÈã ‚Ìê‡ b ‚ğ•Ô‚·(t=1‚Æ“¯‚¶)
+/// aã‹ã‚‰b ã¸ tã®å‰²åˆã ã‘è¿‘ã¥ã„ãŸç‚¹ã‚’è¿”ã™
+/// tã¯ 0-1 ã®ç¯„å›²
+/// tãŒ 0   ã®å ´åˆã€a ã‚’è¿”ã™
+/// tãŒ 1   ã®å ´åˆã€b ã‚’è¿”ã™
+/// tãŒ 0.5 ã®å ´åˆã€a ã¨ b ã®ä¸­ç‚¹ãŒè¿”ã•ã‚Œã‚‹
+/// tãŒ 0ä»¥ä¸‹ ã®å ´åˆ a ã‚’è¿”ã™(t=0ã¨åŒã˜)
+/// tãŒ 1ä»¥ä¸Š ã®å ´åˆ b ã‚’è¿”ã™(t=1ã¨åŒã˜)
 /// </summary>
-/// <param name="a">n“_</param>
-/// <param name="b">I“_</param>
-/// <param name="t">”ÍˆÍ</param>
+/// <param name="a">å§‹ç‚¹</param>
+/// <param name="b">çµ‚ç‚¹</param>
+/// <param name="t">ç¯„å›²</param>
 /// <returns></returns>
 Vector3 Lerp(const Vector3& va, const Vector3& vb, const float& t);
 
 /// <summary>
-/// ƒXƒP[ƒŠƒ“ƒO‚µ‚½ƒxƒNƒgƒ‹‚ğ•Ô‚·
+/// ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™
 /// </summary>
 /// <param name="v"></param>
 /// <param name="scale"></param>
@@ -128,7 +128,7 @@ Vector3 Lerp(const Vector3& va, const Vector3& vb, const float& t);
 Vector3 VecScale(const Vector3& v, const float& scale);
 
 /// <summary>
-/// “àÏ‚ğ•Ô‚·
+/// å†…ç©ã‚’è¿”ã™
 /// </summary>
 /// <param name="va"></param>
 /// <param name="vb"></param>
@@ -136,8 +136,8 @@ Vector3 VecScale(const Vector3& v, const float& scale);
 float Dot(const Vector3& va, const Vector3& vb);
 
 /// <summary>
-/// ŠOÏ‚ğ•Ô‚·
-/// (‹°‚ç‚­•sŠ®‘S)
+/// å¤–ç©ã‚’è¿”ã™
+/// (æã‚‰ãä¸å®Œå…¨)
 /// </summary>
 /// <param name="va"></param>
 /// <param name="vb"></param>
@@ -145,7 +145,7 @@ float Dot(const Vector3& va, const Vector3& vb);
 //float Cross(const Vector3& va, const Vector3& vb);
 
 /// <summary>
-/// ŠOÏ‚ğ•Ô‚·
+/// å¤–ç©ã‚’è¿”ã™
 /// </summary>
 /// <param name="va"></param>
 /// <param name="vb"></param>
@@ -153,7 +153,7 @@ float Dot(const Vector3& va, const Vector3& vb);
 Vector3 Cross(const Vector3& va, const Vector3& vb);
 
 /// <summary>
-/// “àÏ
+/// å†…ç©
 /// </summary>
 /// <param name="va"></param>
 /// <param name="vb"></param>
@@ -161,7 +161,7 @@ Vector3 Cross(const Vector3& va, const Vector3& vb);
 float operator*(const Vector3& va, const Vector3& vb);
 
 /// <summary>
-/// ŠOÏ
+/// å¤–ç©
 /// </summary>
 /// <param name="va"></param>
 /// <param name="vb"></param>
@@ -169,10 +169,10 @@ float operator*(const Vector3& va, const Vector3& vb);
 Vector3 operator%(const Vector3& va, const Vector3& vb);
 
 /// <summary>
-/// ”½ËƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+/// åå°„ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
 /// </summary>
-/// <param name="v">“üËƒxƒNƒgƒ‹</param>
-/// <param name="normal">–@üƒxƒNƒgƒ‹</param>
+/// <param name="v">å…¥å°„ãƒ™ã‚¯ãƒˆãƒ«</param>
+/// <param name="normal">æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«</param>
 /// <returns></returns>
 Vector3 Reflect(const Vector3 v, Vector3 normal);
 

@@ -1,4 +1,4 @@
-#include "Weapon.h"
+﻿#include "Weapon.h"
 #include "Rigidbody.h"
 #include "ColliderData.h"
 #include "ColliderDataCapsule.h"
@@ -18,39 +18,43 @@ Weapon::Weapon() :
 
 Weapon::~Weapon()
 {
+	MV1DeleteModel(_modelHandle);
 }
 
-void Weapon::Init(int modelHandle, float rad, float dist, Vector3 angle)
+void Weapon::Init(int modelHandle, Matrix4x4 localOffsetMatrix, float rad, float dist, Vector3 angle)
 {
-	assert(modelHandle >= 0 && "���f���n���h�����������Ȃ�");
+	assert(modelHandle >= 0 && "モデルハンドルが正しくない");
 	_modelHandle = modelHandle;
 
-	// �����蔻��̃f�[�^��K�p
+	_localOffsetMatrix = localOffsetMatrix;
+
+	// 当たり判定のデータを適用
 	SetColliderData(PhysicsData::ColliderKind::Capsule, true, rad, dist, angle);
 }
 
-void Weapon::Update(Matrix4x4 worldMatrix)
+void Weapon::Update(Matrix4x4 parentWorldMatrix)
 {
-	auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
-	Position3 start = capsuleData->GetStartPos(Vector3());
-	Position3 end = capsuleData->GetEndPos(Vector3());
-	Matrix4x4 localMat = MatTranslate(end - start);
+	// 武器自身のワールド行列を計算
+	// 親のワールド行列に武器のローカルオフセット行列を乗算
+	Matrix4x4 weaponWorldMatrix = MatMultiple(_localOffsetMatrix, parentWorldMatrix);
 
-	worldMatrix = MatMultiple(localMat, worldMatrix);
+	// モデルのワールド行列を適用
+	MV1SetMatrix(_modelHandle, weaponWorldMatrix);
 
-	// ���[���h�s���K�p
-	MV1SetMatrix(_modelHandle, worldMatrix);
-
-	// �s�񂩂�ʒu���������o���đ��
-	Position3 pos = Vector3(worldMatrix.m[3][0], worldMatrix.m[3][1], worldMatrix.m[3][2]);
-	rigidbody->SetPos(pos);
-
-	// MEMO:trans, frame, scale(, rotY
+	// Rigidbodyの位置を更新
+	// モデルのワールド行列から位置情報を取り出し、Rigidbodyに設定
+	// これにより、物理演算（衝突判定など）がモデルの描画位置と同期する
+	Position3 modelWorldPos = Vector3(
+		weaponWorldMatrix.m[3][0],
+		weaponWorldMatrix.m[3][1],
+		weaponWorldMatrix.m[3][2]
+	);
+	rigidbody->SetPos(modelWorldPos);
 }
 
 void Weapon::Draw()
 {
-	// �`��
+	// 描画
 	MV1DrawModel(_modelHandle);
 }
 

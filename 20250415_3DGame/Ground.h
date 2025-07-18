@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class Ground final {
 public:
@@ -6,17 +6,17 @@ public:
 	~Ground();
 
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	void Init();
 
 	/// <summary>
-	/// “à•”•Ï”‚ÌXV
+	/// å†…éƒ¨å¤‰æ•°ã®æ›´æ–°
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// •`‰æ‘S”Ê
+	/// æç”»å…¨èˆ¬
 	/// </summary>
 	void Draw();
 };

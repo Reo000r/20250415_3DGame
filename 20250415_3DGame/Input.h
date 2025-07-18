@@ -1,69 +1,69 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector3.h"
 
 #include <map>
 #include <string>
 #include <vector>
 
-#define USE_STICK	// ‘€ì‚ÅƒXƒeƒBƒbƒN‚ğg‚¤
+#define USE_STICK	// æ“ä½œã§ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’ä½¿ã†
 
 /// <summary>
-/// “ü—ÍŒn‚ğƒRƒ“ƒgƒ[ƒ‹‚·‚éƒNƒ‰ƒX
-/// ƒVƒ“ƒOƒ‹ƒgƒ“‰»‚·‚é
+/// å…¥åŠ›ç³»ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã™ã‚‹ã‚¯ãƒ©ã‚¹
+/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–ã™ã‚‹
 /// </summary>
 class Input final {
 public:
 	/// <summary>
-	/// ƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg‚ğ•Ô‚·
+	/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™
 	/// </summary>
-	/// <returns>ƒVƒ“ƒOƒ‹ƒgƒ“ƒIƒuƒWƒFƒNƒg</returns>
+	/// <returns>ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ</returns>
 	static Input& GetInstance();
 
 	/// <summary>
-	/// “ü—Íî•ñ‚ÌXV
+	/// å…¥åŠ›æƒ…å ±ã®æ›´æ–°
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// ‰Ÿ‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚Ìæ“¾
+	/// æŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã®å–å¾—
 	/// </summary>
-	/// <param name="button">”»’è‚ğs‚¤ƒ{ƒ^ƒ“</param>
-	/// <returns>‰Ÿ‚³‚ê‚Ä‚¢‚ê‚ÎtrueA‚Å‚È‚¯‚ê‚Îfalse</returns>
+	/// <param name="button">åˆ¤å®šã‚’è¡Œã†ãƒœã‚¿ãƒ³</param>
+	/// <returns>æŠ¼ã•ã‚Œã¦ã„ã‚Œã°trueã€ã§ãªã‘ã‚Œã°false</returns>
 	bool IsPress(const char* key) const;
 
 	/// <summary>
-	/// ‰Ÿ‚³‚ê‚½uŠÔ‚©‚Ç‚¤‚©‚Ìæ“¾
+	/// æŠ¼ã•ã‚ŒãŸç¬é–“ã‹ã©ã†ã‹ã®å–å¾—
 	/// </summary>
-	/// <param name="button">”»’è‚ğs‚¤ƒ{ƒ^ƒ“</param>
-	/// <returns>‰Ÿ‚³‚ê‚Ä‚¢‚ê‚ÎtrueA‚Å‚È‚¯‚ê‚Îfalse</returns>
+	/// <param name="button">åˆ¤å®šã‚’è¡Œã†ãƒœã‚¿ãƒ³</param>
+	/// <returns>æŠ¼ã•ã‚Œã¦ã„ã‚Œã°trueã€ã§ãªã‘ã‚Œã°false</returns>
 	bool IsTrigger(const char* key) const;
 
 	/// <summary>
-	/// ‰EƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ‚ğVector3Œ^‚Å•Ô‚·
-	/// xAz‚É’l‚ğ“ü‚ê‚é
+	/// å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±ã‚’Vector3å‹ã§è¿”ã™
+	/// xã€zã«å€¤ã‚’å…¥ã‚Œã‚‹
 	/// </summary>
-	/// <returns>‰EƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ</returns>
+	/// <returns>å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±</returns>
 	Vector3 GetPadRightSitck() const;
 	/// <summary>
-	/// ‰EƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ‚ğVector3Œ^‚Å•Ô‚·
-	/// xAz‚É’l‚ğ“ü‚ê‚é
-	/// ÅŒã‚É‚ ‚Á‚½“ü—Í‚ğ•Ô‚·
+	/// å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±ã‚’Vector3å‹ã§è¿”ã™
+	/// xã€zã«å€¤ã‚’å…¥ã‚Œã‚‹
+	/// æœ€å¾Œã«ã‚ã£ãŸå…¥åŠ›ã‚’è¿”ã™
 	/// </summary>
-	/// <returns>‰EƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ</returns>
+	/// <returns>å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±</returns>
 	Vector3 GetPadRightSitckLast() const;
 
 	/// <summary>
-	/// ¶ƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ‚ğVector3Œ^‚Å•Ô‚·
-	/// xAz‚É’l‚ğ“ü‚ê‚é
+	/// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±ã‚’Vector3å‹ã§è¿”ã™
+	/// xã€zã«å€¤ã‚’å…¥ã‚Œã‚‹
 	/// </summary>
-	/// <returns>¶ƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ</returns>
+	/// <returns>å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±</returns>
 	Vector3 GetPadLeftSitck() const;
 	/// <summary>
-	/// ¶ƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ‚ğVector3Œ^‚Å•Ô‚·
-	/// xAz‚É’l‚ğ“ü‚ê‚é
-	/// ÅŒã‚É‚ ‚Á‚½“ü—Í‚ğ•Ô‚·
+	/// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±ã‚’Vector3å‹ã§è¿”ã™
+	/// xã€zã«å€¤ã‚’å…¥ã‚Œã‚‹
+	/// æœ€å¾Œã«ã‚ã£ãŸå…¥åŠ›ã‚’è¿”ã™
 	/// </summary>
-	/// <returns>¶ƒXƒeƒBƒbƒN‚Ì“ü—Íî•ñ</returns>
+	/// <returns>å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›æƒ…å ±</returns>
 	Vector3 GetPadLeftSitckLast() const;
 
 private:
@@ -71,78 +71,78 @@ private:
 	Input(const Input&) = delete;
 	void operator=(const Input&) = delete;
 
-	// ü•Ó‹@Šíí•Ê
+	// å‘¨è¾ºæ©Ÿå™¨ç¨®åˆ¥
 	enum class PeripheralType {
-		keybd,	// ƒL[ƒ{[ƒh
-		pad1	// ƒpƒbƒh‚P
+		keybd,	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰
+		pad1	// ãƒ‘ãƒƒãƒ‰ï¼‘
 	};
-	///“ü—Íî•ñ’è‹`—p
+	///å…¥åŠ›æƒ…å ±å®šç¾©ç”¨
 	struct InputState {
-		PeripheralType type;	// ü•Ó‹@Šíí•Ê
-		int id;					// ÀÛ‚Ì“ü—Í‚ğ•\‚·’è”
+		PeripheralType type;	// å‘¨è¾ºæ©Ÿå™¨ç¨®åˆ¥
+		int id;					// å®Ÿéš›ã®å…¥åŠ›ã‚’è¡¨ã™å®šæ•°
 	};
 
 	using InputTable_t = std::map<std::string, std::vector<InputState>>;
-	InputTable_t _inputTable;		// –¼‘O‚ÆÀÛ‚Ì“ü—Í‚Ì‘Î‰•\
-	InputTable_t _tempInputTable;	// –¼‘O‚ÆÀÛ‚Ì“ü—Í‚Ì‘Î‰•\(ˆê“I‚ÈƒRƒs[)
+	InputTable_t _inputTable;		// åå‰ã¨å®Ÿéš›ã®å…¥åŠ›ã®å¯¾å¿œè¡¨
+	InputTable_t _tempInputTable;	// åå‰ã¨å®Ÿéš›ã®å…¥åŠ›ã®å¯¾å¿œè¡¨(ä¸€æ™‚çš„ãªã‚³ãƒ”ãƒ¼)
 
 	/// <summary>
-	/// “ü—Í‚ğ‰Šú’l‚Éİ’è‚·‚é
+	/// å…¥åŠ›ã‚’åˆæœŸå€¤ã«è¨­å®šã™ã‚‹
 	/// </summary>
 	void SetDefault();
 
 	///// <summary>
-	///// ƒL[ƒRƒ“ƒtƒBƒO—p(s‚Á‚½•ÏX‚ğŠm’è‚·‚é)
+	///// ã‚­ãƒ¼ã‚³ãƒ³ãƒ•ã‚£ã‚°ç”¨(è¡Œã£ãŸå¤‰æ›´ã‚’ç¢ºå®šã™ã‚‹)
 	///// </summary>
 	//void CommitEdittedInputTable();
 
 	///// <summary>
-	///// ƒL[ƒRƒ“ƒtƒBƒO—p(s‚Á‚½•ÏX‚ğ‚È‚©‚Á‚½‚±‚Æ‚É‚·‚é)
+	///// ã‚­ãƒ¼ã‚³ãƒ³ãƒ•ã‚£ã‚°ç”¨(è¡Œã£ãŸå¤‰æ›´ã‚’ãªã‹ã£ãŸã“ã¨ã«ã™ã‚‹)
 	///// </summary>
 	//void RollbackEdittedInputTable();
 
-	// ‰Ÿ‚³‚ê‚½‚©‚Ç‚¤‚©‚ğ‹L˜^‚µ‚Ä‚¢‚­‚à‚Ì
+	// æŠ¼ã•ã‚ŒãŸã‹ã©ã†ã‹ã‚’è¨˜éŒ²ã—ã¦ã„ãã‚‚ã®
 	using InputRecord_t = std::map<std::string, bool>;
-	InputRecord_t _current;		// Œ»İ‰Ÿ‚µ‚Ä‚é‚©‚Ç‚¤‚©
-	InputRecord_t _last;		// ’¼‘O‚É‰Ÿ‚³‚ê‚Ä‚½‚©‚Ç‚¤‚©
+	InputRecord_t _current;		// ç¾åœ¨æŠ¼ã—ã¦ã‚‹ã‹ã©ã†ã‹
+	InputRecord_t _last;		// ç›´å‰ã«æŠ¼ã•ã‚Œã¦ãŸã‹ã©ã†ã‹
 
-	std::vector<std::string> _orderForDisplay;	// •\¦—p(map‚Ì‡˜‚ÍƒRƒ“ƒgƒ[ƒ‹‚Å‚«‚È‚¢‚½‚ß)
+	std::vector<std::string> _orderForDisplay;	// è¡¨ç¤ºç”¨(mapã®é †åºã¯ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã§ããªã„ãŸã‚)
 
-	// “ü—Í•Û‘¶
-	int _currentRawPadState;			// ¡‚Ì¶ƒpƒbƒhƒXƒe[ƒg
-	int _lastRawPadState;				// ’¼‘O‚Ì¶ƒpƒbƒhƒXƒe[ƒg
-	char _currentRawKeybdState[256];	// ¡‚ÌƒL[ƒ{[ƒhó‘Ô
-	char _lastRawKeybdState[256];		// ’¼‘O‚ÌƒL[ƒ{[ƒhó‘Ô
+	// å…¥åŠ›ä¿å­˜
+	int _currentRawPadState;			// ä»Šã®ç”Ÿãƒ‘ãƒƒãƒ‰ã‚¹ãƒ†ãƒ¼ãƒˆ
+	int _lastRawPadState;				// ç›´å‰ã®ç”Ÿãƒ‘ãƒƒãƒ‰ã‚¹ãƒ†ãƒ¼ãƒˆ
+	char _currentRawKeybdState[256];	// ä»Šã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰çŠ¶æ…‹
+	char _lastRawKeybdState[256];		// ç›´å‰ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰çŠ¶æ…‹
 
-	// ¶‰EƒXƒeƒBƒbƒN“ü—Íî•ñ
+	// å·¦å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›æƒ…å ±
 	Vector3 _rightStickInput;
 	Vector3 _leftStickInput;
-	// ¶‰EƒXƒeƒBƒbƒN‚ÌÅŒã‚Ì“ü—Íî•ñ
+	// å·¦å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®æœ€å¾Œã®å…¥åŠ›æƒ…å ±
 	Vector3 _rightStickLastInput;
 	Vector3 _leftStickLastInput;
 
 	/// <summary>
-	/// Œ»İ‚ÌƒL[ƒ{[ƒhó‘Ô‚ğ’²‚×‚ÄÅ‚à
-	/// á‚¢ƒL[ƒR[ƒh‚ğ•Ô‚·
-	/// ‚Ğ‚Æ‚Â‚à‰Ÿ‚³‚ê‚Ä‚È‚¯‚ê‚Î-1‚ğ•Ô‚·
+	/// ç¾åœ¨ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰çŠ¶æ…‹ã‚’èª¿ã¹ã¦æœ€ã‚‚
+	/// è‹¥ã„ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’è¿”ã™
+	/// ã²ã¨ã¤ã‚‚æŠ¼ã•ã‚Œã¦ãªã‘ã‚Œã°-1ã‚’è¿”ã™
 	/// </summary>
 	/// <returns></returns>
 	int GetKeyboradState()const;
 
 	/// <summary>
-	/// Œ»İ‚ÌPADó‘Ô‚ğ’²‚×‚ÄÅ‚à
-	/// á‚¢ƒL[“ü—Í‚ğ•Ô‚·
-	/// ‚Ğ‚Æ‚Â‚à‰Ÿ‚³‚ê‚Ä‚È‚¯‚ê‚Î-1‚ğ•Ô‚·
+	/// ç¾åœ¨ã®PADçŠ¶æ…‹ã‚’èª¿ã¹ã¦æœ€ã‚‚
+	/// è‹¥ã„ã‚­ãƒ¼å…¥åŠ›ã‚’è¿”ã™
+	/// ã²ã¨ã¤ã‚‚æŠ¼ã•ã‚Œã¦ãªã‘ã‚Œã°-1ã‚’è¿”ã™
 	/// </summary>
 	int GetPadState(int padno)const;
 
 	/// <summary>
-	/// Œ»İ‚Ì“ü—Íƒe[ƒuƒ‹‚ğƒZ[ƒu‚·‚é
+	/// ç¾åœ¨ã®å…¥åŠ›ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ã‚»ãƒ¼ãƒ–ã™ã‚‹
 	/// </summary>
 	void SaveInputTable();
 
 	/// <summary>
-	/// “ü—Íƒe[ƒuƒ‹‚ğƒ[ƒh‚µ‚Ä”½‰f‚·‚é
+	/// å…¥åŠ›ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¦åæ˜ ã™ã‚‹
 	/// </summary>
 	void LoadInputTable();
 };

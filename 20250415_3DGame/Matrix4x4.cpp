@@ -1,4 +1,4 @@
-#include "Matrix4x4.h"
+ï»¿#include "Matrix4x4.h"
 #include "Vector3.h"
 
 #include <DxLib.h>
@@ -62,14 +62,14 @@ Vector3 Matrix4x4::VecMultiple(const Vector3& vec) const {
 
 void Matrix4x4::MatScale(const float& scale) {
 	if (scale == 0.0f) {
-		*this = MatIdentity();	// ƒXƒP[ƒ‹‚ªƒ[ƒ‚Ìê‡‚Í’PˆÊs—ñ‚É–ß‚·
+		*this = MatIdentity();	// ã‚¹ã‚±ãƒ¼ãƒ«ãŒã‚¼ãƒ­ã®å ´åˆã¯å˜ä½è¡Œåˆ—ã«æˆ»ã™
 		return;
 	}
 	const int range = 4;//sizeof(ret.m[0]) / sizeof(ret.m[0][0]);
 	for (int i = 0; i < range; ++i) {
 		this->m[i][i] *= scale;
 	}
-	// C³‘O
+	// ä¿®æ­£å‰
 	//for (int k = 0; k < range; ++k) {
 	//	for (int j = 0; j < range; ++j) {
 	//		for (int i = 0; i < range; ++i) {
@@ -117,22 +117,22 @@ Matrix4x4 MatMultiple(const Matrix4x4& lmat, const Matrix4x4& rmat) {
 		}
 	}
 	return ret;
-	// •ª‰ğ«
-	// k‚ÍsAj‚Í—ñAi‚ÍŒ‹‰Ê‚Ìˆê—v‘f‚É‚©‚¯‚éŒvZ‰ñ”
-	// 4x4s—ñ‚ÌŠ|‚¯Z
+	// åˆ†è§£â†“
+	// kã¯è¡Œã€jã¯åˆ—ã€iã¯çµæœã®ä¸€è¦ç´ ã«ã‹ã‘ã‚‹è¨ˆç®—å›æ•°
+	// 4x4è¡Œåˆ—ã®æ›ã‘ç®—
 	// ret = lmat * rmat
 	//
-	// Še—v‘f‚ÌŒvZ•û–@F
+	// å„è¦ç´ ã®è¨ˆç®—æ–¹æ³•ï¼š
 	// ret.m[i][j] = lmat.m[i][0] * rmat.m[0][j]
 	//             + lmat.m[i][1] * rmat.m[1][j]
 	//             + lmat.m[i][2] * rmat.m[2][j]
 	//             + lmat.m[i][3] * rmat.m[3][j];
-	// „ a b c d„    „ e f g h„    „ ae+bf+cg+dh ...„ 
-	// „ e f g h„  x „ i j k l„  = „ ...            „ 
-	// „ i j k l„    „ m n o p„    „ ...            „ 
-	// „ m n o p„    „ q r s t„    „ ...            „ 
+	// â”‚a b c dâ”‚   â”‚e f g hâ”‚   â”‚ae+bf+cg+dh ...â”‚
+	// â”‚e f g hâ”‚ x â”‚i j k lâ”‚ = â”‚...            â”‚
+	// â”‚i j k lâ”‚   â”‚m n o pâ”‚   â”‚...            â”‚
+	// â”‚m n o pâ”‚   â”‚q r s tâ”‚   â”‚...            â”‚
 	//
-	// ¦ ret.m[s][—ñ] = ¶‚Ìs ~ ‰E‚Ì—ñ ‚ÌÏ‚Ì‘˜a
+	// â€» ret.m[è¡Œ][åˆ—] = å·¦ã®è¡Œ Ã— å³ã®åˆ— ã®ç©ã®ç·å’Œ
 }
 
 Vector3 VecMultiple(const Matrix4x4& mat, const Vector3& vec) {
@@ -148,30 +148,30 @@ Matrix4x4 MatGetScale(const Vector3& scale) {
 }
 
 Matrix4x4 MatInverse(const Matrix4x4& mat) {
-	// DxLib‚Ì‹ts—ñ“±o‚ğ—˜—p‚·‚é
+	// DxLibã®é€†è¡Œåˆ—å°å‡ºã‚’åˆ©ç”¨ã™ã‚‹
 	return DxLib::MInverse(mat);
 	
-	// ‹ŒƒR[ƒh(‘|‚«o‚µ–@)
+	// æ—§ã‚³ãƒ¼ãƒ‰(æƒãå‡ºã—æ³•)
 	/*
 	Matrix4x4 ret = mat;
 	float temp = 0;
 	for (int i = 0; i < 4; ++i) {
-		ret.m[1][i] -= ret.m[0][i];		// 1. 2s‚©‚ç1s‚ğˆø‚­
-		ret.m[2][i] -= ret.m[0][i];		// 2. 3s‚©‚ç1s‚ğˆø‚­
-		ret.m[3][i] += ret.m[0][i];		// 3. 4s‚É  1s‚ğ‘«‚·
-		temp = ret.m[1][i];		// 4. 2s‚Æ  4s‚ğ“ü‚ê‘Ö‚¦‚é
+		ret.m[1][i] -= ret.m[0][i];		// 1. 2è¡Œã‹ã‚‰1è¡Œã‚’å¼•ã
+		ret.m[2][i] -= ret.m[0][i];		// 2. 3è¡Œã‹ã‚‰1è¡Œã‚’å¼•ã
+		ret.m[3][i] += ret.m[0][i];		// 3. 4è¡Œã«  1è¡Œã‚’è¶³ã™
+		temp = ret.m[1][i];		// 4. 2è¡Œã¨  4è¡Œã‚’å…¥ã‚Œæ›¿ãˆã‚‹
 		ret.m[1][i] = ret.m[3][i];
 		ret.m[3][i] = temp;
-		ret.m[1][i] *= 0.5f;			// 5. 2s‚É  1/2(0.5)‚ğŠ|‚¯‚é
-		ret.m[0][i] -= ret.m[1][i];		// 6. 1s‚©‚ç2s‚ğˆø‚­
-		ret.m[2][i] += ret.m[0][i] * 2;	// 7. 3s‚É  2s*2‚ğ‘«‚·
-		ret.m[2][i] *= 0.5f;			// 8. 3s‚É  1/2(0.5)‚ğŠ|‚¯‚é
-		ret.m[1][i] -= ret.m[2][i];		// 9. 2s‚©‚ç3s‚ğˆø‚­
-		ret.m[3][i] += ret.m[2][i] * 2;	// 10.4s‚É  3s*2‚ğ‘«‚·
-		ret.m[3][i] *= 0.25f;			// 11.4s‚É  1/4(0.25)‚ğŠ|‚¯‚é
-		ret.m[0][i] += ret.m[3][i];		// 12.1s‚É  4s‚ğ‘«‚·
-		ret.m[1][i] += ret.m[3][i];		// 13.2s‚É  4s‚ğ‘«‚·
-		ret.m[2][i] -= ret.m[3][i];		// 14.3s‚©‚ç4s‚ğˆø‚­
+		ret.m[1][i] *= 0.5f;			// 5. 2è¡Œã«  1/2(0.5)ã‚’æ›ã‘ã‚‹
+		ret.m[0][i] -= ret.m[1][i];		// 6. 1è¡Œã‹ã‚‰2è¡Œã‚’å¼•ã
+		ret.m[2][i] += ret.m[0][i] * 2;	// 7. 3è¡Œã«  2è¡Œ*2ã‚’è¶³ã™
+		ret.m[2][i] *= 0.5f;			// 8. 3è¡Œã«  1/2(0.5)ã‚’æ›ã‘ã‚‹
+		ret.m[1][i] -= ret.m[2][i];		// 9. 2è¡Œã‹ã‚‰3è¡Œã‚’å¼•ã
+		ret.m[3][i] += ret.m[2][i] * 2;	// 10.4è¡Œã«  3è¡Œ*2ã‚’è¶³ã™
+		ret.m[3][i] *= 0.25f;			// 11.4è¡Œã«  1/4(0.25)ã‚’æ›ã‘ã‚‹
+		ret.m[0][i] += ret.m[3][i];		// 12.1è¡Œã«  4è¡Œã‚’è¶³ã™
+		ret.m[1][i] += ret.m[3][i];		// 13.2è¡Œã«  4è¡Œã‚’è¶³ã™
+		ret.m[2][i] -= ret.m[3][i];		// 14.3è¡Œã‹ã‚‰4è¡Œã‚’å¼•ã
 	}
 	return ret;
 	*/
@@ -179,7 +179,7 @@ Matrix4x4 MatInverse(const Matrix4x4& mat) {
 
 Matrix4x4 MatTranspose(const Matrix4x4& mat)
 {
-	// “]’u
+	// è»¢ç½®
 	Matrix4x4 ret;
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
