@@ -5,14 +5,14 @@
 
 namespace {
 	// アニメーションのブレンド時間(frame)
-	constexpr float kAnimBlendFrame = 8.0f;
+	constexpr float kAnimBlendFrame = 15.0f;
 	// アニメーションの再生速度(60fなら1.0、30fなら0.5が等速)
-	constexpr float kAnimSpeed = 0.6f;
+	constexpr float kAnimSpeed = 0.7f;
 }
 
 Animator::Animator() :
 	_model(-1),
-	_blendRate(0.0f)
+	_blendRate(1.0f) // 最初はブレンドしていないので1.0
 {
 }
 
@@ -29,23 +29,15 @@ void Animator::Init(int model)
 
 void Animator::Update()
 {
-	// アニメーションの再生
-	UpdateAnim(FindAnimData(_blendingAnimName));
-	// 同じアニメーションでないかつ
-	// 再生終了フラグが立っていないなら
-	if (_currentAnimName != _blendingAnimName &&
-		!FindAnimData(_currentAnimName).isEnd) {
-		// 再生
-		UpdateAnim(FindAnimData(_currentAnimName));
-	}
-	// ブレンド比率更新
+	// ブレンド処理が進行中か、
+	// そうでなければ現在のアニメーションを更新
 	UpdateAnimBlendRate();
 
 #ifdef _DEBUG	// 複数所持は対応していない
 	int y = 16 * 9;
-	DrawFormatString(0, y, 0xffffff, L"ExistState = %s", _currentAnimName.c_str());
+	DrawFormatString(0, y, 0xffffff, L"CurrentState = %s", _currentAnimName.c_str());
 	y += 16;
-	DrawFormatString(0, y, 0xffffff, L"BlendState = %s", _blendingAnimName.c_str());
+	DrawFormatString(0, y, 0xffffff, L"PrevState = %s", _prevAnimName.c_str());
 	y += 16;
 	DrawFormatString(0, y, 0xffffff, L"BlendRate = %.2f", _blendRate);
 	y += 16;
@@ -58,10 +50,16 @@ void Animator::Update()
 
 void Animator::SetStartAnim(const std::wstring animName, const bool isLoop)
 {
-	AttachAnim(animName, isLoop);
-	// _blendingAnimのみを使用するため
+	// 最初のアニメーションを現在のものとして設定
+	_currentAnimName = animName;
+	AttachAnim(_currentAnimName, isLoop);
+
+	// ブレンドは不要なので、ウェイトを100%にする
 	_blendRate = 1.0f;
-	_currentAnimName = _blendingAnimName;
+	MV1SetAttachAnimBlendRate(
+		_model, 
+		FindAnimData(_currentAnimName).attachNo, 
+		_blendRate);
 }
 
 void Animator::SetAnimData(const std::wstring animName, const bool isLoop, float inputAcceptanceStartRatio, float inputAcceptanceEndRatio)
@@ -75,25 +73,27 @@ void Animator::SetAnimData(const std::wstring animName, const bool isLoop, float
 	}
 	AnimData animData;
 	animData.animIndex = MV1GetAnimIndex(_model, animName.c_str());
-	animData.attachNo = -1;		// 実際に使う際に更新する
+	animData.attachNo = -1;	// 実際に使う際に更新する
 	animData.animName = animName;
 	animData.frame = 0.0f;
 	animData.totalFrame = MV1GetAnimTotalTime(_model, animData.animIndex);
 	animData.isLoop = isLoop;
 	animData.isEnd = false;
-
 	// 比率をフレーム値に変換
 	animData.inputAcceptanceStartFrame = animData.totalFrame * inputAcceptanceStartRatio;
 	animData.inputAcceptanceEndFrame = animData.totalFrame * inputAcceptanceEndRatio;
-
-	//_animDataList.emplace_back(animData);
 	_animDataList.emplace_front(animData);
 }
 
 void Animator::AttachAnim(const std::wstring animName, const bool isLoop)
 {
-	_blendingAnimName = animName;
-	AnimData& animData = FindAnimData(_blendingAnimName);
+	// アニメーション名が空なら何もしない
+	if (animName.empty()) return;
+
+	AnimData& animData = FindAnimData(animName);
+
+	// すでにアタッチ済みなら何もしない
+	if (animData.attachNo >= 0) return;
 
 	// モデルにアニメーションをアタッチ
 	animData.attachNo = MV1AttachAnim(_model, animData.animIndex, -1, false);
@@ -101,7 +101,8 @@ void Animator::AttachAnim(const std::wstring animName, const bool isLoop)
 	animData.frame = 0.0f;
 	animData.isLoop = isLoop;
 	animData.isEnd = false;
-	MV1SetAttachAnimBlendRate(_model, animData.attachNo, 0.0f);
+	// 再生時間をリセット
+	MV1SetAttachAnimTime(_model, animData.attachNo, 0.0f);
 }
 
 void Animator::UpdateAnim(AnimData& data)
@@ -110,7 +111,6 @@ void Animator::UpdateAnim(AnimData& data)
 	if (data.attachNo == -1) return;
 	// アニメーションを進める
 	data.frame += kAnimSpeed;
-
 	// 現在再生中のアニメーションの総時間を取得する
 	const float totalTime = data.totalFrame;
 	
@@ -139,72 +139,87 @@ void Animator::UpdateAnim(AnimData& data)
 
 void Animator::UpdateAnimBlendRate()
 {
-	// 両方にアニメーションが設定されていない場合は変化させない
-	if (FindAnimData(_blendingAnimName).attachNo == -1) return;
-	if (FindAnimData(_currentAnimName).attachNo == -1) return;
-
-	// _blendRateを0.0f -> 1.0fに変化させる
-	_blendRate += 1.0f / kAnimBlendFrame;
-	
-	// ブレンドが終了したら
-	if (_blendRate >= 1.0f) {
-		// 現在のアニメーションをブレンド中のアニメーションに置き換える
-		//_currentAnimName = _blendingAnimName;
-
-		_blendRate = 1.0f;
+	// 現在のアニメーションを進める
+	if (!_currentAnimName.empty()) {
+		UpdateAnim(FindAnimData(_currentAnimName));
 	}
 
-	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, FindAnimData(_blendingAnimName).attachNo, _blendRate);
+	// 2. ブレンド中かどうか
+	if (_blendRate < 1.0f) {
+		// 古いアニメーションのフレームは更新せず
+		// 影響度だけを下げる
+
+		// ブレンド率を更新
+		_blendRate += 1.0f / kAnimBlendFrame;
+
+		// ブレンドが完了した場合の処理
+		if (_blendRate >= 1.0f) {
+			_blendRate = 1.0f;
+
+			// 古いアニメーションは完全に不要になったのでデタッチ
+			if (!_prevAnimName.empty()) {
+				AnimData& prevAnim = FindAnimData(_prevAnimName);
+				if (prevAnim.attachNo != -1) {
+					MV1DetachAnim(_model, prevAnim.attachNo);
+					prevAnim.attachNo = -1;
+				}
+				// 前のアニメーション名をクリアしてブレンド処理を終了
+				_prevAnimName.clear();
+			}
+		}
+	}
+
+	// モデルにブレンド率を適用
+	if (!_currentAnimName.empty()) {
+		MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, _blendRate);
+	}
+	if (!_prevAnimName.empty()) {
+		MV1SetAttachAnimBlendRate(_model, FindAnimData(_prevAnimName).attachNo, 1.0f - _blendRate);
+	}
 }
 
 void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
 {
-	// すでに目的のアニメーションへブレンド中ならreturn
-	if (animName == _blendingAnimName) return;
+	// 既に再生中、または遷移しようとしているアニメーションならreturn
+	if (animName == _currentAnimName) return;
 
-	// ブレンドに使用しない古いアニメーションの初期化
-	FindAnimData(_currentAnimName).frame = 0.0f;
-	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 0.0f);
-	
-	// 現在メインで再生中のアニメーションを切り替える
-	_currentAnimName = _blendingAnimName;
-	_blendingAnimName = animName;
+	// もし現在ブレンド中なら、
+	// そのブレンド元のアニメーションは不要になるのでデタッチ
+	if (!_prevAnimName.empty()) {
+		AnimData& prevAnim = FindAnimData(_prevAnimName);
+		if (prevAnim.attachNo != -1) {
+			MV1DetachAnim(_model, prevAnim.attachNo);
+			prevAnim.attachNo = -1;
+		}
+	}
 
-	// 新たにアニメーションをアタッチする
-	AttachAnim(_blendingAnimName, isLoop);
-
-	// ブレンド比率初期化
+	// 今まで再生していたアニメーションを前のアニメーションにし、
+	// 新しいアニメーションを現在のアニメーションにする
+	_prevAnimName = _currentAnimName;
+	_currentAnimName = animName;
+	// 新しいアニメーションをアタッチ
+	AttachAnim(_currentAnimName, isLoop);
 	_blendRate = 0.0f;
-
-	// ブレンド比率をアニメーションに適用
-	MV1SetAttachAnimBlendRate(_model, FindAnimData(_currentAnimName).attachNo, 1.0f - _blendRate);
-	MV1SetAttachAnimBlendRate(_model, FindAnimData(_blendingAnimName).attachNo, _blendRate);
 }
 
 Animator::AnimData& Animator::FindAnimData(const std::wstring animName)
 {
-	AnimData* firstData = nullptr;
-	// アニメーション名で検索
+	// アニメーション名が空の場合はリストの先頭をダミーとして返す
+	if (animName.empty()) {
+		return _animDataList.front();
+	}
+
+	// 検索
 	for (auto& data : _animDataList) {
-		if (firstData == nullptr)		firstData = &data;
-		if (animName == data.animName)	return data;
+		if (animName == data.animName)  return data;
 	}
 
 	assert(false && "指定の名前のアニメーションが登録されていなかった");
-	// 見つからなかった場合は最初に見たアニメーションデータを返す
-	return *(firstData);
+	return _animDataList.front();
 }
 
 float Animator::GetCurrentAnimFrame()
 {
-	// 現在再生中のアニメーションデータからフレームを返す
-	for (const auto& data : _animDataList) {
-		if (data.animName == _currentAnimName) {
-			return data.frame;
-		}
-	}
-	// 見つからない場合
-	assert(false && "現在のアニメーションデータが見つからない");
-	return 0.0f;
+	if (_currentAnimName.empty()) return 0.0f;
+	return FindAnimData(_currentAnimName).frame;
 }

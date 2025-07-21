@@ -15,6 +15,8 @@ public:
 	Vector3 GetAngle() { return _angle; }
 	float GetDist() { return _dist; }
 
+	void SetAngle(const Vector3& angle) { _angle = angle; }
+
 	// 以降の変数のアクセス権を渡す
 	friend Collider;
 	friend Physics;

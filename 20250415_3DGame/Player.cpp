@@ -7,6 +7,7 @@
 #include "ColliderData.h"
 #include "Rigidbody.h"
 #include <cassert>
+#include <algorithm>
 
 #include <DxLib.h>
 
@@ -21,6 +22,9 @@ namespace {
 	constexpr float kDashSpeed = 14.0f;
 	constexpr float kJumpForce = 20.0f;
 	constexpr float kGround = 0.0f;
+
+	// 回転速度(ラジアン)
+	constexpr float kTurnSpeed = 0.2f;
 	
 	constexpr float kHitPoint = 100.0f;
 
@@ -43,9 +47,9 @@ namespace {
 	const std::wstring kAnimNameDead = kAnimName + L"Dying";
 	const std::wstring kAnimNameAppeal = kAnimName + L"WinAnim";
 
-	constexpr float kAttackCombo1InputStart = 0.5f;
+	constexpr float kAttackCombo1InputStart = 0.0f;
 	constexpr float kAttackCombo1InputEnd	= 1.0f;
-	constexpr float kAttackCombo2InputStart = 0.5f;
+	constexpr float kAttackCombo2InputStart = 0.0f;
 	constexpr float kAttackCombo2InputEnd	= 1.0f;
 
 #else
@@ -65,7 +69,7 @@ namespace {
 Player::Player() :
 	Collider(PhysicsData::Priority::High,
 		PhysicsData::GameObjectTag::Player,
-		PhysicsData::ColliderKind::Sphere,
+		PhysicsData::ColliderKind::Capsule,
 		false),
 	_nowUpdateState(&Player::UpdateIdle),
 	_animator(std::make_shared<Animator>()),
@@ -128,8 +132,14 @@ Player::Player() :
 	// 武器初期化
 	int weaponModelHandle = MV1LoadModel(L"data/model/weapon/PlayerWeapon.mv1");
 	assert(weaponModelHandle >= 0 && "モデルハンドルが正しくない");
-	_weapon->Init(weaponModelHandle, MatIdentity(), 100.0f,
-		500, Vector3Up());
+	// 武器補正
+	Matrix4x4 weaponOffsetMatrix = MatTranslate(Vector3(0.0f, 0.0f, 0.0f));
+	Vector3 weaponDir = Vector3(
+		DX_PI_F / 180 * 60.0f , 
+		DX_PI_F / 180 * 90.0f, 
+		DX_PI_F / 180 * 50.0f);
+	_weapon->Init(weaponModelHandle, 100.0f, 500, 
+		Vector3(), Vector3(1, 1.3f, 2), weaponDir);
 }
 
 Player::~Player() {
@@ -160,6 +170,8 @@ void Player::Draw() {
 	MV1SetPosition(_animator->GetModelHandle(), GetPos());
 	// モデルの描画
 	MV1DrawModel(_animator->GetModelHandle());
+
+	_weapon->Draw();
 
 #ifdef _DEBUG
 	int color = 0xffffff;
@@ -311,11 +323,6 @@ void Player::CheckStateTransition()
 
 	// 現在再生中のアニメーションが終了しているか
 	bool isEndAnim = _animator->IsEnd(_animator->GetCurrentAnimName());
-	// 現在再生中のアニメーションがループ可能か
-	bool isLoopAnim = _animator->IsLoop(_animator->GetCurrentAnimName());
-
-	// ステートが遷移可能かどうか
-	bool canChangeState = (!isLoopAnim && isEndAnim) || (isLoopAnim);
 
 	// 攻撃中かどうか
 	bool isAttack =
@@ -323,58 +330,57 @@ void Player::CheckStateTransition()
 		_nowUpdateState == &Player::UpdateAttackSecond ||
 		_nowUpdateState == &Player::UpdateAttackThird);
 
+	if (isAttack) {
+		// 攻撃アニメーションが終了した場合にのみ、次の遷移を判断する
+		if (isEndAnim) {
+			// 派生入力があったか
+			if (_hasDerivedAttackInput) {
+				// どの攻撃からの派生か
+				if (_nowUpdateState == &Player::UpdateAttackFirst) {
+					_nowUpdateState = &Player::UpdateAttackSecond;
+					_animator->ChangeAnim(kAnimNameAttackCombo2, false);
+					_hasDerivedAttackInput = false;
+					return; // 遷移したので処理終了
+				}
+				else if (_nowUpdateState == &Player::UpdateAttackSecond) {
+					_nowUpdateState = &Player::UpdateAttackThird;
+					_animator->ChangeAnim(kAnimNameAttackCombo3, false);
+					_hasDerivedAttackInput = false;
+					return; // 遷移したので処理終了
+				}
+			}
+
+			// 派生入力がなければ
+			if (stick.Magnitude() != 0.0f) {
+				_nowUpdateState = &Player::UpdateWalk;
+				_animator->ChangeAnim(kAnimNameWalk, true);
+			}
+			else {
+				_nowUpdateState = &Player::UpdateIdle;
+				_animator->ChangeAnim(kAnimNameIdle, true);
+			}
+			return;
+		}
+
+		// 攻撃中は何もしない
+		return;
+	}
+
+
+
 	// 攻撃開始
-	// 攻撃を行っていないかつ
-	// 攻撃入力があったかつ
-	// ステートを変えられる状態なら
-	if (!isAttack && input.IsTrigger("action") && canChangeState) {
+	// 攻撃入力があったなら
+	if (input.IsTrigger("action")) {
 		_nowUpdateState = &Player::UpdateAttackFirst;
 		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
-		_hasDerivedAttackInput = false;	// 初期化
-		return; // 遷移したら他の条件はチェックしない
-	}
-
-	// 攻撃コンボの派生
-	// 攻撃中に攻撃遷移入力があれば、アニメーションの終了を待たずに遷移
-	if (_hasDerivedAttackInput) {
-		if (_nowUpdateState == &Player::UpdateAttackFirst) {
-			_nowUpdateState = &Player::UpdateAttackSecond;
-			_animator->ChangeAnim(kAnimNameAttackCombo2, false);
-			_hasDerivedAttackInput = false;	// 消費
-			return;
-		}
-		else if (_nowUpdateState == &Player::UpdateAttackSecond) {
-			_nowUpdateState = &Player::UpdateAttackThird;
-			_animator->ChangeAnim(kAnimNameAttackCombo3, false);
-			_hasDerivedAttackInput = false;	// 消費
-			return;
-		}
-	}
-
-	// 攻撃アニメーション終了後の復帰処理
-	// 攻撃ステートであり、
-	// アニメーションが終了し、
-	// かつ次の攻撃入力がない場合
-	if (isAttack && isEndAnim && !_hasDerivedAttackInput) {
-		// 移動入力があればWalk、なければIdleへ
-		if (stick.Magnitude() != 0.0f) {
-			_nowUpdateState = &Player::UpdateWalk;
-			_animator->ChangeAnim(kAnimNameWalk, true);
-		}
-		else {
-			_nowUpdateState = &Player::UpdateIdle;
-			_animator->ChangeAnim(kAnimNameIdle, true);
-		}
+		_hasDerivedAttackInput = false;
 		return;
 	}
 
 	// ダッシュ
-	// スティックが一定以上傾いているかつ
-	// ステートを変えられる状態なら
-	else if (GetPos().y <= kGround &&
-		canChangeState &&
-		(stick.Normalize().Magnitude() >= 0.8f) &&
-		input.IsPress("dash")) {
+	// スティックが一定以上傾いているなら
+	if (GetPos().y <= kGround &&
+		(stick.Magnitude() >= 1000 * 0.8f)) {
 		if (_nowUpdateState != &Player::UpdateDash) {
 			_nowUpdateState = &Player::UpdateDash;
 			_animator->ChangeAnim(kAnimNameRun, true);
@@ -383,10 +389,8 @@ void Player::CheckStateTransition()
 	}
 
 	// 歩行
-	// スティックの入力があるかつ
-	// ステートを変えられる状態なら
+	// スティックの入力があるなら
 	else if (GetPos().y <= kGround &&
-		canChangeState &&
 		(stick.Magnitude() != 0.0f)) {
 		if (_nowUpdateState != &Player::UpdateWalk) {
 			_nowUpdateState = &Player::UpdateWalk;
@@ -396,10 +400,8 @@ void Player::CheckStateTransition()
 	}
 
 	// 待機
-	// それ以外かつ
-	// ステートを変えられる状態なら
-	else if (GetPos().y <= kGround &&
-		canChangeState) {
+	// それ以外なら
+	else if (GetPos().y <= kGround) {
 		if (_nowUpdateState != &Player::UpdateIdle) {
 			_nowUpdateState = &Player::UpdateIdle;
 			_animator->ChangeAnim(kAnimNameIdle, true);
@@ -411,11 +413,11 @@ void Player::CheckStateTransition()
 void Player::WeaponUpdate()
 {
 	// 手の行列を武器のワールド行列とする
-	std::wstring handName = L"FrameName";
+	std::wstring handName = L"mixamorig:RightHandThumb3";
 	// 武器をアタッチするフレームの番号を検索
 	int frameIndex = MV1SearchFrame(_animator->GetModelHandle(), handName.c_str());
 	// インデックスが有効かチェック
-	if (frameIndex == -1) {
+	if (frameIndex < 0) {
 		assert(false && "指定されたフレームが見つからなかった");
 		return;
 	}
@@ -527,8 +529,13 @@ void Player::UpdateAttackFirst()
 	const Animator::AnimData & currentAnimData = _animator->FindAnimData(_animator->
 		GetCurrentAnimName());
 	
-	// 入力受付期間内かつ、攻撃ボタンが押されたら次の攻撃へ派生可能にする
-	if (currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
+	// 入力受付期間内かつ
+	// 再生された瞬間ではないかつ
+	// 攻撃ボタンが押されたら
+	// 次の攻撃へ派生可能にする
+	if (currentAnimData.animName == kAnimNameAttackCombo1 &&
+		currentAnimData.frame != 0.0f &&
+		currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
 		currentFrame <= currentAnimData.inputAcceptanceEndFrame &&
 		Input::GetInstance().IsTrigger("action"))
 	{
@@ -545,7 +552,8 @@ void Player::UpdateAttackSecond()
 		_animator->FindAnimData(_animator->GetCurrentAnimName());
 
 	// 入力受付期間内かつ、攻撃ボタンが押されたら次の攻撃へ派生可能にする
-	if (currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
+	if (currentAnimData.animName == kAnimNameAttackCombo2 &&
+		currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
 		currentFrame <= currentAnimData.inputAcceptanceEndFrame &&
 		Input::GetInstance().IsTrigger("action"))
 	{
@@ -645,9 +653,36 @@ void Player::Rotate() {
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
 	// 入力があった場合のみキャラクターの向きを変更
 	if (stick.x != 0.0f || stick.z != 0.0f) {
+		// カメラの向きを考慮しつつ目標の角度を計算
 		const float cameraRot = _camera.lock()->GetRotAngleY();
-		float a = atan2f(stick.z, stick.x) + -cameraRot + DX_PI_F * 0.5f;
-		MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, a, 0));
+		float targetAngle = atan2f(stick.z, stick.x) + -cameraRot + DX_PI_F * 0.5f;
+
+		// 現在の角度から目標角度までの最短差分を計算
+		float diff = targetAngle - _rotAngle;
+
+		// 角度の差が180度を超えないように正規化する
+		// (-270度は+90度として扱うなど)
+		while (diff > DX_PI_F) {
+			diff -= DX_PI_F * 2.0f;
+		}
+		while (diff < -DX_PI_F) {
+			diff += DX_PI_F * 2.0f;
+		}
+		// 1フレームで回転できる最大量に制限する
+		float turnAmount = std::clamp(diff, -kTurnSpeed, kTurnSpeed);
+
+		// 更新
+		_rotAngle += turnAmount;
+
+		// 現在の角度も正規化しておく
+		while (_rotAngle > DX_PI_F) {
+			_rotAngle -= DX_PI_F * 2.0f;
+		}
+		while (_rotAngle < -DX_PI_F) {
+			_rotAngle += DX_PI_F * 2.0f;
+		}
+		// 最終的な角度をモデルに適用
+		MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
 	}
 #else
 	MV1SetRotationXYZ(_modelHandle, Vector3(0, _rotAngle, 0));

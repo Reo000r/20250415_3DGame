@@ -21,35 +21,65 @@ Weapon::~Weapon()
 	MV1DeleteModel(_modelHandle);
 }
 
-void Weapon::Init(int modelHandle, Matrix4x4 localOffsetMatrix, float rad, float dist, Vector3 angle)
+void Weapon::Init(int modelHandle, float rad, float dist, Vector3 transOffset, Vector3 scale, Vector3 angle)
 {
 	assert(modelHandle >= 0 && "モデルハンドルが正しくない");
 	_modelHandle = modelHandle;
+	_scale = scale;
 
-	_localOffsetMatrix = localOffsetMatrix;
+	Matrix4x4 scaleMatrix = MatGetScale(scale);
+	
+	_transOffset = transOffset;
+	_rotAngle = angle;
+	_scale = scale;
 
 	// 当たり判定のデータを適用
-	SetColliderData(PhysicsData::ColliderKind::Capsule, true, rad, dist, angle);
+	SetColliderData(
+		PhysicsData::ColliderKind::Capsule, 
+		true, rad, dist, Vector3());
 }
 
 void Weapon::Update(Matrix4x4 parentWorldMatrix)
 {
-	// 武器自身のワールド行列を計算
-	// 親のワールド行列に武器のローカルオフセット行列を乗算
-	Matrix4x4 weaponWorldMatrix = MatMultiple(_localOffsetMatrix, parentWorldMatrix);
+    // 各オフセットの行列を生成
+    Matrix4x4 scaleMatrix = MatGetScale(_scale);
+    Matrix4x4 rotY = MatRotateY(_rotAngle.y);
+    Matrix4x4 rotX = MatRotateX(_rotAngle.x);
+    Matrix4x4 rotZ = MatRotateZ(_rotAngle.z);
+    Matrix4x4 rotationMatrix = MatMultiple(MatMultiple(rotZ, rotX), rotY);
+    Matrix4x4 translationMatrix = MatTranslate(_transOffset);
 
-	// モデルのワールド行列を適用
-	MV1SetMatrix(_modelHandle, weaponWorldMatrix);
+    // 親の行列に対して、オフセットを合成していく
+    // 親 -> 平行移動 -> 回転 -> 拡縮の順で変換
+    Matrix4x4 worldMatrix = MatMultiple(
+        scaleMatrix, MatMultiple(rotationMatrix, 
+            MatMultiple(translationMatrix, parentWorldMatrix)));
 
-	// Rigidbodyの位置を更新
-	// モデルのワールド行列から位置情報を取り出し、Rigidbodyに設定
-	// これにより、物理演算（衝突判定など）がモデルの描画位置と同期する
-	Position3 modelWorldPos = Vector3(
-		weaponWorldMatrix.m[3][0],
-		weaponWorldMatrix.m[3][1],
-		weaponWorldMatrix.m[3][2]
-	);
-	rigidbody->SetPos(modelWorldPos);
+    // モデルに最終的なワールド行列を適用
+    MV1SetMatrix(_modelHandle, worldMatrix);
+
+    // Rigidbodyの位置と当たり判定の向きを更新
+    // (回転とスケールが適用される前の行列から計算)
+    auto m1 = MatMultiple(translationMatrix, parentWorldMatrix);
+    Position3 modelWorldPos = Vector3(
+        m1.m[3][0],
+        m1.m[3][1],
+        m1.m[3][2]
+    );
+    rigidbody->SetPos(modelWorldPos);
+
+    // 当たり判定の向きは、回転まで適用した行列から取得
+    auto m2 = MatMultiple(rotationMatrix, m1);
+    Vector3 weaponDirection = Vector3(
+        m2.m[1][0],
+        m2.m[1][1],
+        m2.m[1][2]
+    ).Normalize();
+
+    auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
+    if (capsuleData) {
+        capsuleData->SetAngle(weaponDirection);
+    }
 }
 
 void Weapon::Draw()

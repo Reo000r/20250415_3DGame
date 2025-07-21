@@ -72,11 +72,25 @@ Matrix4x4 MatTranslate(const Vector3& vec);
 Matrix4x4 MatTranslate(const float& x, const float& y, const float& z);
 
 /// <summary>
+/// x軸回転行列を返す
+/// </summary>
+/// <param name="angle">回転値</param>
+/// <returns></returns>
+Matrix4x4 MatRotateX(const float& angle);
+
+/// <summary>
 /// y軸回転行列を返す
 /// </summary>
 /// <param name="angle">回転値</param>
 /// <returns></returns>
 Matrix4x4 MatRotateY(const float& angle);
+
+/// <summary>
+/// z軸回転行列を返す
+/// </summary>
+/// <param name="angle">回転値</param>
+/// <returns></returns>
+Matrix4x4 MatRotateZ(const float& angle);
 
 /// <summary>
 /// 二つの行列の乗算を返す

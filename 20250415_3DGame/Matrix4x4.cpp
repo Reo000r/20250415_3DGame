@@ -10,9 +10,9 @@ Matrix4x4 MatTranslate(const Vector3& vec) {
 
 Matrix4x4 MatTranslate(const float& x, const float& y, const float& z) {
 	Matrix4x4 ret = MatIdentity();
-	ret.m[0][3] = x;
-	ret.m[1][3] = y;
-	ret.m[2][3] = z;
+	ret.m[3][0] = x;
+	ret.m[3][1] = y;
+	ret.m[3][2] = z;
 	return ret;
 }
 
@@ -97,12 +97,32 @@ Matrix4x4 MatIdentity() {
 	return ret;
 }
 
+Matrix4x4 MatRotateX(const float& angle)
+{
+	Matrix4x4 ret = MatIdentity();
+	ret.m[1][1] = cos(angle);
+	ret.m[1][2] = sin(angle);
+	ret.m[2][1] = -sin(angle);
+	ret.m[2][2] = cos(angle);
+	return ret;
+}
+
 Matrix4x4 MatRotateY(const float& angle) {
 	Matrix4x4 ret = MatIdentity();
 	ret.m[0][0] = cos(angle);
 	ret.m[0][2] = -sin(angle);
 	ret.m[2][0] = sin(angle);
 	ret.m[2][2] = cos(angle);
+	return ret;
+}
+
+Matrix4x4 MatRotateZ(const float& angle)
+{
+	Matrix4x4 ret = MatIdentity();
+	ret.m[0][0] = cos(angle);
+	ret.m[0][1] = sin(angle);
+	ret.m[1][0] = -sin(angle);
+	ret.m[1][1] = cos(angle);
 	return ret;
 }
 

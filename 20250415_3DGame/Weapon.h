@@ -11,7 +11,10 @@ public:
 	Weapon();
 	~Weapon();
 
-	void Init(int modelHandle, Matrix4x4 localOffsetMatrix, float rad, float dist, Vector3 angle = Vector3Up());
+	void Init(int modelHandle, float rad, float dist, 
+		Vector3 transOffset = Vector3(),
+		Vector3 scale = Vector3(1,1,1),
+		Vector3 angle = Vector3());
 	void Update(Matrix4x4 parentWorldMatrix);
 	void Draw();
 
@@ -25,6 +28,8 @@ private:
 	// モデルハンドル
 	int _modelHandle;
 
-	Matrix4x4 _localOffsetMatrix;
+	Vector3 _transOffset;
+	Vector3 _rotAngle;
+	Vector3 _scale;
 };
 

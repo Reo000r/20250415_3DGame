@@ -77,8 +77,7 @@ public:
 	int GetModelHandle() const{ return _model; }
 
 	std::wstring GetCurrentAnimName() const{ return _currentAnimName; }
-	std::wstring GetBlendingAnimName() const{ return _blendingAnimName; }
-
+	
 	float GetCurrentAnimFrame();
 
 	/// <summary>
@@ -105,11 +104,11 @@ private:
 
 	// 現在再生中のアニメーション名
 	std::wstring _currentAnimName;
-	// 次にメインとなるブレンド中のアニメーション名
-	std::wstring _blendingAnimName;
+	// 前に再生されていてブレンドアウトしていくアニメーション名
+	std::wstring _prevAnimName;
 
 	// アニメーションのブレンド比率
-	// current->blending
+	// _currentAnimName のウェイトとして使用する
 	// 0.0->1.0
 	float _blendRate;
 };
