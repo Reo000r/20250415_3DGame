@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <forward_list>
@@ -8,17 +8,17 @@ class Animator
 public:
 	struct AnimData
 	{
-		int animIndex = -1;			// ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†(Œ³ƒf[ƒ^‚É‚¨‚¯‚é)
-		int attachNo = -1;			// ƒAƒ^ƒbƒ`”Ô†
-		std::wstring animName = L"";	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì–¼‘O
-		float animSpeed = 1.0f;		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
-		float frame = 0.0f;			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ŠÔ
-		float totalFrame = 0.0f;	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‘Ä¶ŠÔ
-		bool  isLoop = false;		// ƒ‹[ƒv‚·‚é‚©
-		bool  isEnd = false;		// ƒ‹[ƒv‚µ‚È‚¢ê‡I—¹‚µ‚Ä‚¢‚é‚©
+		int animIndex = -1;			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç•ªå·(å…ƒãƒ‡ãƒ¼ã‚¿ã«ãŠã‘ã‚‹)
+		int attachNo = -1;			// ã‚¢ã‚¿ãƒƒãƒç•ªå·
+		std::wstring animName = L"";	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åå‰
+		float animSpeed = 1.0f;		// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦
+		float frame = 0.0f;			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿæ™‚é–“
+		float totalFrame = 0.0f;	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç·å†ç”Ÿæ™‚é–“
+		bool  isLoop = false;		// ãƒ«ãƒ¼ãƒ—ã™ã‚‹ã‹
+		bool  isEnd = false;		// ãƒ«ãƒ¼ãƒ—ã—ãªã„å ´åˆçµ‚äº†ã—ã¦ã„ã‚‹ã‹
 
-		float inputAcceptanceStartFrame = 0.0f; // “ü—Íó•tŠJnƒtƒŒ[ƒ€
-		float inputAcceptanceEndFrame = 0.0f;   // “ü—Íó•tI—¹ƒtƒŒ[ƒ€
+		float inputAcceptanceStartFrame = 0.0f; // å…¥åŠ›å—ä»˜é–‹å§‹ãƒ•ãƒ¬ãƒ¼ãƒ 
+		float inputAcceptanceEndFrame = 0.0f;   // å…¥åŠ›å—ä»˜çµ‚äº†ãƒ•ãƒ¬ãƒ¼ãƒ 
 	};
 
 	Animator();
@@ -28,33 +28,33 @@ public:
 	void Update();
 
 	/// <summary>
-	/// Å‰‚Ég—p‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ğİ’è
+	/// æœ€åˆã«ä½¿ç”¨ã™ã‚‹ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®š
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <param name="isLoop"></param>
 	void SetStartAnim(const std::wstring animName, const bool isLoop = true);
 	/// <summary>
-	/// ƒQ[ƒ€’†‚Åg—p‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^
+	/// ã‚²ãƒ¼ãƒ ä¸­ã§ä½¿ç”¨ã™ã‚‹ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿
 	/// </summary>
 	void SetAnimData(const std::wstring animName, const bool isLoop, 
 		float inputAcceptanceStartRatio = 0.0f, 
 		float inputAcceptanceEndRatio = 1.0f);
 	/// <summary>
-	/// ƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğw’è‚µƒAƒ^ƒbƒ`
-	/// (ƒuƒŒƒ“ƒh‚Ìisó‹µ‚ª~‚Ü‚é‚½‚ß‰Šú‰»‚·‚é–Ú“I‚Åg—p)
+	/// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åã‚’æŒ‡å®šã—ã‚¢ã‚¿ãƒƒãƒ
+	/// (ãƒ–ãƒ¬ãƒ³ãƒ‰ã®é€²è¡ŒçŠ¶æ³ãŒæ­¢ã¾ã‚‹ãŸã‚åˆæœŸåŒ–ã™ã‚‹ç›®çš„ã§ä½¿ç”¨)
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <param name="isLoop"></param>
 	void AttachAnim(const std::wstring animName, const bool isLoop = false);
 
 	/// <summary>
-	/// w’è‚³‚ê‚½ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	/// æŒ‡å®šã•ã‚ŒãŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	/// </summary>
 	/// <param name="data"></param>
 	void UpdateAnim(AnimData& data);
 
 	/// <summary>
-	/// ƒuƒŒƒ“ƒh”ä—¦‚ÌXV
+	/// ãƒ–ãƒ¬ãƒ³ãƒ‰æ¯”ç‡ã®æ›´æ–°
 	/// </summary>
 	void UpdateAnimBlendRate();
 
@@ -63,12 +63,12 @@ public:
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <param name="isLoop"></param>
-	void ChangeAnim(const std::wstring animName, bool isLoop);
+	void ChangeAnim(const std::wstring animName, bool isLoop = false);
 
 	/// <summary>
-	/// ƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^‚ğ–¼‘O‚ÅŒŸõ‚µQÆ‚ğ•Ô‚·
-	/// Œ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚ÍÅ‰‚ÉŒ©‚½ƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^‚ğ•Ô‚·
-	/// debug‚È‚çassert‚ğ“Š‚°‚é
+	/// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ã‚’åå‰ã§æ¤œç´¢ã—å‚ç…§ã‚’è¿”ã™
+	/// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯æœ€åˆã«è¦‹ãŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™
+	/// debugãªã‚‰assertã‚’æŠ•ã’ã‚‹
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <returns></returns>
@@ -81,34 +81,34 @@ public:
 	float GetCurrentAnimFrame();
 
 	/// <summary>
-	/// w’è‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚Ä‚¢‚é‚©
+	/// æŒ‡å®šã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ã¦ã„ã‚‹ã‹
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <returns></returns>
 	bool IsEnd(const std::wstring animName) { return FindAnimData(animName).isEnd; }
 	/// <summary>
-	/// w’è‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ªƒ‹[ƒv‚·‚é‚©
+	/// æŒ‡å®šã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒãƒ«ãƒ¼ãƒ—ã™ã‚‹ã‹
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <returns></returns>
 	bool IsLoop(const std::wstring animName) { return FindAnimData(animName).isLoop; }
 
 private:
-	// ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹
+	// ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«
 	int _model;
 	
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìforward_list(list)
-	// ‡”Ô‚ğ‹C‚É‚·‚é•K—v‚ª‚È‚¢‚©‚Â
-	// ƒƒ‚ƒŠ‚ÌŒø—¦‰»‚Ì‚½‚ßforward_list
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®forward_list(list)
+	// é †ç•ªã‚’æ°—ã«ã™ã‚‹å¿…è¦ãŒãªã„ã‹ã¤
+	// ãƒ¡ãƒ¢ãƒªã®åŠ¹ç‡åŒ–ã®ãŸã‚forward_list
 	std::forward_list<AnimData> _animDataList;
 
-	// Œ»İÄ¶’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
 	std::wstring _currentAnimName;
-	// ‘O‚ÉÄ¶‚³‚ê‚Ä‚¢‚ÄƒuƒŒƒ“ƒhƒAƒEƒg‚µ‚Ä‚¢‚­ƒAƒjƒ[ƒVƒ‡ƒ“–¼
+	// å‰ã«å†ç”Ÿã•ã‚Œã¦ã„ã¦ãƒ–ãƒ¬ãƒ³ãƒ‰ã‚¢ã‚¦ãƒˆã—ã¦ã„ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
 	std::wstring _prevAnimName;
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒh”ä—¦
-	// _currentAnimName ‚ÌƒEƒFƒCƒg‚Æ‚µ‚Äg—p‚·‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ–ãƒ¬ãƒ³ãƒ‰æ¯”ç‡
+	// _currentAnimName ã®ã‚¦ã‚§ã‚¤ãƒˆã¨ã—ã¦ä½¿ç”¨ã™ã‚‹
 	// 0.0->1.0
 	float _blendRate;
 };

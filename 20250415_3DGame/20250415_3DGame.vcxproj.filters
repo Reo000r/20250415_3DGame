@@ -102,9 +102,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Object\Player</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyNormal.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Weapon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -119,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyNormal.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +197,6 @@
     <ClInclude Include="Player.h">
       <Filter>Object\Player</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyNormal.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Weapon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -214,6 +211,9 @@
     </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyNormal.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

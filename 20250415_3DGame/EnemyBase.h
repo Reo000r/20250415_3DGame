@@ -22,6 +22,8 @@ public:
 	virtual void Update() abstract;
 	virtual void Draw() abstract;
 
+	bool IsAlive() { return (_hitPoint > 0.0f); }
+
 	Matrix4x4 GetRotMtx() const { return _rotMtx; }
 
 protected:

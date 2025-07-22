@@ -18,7 +18,7 @@ Weapon::Weapon() :
 
 Weapon::~Weapon()
 {
-	MV1DeleteModel(_modelHandle);
+    // modelはanimator側で消している
 }
 
 void Weapon::Init(int modelHandle, float rad, float dist, Vector3 transOffset, Vector3 scale, Vector3 angle)
@@ -49,8 +49,8 @@ void Weapon::Update(Matrix4x4 parentWorldMatrix)
     Matrix4x4 rotationMatrix = MatMultiple(MatMultiple(rotZ, rotX), rotY);
     Matrix4x4 translationMatrix = MatTranslate(_transOffset);
 
-    // 親の行列に対して、オフセットを合成していく
-    // 親 -> 平行移動 -> 回転 -> 拡縮の順で変換
+    // 親の行列に対して補正値を合成する
+    // 親 -> 平行移動 -> 回転 -> 拡縮の順
     Matrix4x4 worldMatrix = MatMultiple(
         scaleMatrix, MatMultiple(rotationMatrix, 
             MatMultiple(translationMatrix, parentWorldMatrix)));
@@ -68,14 +68,13 @@ void Weapon::Update(Matrix4x4 parentWorldMatrix)
     );
     rigidbody->SetPos(modelWorldPos);
 
-    // 当たり判定の向きは、回転まで適用した行列から取得
+    // 当たり判定の向きは回転まで適用した行列から取得
     auto m2 = MatMultiple(rotationMatrix, m1);
     Vector3 weaponDirection = Vector3(
         m2.m[1][0],
         m2.m[1][1],
         m2.m[1][2]
     ).Normalize();
-
     auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
     if (capsuleData) {
         capsuleData->SetAngle(weaponDirection);

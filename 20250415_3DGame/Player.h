@@ -26,6 +26,7 @@ public:
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
 	float GetHitPoint() { return _hitpoint; }
+	bool IsAlive() { return (_hitpoint > 0.0f); }
 	
 private:
 	// UpdateのStateパターン
@@ -47,12 +48,11 @@ private:
 	void UpdateIdle();
 	void UpdateWalk();
 	void UpdateDash();
-	void UpdateJump();
 	void UpdateAttackFirst();
 	void UpdateAttackSecond();
 	void UpdateAttackThird();
 	void UpdateDamage();
-	void UpdateDead();
+	void UpdateDeath();
 
 	/// <summary>
 	/// 移動処理

@@ -32,14 +32,9 @@ private:
 private:
 
 	/// <summary>
-	/// 誰かがプレイヤーを殴っていたりする場合
-	/// 少し離れて様子をうかがう
+	/// 対象を追いかける
 	/// </summary>
-	void UpdateIdle();
-	/// <summary>
-	/// プレイヤーを補足して近づく
-	/// </summary>
-	void UpdateWalk();
+	void UpdateChase();
 	/// <summary>
 	/// 攻撃
 	/// </summary>
@@ -51,5 +46,10 @@ private:
 	/// <summary>
 	/// 死亡
 	/// </summary>
-	void UpdateDead();
+	void UpdateDeath();
+
+	/// <summary>
+	/// プレイヤーの方を向く
+	/// </summary>
+	void RotateToPlayer();
 };

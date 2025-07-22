@@ -8,21 +8,26 @@
 #include <cassert>
 
 #include <DxLib.h>
+#include <algorithm>
 
 namespace {
-	constexpr float kWalkSpeed = 5.0f;
-	constexpr float kGround = 0.0f;
+	constexpr float kHitPoint = 3.0f;		// HP
+	constexpr float kTempDamage = 1.0f;		// 仮の被弾時ダメージ
+	constexpr float kChaseSpeed = 5.0f;		// 追いかける速度
+	constexpr float kTurnSpeed = 0.05f;		// 回転速度(ラジアン)
+	constexpr float kAttackRange = 150.0f;	// 攻撃に移行する距離
+	constexpr float kGround = 0.0f;			// (地面の高さ)
 
-	const std::wstring kAnimName = L"CharacterArmature|";
-	const std::wstring kAnimNameIdle = kAnimName + L"Idle";
-	const std::wstring kAnimNameWalk = kAnimName + L"Walk";
+	const std::wstring kAnimName = L"Armature|Animation_";
+	const std::wstring kAnimNameChase = kAnimName + L"Idle";
 	const std::wstring kAnimNameAttack = kAnimName + L"Attack";
 	const std::wstring kAnimNameDamage = kAnimName + L"Damage";
+	const std::wstring kAnimNameDeath = kAnimName + L"Death";
 }
 
 EnemyNormal::EnemyNormal() : 
-	EnemyBase(10.0f, 100.0f, 1.0f),
-	_nowUpdateState(&EnemyNormal::UpdateIdle)
+	EnemyBase(kHitPoint, kAttackRange, 1.0f),
+	_nowUpdateState(&EnemyNormal::UpdateChase)
 
 {
 	rigidbody->Init(true);
@@ -31,16 +36,17 @@ EnemyNormal::EnemyNormal() :
 	_animator->Init(MV1LoadModel(L"data/model/EnemyNormal_test.mv1"));
 
 	// 使用するアニメーションを全て入れる
-	_animator->SetAnimData(kAnimNameIdle, true);
-	_animator->SetAnimData(kAnimNameWalk, true);
-	//_animator->SetAnimData(kAnimNameAttack, true);	// 保留
-	//_animator->SetAnimData(kAnimNameDamage, true);
+	_animator->SetAnimData(kAnimNameChase, true);
+	_animator->SetAnimData(kAnimNameAttack, false);
+	_animator->SetAnimData(kAnimNameDamage, false);
+	_animator->SetAnimData(kAnimNameDeath, false);
 	// 最初のアニメーションを設定する
-	_animator->SetStartAnim(kAnimNameIdle);
+	_animator->SetStartAnim(kAnimNameChase);
 }
 
 EnemyNormal::~EnemyNormal()
 {
+	// modelはanimator側で消している
 }
 
 void EnemyNormal::Init(std::weak_ptr<Player> player)
@@ -77,103 +83,140 @@ void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)
 {
 	// coliderと衝突
 	
-	// 特定のタグではない場合return
-	if (collider.lock()->GetTag() != PhysicsData::GameObjectTag::PlayerAttack) return;
-
-	// (ダメージを受け)
-	// 被弾状態へ
-	if (_nowUpdateState != &EnemyNormal::UpdateDamage) {
-		_nowUpdateState = &EnemyNormal::UpdateDamage;
-		_animator->ChangeAnim(kAnimNameDamage, false);
-		// ダメージを受ける
-
-		return;
+	// 死亡状態ではダメージを受けない
+	if (_nowUpdateState == &EnemyNormal::UpdateDeath) return;
+	
+	// プレイヤーの攻撃であれば
+	if (collider.lock()->GetTag() == PhysicsData::GameObjectTag::PlayerAttack) {
+		// (固定ダメージ)
+		_hitPoint -= kTempDamage;
+		// 既に被弾状態ならアニメーションを最初から再生
+		if (_nowUpdateState == &EnemyNormal::UpdateDamage) {
+			auto& animData = _animator->FindAnimData(kAnimNameDamage);
+			animData.frame = 0.0f;
+			animData.isEnd = false;
+		}
+		// そうでなければ被弾状態へ遷移
+		else {
+			_nowUpdateState = &EnemyNormal::UpdateDamage;
+			_animator->ChangeAnim(kAnimNameDamage, false);
+		}
 	}
 }
 
 void EnemyNormal::CheckStateTransition()
 {
-	// 自身からプレイヤーまでの距離
-	float enemyToPlayerDist = (_player.lock()->GetPos() - GetPos()).Magnitude();
-
-	// HPがないなら
-	// 死亡状態へ
-	if (_nowUpdateState != &EnemyNormal::UpdateDead &&
-		_hitPoint <= 0.0f) {
-		if (_nowUpdateState != &EnemyNormal::UpdateDead) { // 現在死亡でなければ
-			_nowUpdateState = &EnemyNormal::UpdateDead;
-			_animator->ChangeAnim(kAnimNameAttack, false);
+	// 死亡判定(最優先)
+	if (_hitPoint <= 0.0f) {
+		if (_nowUpdateState != &EnemyNormal::UpdateDeath) {
+			_nowUpdateState = &EnemyNormal::UpdateDeath;
+			_animator->ChangeAnim(kAnimNameDeath, false);
 		}
 		return;
 	}
 
-	// 被弾していないかつ
-	// プレイヤーとの距離が一定以下なら
-	// 攻撃状態へ
-	if (_nowUpdateState != &EnemyNormal::UpdateDamage &&
-		enemyToPlayerDist <= _transferAttackRad) {
-		if (_nowUpdateState != &EnemyNormal::UpdateAttack) { // 現在攻撃でなければ
+	// 割り込み不可の状態判定
+	// 死亡または被弾アニメーション中は他の状態に遷移しない
+	if (_nowUpdateState == &EnemyNormal::UpdateDeath) {
+		return;
+	}
+	if (_nowUpdateState == &EnemyNormal::UpdateDamage) {
+		// 被弾アニメーションが終了していない場合はこのまま
+		if (!_animator->IsEnd(kAnimNameDamage)) {
+			return;
+		}
+	}
+
+	// プレイヤー情報の確認
+	if (_player.expired()) {
+		// もしプレイヤーがいない場合、追跡状態に戻る
+		if (_nowUpdateState != &EnemyNormal::UpdateChase) {
+			_nowUpdateState = &EnemyNormal::UpdateChase;
+			_animator->ChangeAnim(kAnimNameChase, true);
+		}
+		return;
+	}
+
+	// プレイヤーとの距離
+	float distance = (_player.lock()->GetPos() - GetPos()).Magnitude();
+
+	// 攻撃状態
+	// プレイヤーとの距離が攻撃移行範囲よりも近かったら
+	if (distance <= _transferAttackRad) {
+		if (_nowUpdateState != &EnemyNormal::UpdateAttack) {
 			_nowUpdateState = &EnemyNormal::UpdateAttack;
 			_animator->ChangeAnim(kAnimNameAttack, false);
 		}
-		return;
+		return; // 攻撃状態に決定
 	}
 
-	// (誰かがプレイヤーと戦闘中なら)
-	// 待機状態へ
-	if (_nowUpdateState != &EnemyNormal::UpdateDamage) {
-		if (_nowUpdateState != &EnemyNormal::UpdateIdle) {
-			_nowUpdateState = &EnemyNormal::UpdateIdle;
-			_animator->ChangeAnim(kAnimNameIdle, true);
-		}
-		return;
-	}
-
-	// 上記のいずれでもなければ近づく状態へ
-	if (_nowUpdateState != &EnemyNormal::UpdateDamage) {
-		if (_nowUpdateState != &EnemyNormal::UpdateWalk) { // 現在近づきでなければ
-			_nowUpdateState = &EnemyNormal::UpdateWalk;
-			_animator->ChangeAnim(kAnimNameWalk, true);
-		}
-		return;
+	// 追跡状態
+	// 上記のいずれでもなければ
+	if (_nowUpdateState != &EnemyNormal::UpdateChase) {
+		_nowUpdateState = &EnemyNormal::UpdateChase;
+		_animator->ChangeAnim(kAnimNameChase, true);
 	}
 }
 
-void EnemyNormal::UpdateIdle()
+void EnemyNormal::UpdateChase()
 {
-	// 処理なし
-}
+	// プレイヤーの方向を向く
+	RotateToPlayer();
 
-void EnemyNormal::UpdateWalk()
-{
-	// プレイヤーに向かって移動する
-	
-	// 自身からプレイヤーへの方向ベクトル
-	Vector3 dir = (_player.lock()->GetPos() - GetPos()).Normalize();
-
-	Vector3 vel = dir * kWalkSpeed;
-
-	// rigidbodyに編集した移動量を代入
+	// 前方に移動
+	Vector3 vel = rigidbody->GetDir() * kChaseSpeed;
 	rigidbody->SetVel(vel);
 }
 
 void EnemyNormal::UpdateAttack()
 {
-	// 攻撃処理
-
-	// 
+	// 攻撃中は移動を止める
+	rigidbody->SetVel(Vector3());
 }
 
 void EnemyNormal::UpdateDamage()
 {
-	// 被弾処理
-
-	// 当たった瞬間に致死オブジェクト(もしくはplayer)と反対方向にノックバックさせたい
+	// 移動を停止する
+	rigidbody->SetVel(Vector3());
 }
 
-void EnemyNormal::UpdateDead()
+void EnemyNormal::UpdateDeath()
 {
-	// 死んだ瞬間に致死オブジェクト(もしくはplayer)と反対方向に吹き飛びたい
+	// 死亡アニメーションが終了したら、更新を止める
+	if (_animator->IsEnd(kAnimNameDeath)) {
+		// 物理判定から除外する
+		ReleasePhysics();
+	}
+}
 
-	// アニメーションが終わったら消滅
+void EnemyNormal::RotateToPlayer()
+{
+	if (_player.expired()) return;
+
+	// プレイヤーへの方向ベクトル
+	Vector3 dirToPlayer = (_player.lock()->GetPos() - GetPos());
+	if (dirToPlayer.SqrMagnitude() == 0.0f) return; // 距離がゼロなら何もしない
+	dirToPlayer.Normalized();
+
+	// Y軸回転角度を計算
+	float targetAngle = atan2f(dirToPlayer.x, dirToPlayer.z);
+
+	// 現在の角度から目標角度までの差分を計算
+	float diff = targetAngle - _rotAngle;
+	// 角度が-180度以下,180度以上にならないように正規化
+	while (diff > DX_PI_F)  diff -= DX_PI_F * 2.0f;
+	while (diff < -DX_PI_F) diff += DX_PI_F * 2.0f;
+
+	// 回転量を制限
+	float turnAmount = std::clamp<float>(diff, -kTurnSpeed, kTurnSpeed);
+	_rotAngle += turnAmount;
+
+	// モデルに回転を適用
+	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
+
+	// Rigidbodyの向きも更新
+	Vector3 newDir = Vector3(sinf(_rotAngle), 0.0f, cosf(_rotAngle)).Normalize();
+	// 速度は維持しない
+	// この時点では向き情報が入っている
+	rigidbody->SetVel(newDir);
 }

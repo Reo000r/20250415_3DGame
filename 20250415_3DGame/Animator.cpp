@@ -12,6 +12,9 @@ namespace {
 
 Animator::Animator() :
 	_model(-1),
+	_animDataList(),
+	_currentAnimName(),
+	_prevAnimName(),
 	_blendRate(1.0f) // 最初はブレンドしていないので1.0
 {
 }
@@ -178,7 +181,7 @@ void Animator::UpdateAnimBlendRate()
 	}
 }
 
-void Animator::ChangeAnim(const std::wstring animName, bool isLoop = false)
+void Animator::ChangeAnim(const std::wstring animName, bool isLoop)
 {
 	// 既に再生中、または遷移しようとしているアニメーションならreturn
 	if (animName == _currentAnimName) return;
