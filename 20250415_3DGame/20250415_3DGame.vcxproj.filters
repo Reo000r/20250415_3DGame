@@ -120,6 +120,15 @@
     <ClCompile Include="EnemyNormal.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="WaveManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveData.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyFactory.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -214,6 +223,15 @@
     </ClInclude>
     <ClInclude Include="EnemyNormal.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

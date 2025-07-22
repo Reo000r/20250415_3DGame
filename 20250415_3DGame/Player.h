@@ -10,7 +10,7 @@ class Weapon;
 /// <summary>
 /// 
 /// </summary>
-class Player final : public Collider, public std::enable_shared_from_this<Player> {
+class Player final : public Collider {
 public:
 	Player();
 	~Player();

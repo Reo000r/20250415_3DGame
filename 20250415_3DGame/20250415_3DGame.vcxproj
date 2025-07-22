@@ -29,6 +29,7 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="EnemyBase.cpp" />
+    <ClCompile Include="EnemyFactory.cpp" />
     <ClCompile Include="EnemyNormal.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -48,6 +49,8 @@
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="WaveData.cpp" />
+    <ClCompile Include="WaveManager.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +64,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="EnemyBase.h" />
+    <ClInclude Include="EnemyFactory.h" />
     <ClInclude Include="EnemyNormal.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Ground.h" />
@@ -81,6 +85,8 @@
     <ClInclude Include="StringUtility.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="WaveData.h" />
+    <ClInclude Include="WaveManager.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

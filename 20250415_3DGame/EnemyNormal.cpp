@@ -11,15 +11,16 @@
 #include <algorithm>
 
 namespace {
+	constexpr float kScaleMul = 2.0f;		// 拡大倍率
 	constexpr float kHitPoint = 3.0f;		// HP
 	constexpr float kTempDamage = 1.0f;		// 仮の被弾時ダメージ
-	constexpr float kChaseSpeed = 5.0f;		// 追いかける速度
+	constexpr float kChaseSpeed = 4.0f * kScaleMul;		// 追いかける速度
 	constexpr float kTurnSpeed = 0.05f;		// 回転速度(ラジアン)
-	constexpr float kAttackRange = 150.0f;	// 攻撃に移行する距離
+	constexpr float kAttackRange = 150.0f * kScaleMul;	// 攻撃に移行する距離
 	constexpr float kGround = 0.0f;			// (地面の高さ)
-
+	
 	const std::wstring kAnimName = L"Armature|Animation_";
-	const std::wstring kAnimNameChase = kAnimName + L"Idle";
+	const std::wstring kAnimNameChase = kAnimName + L"Chase";
 	const std::wstring kAnimNameAttack = kAnimName + L"Attack";
 	const std::wstring kAnimNameDamage = kAnimName + L"Damage";
 	const std::wstring kAnimNameDeath = kAnimName + L"Death";
@@ -33,7 +34,7 @@ EnemyNormal::EnemyNormal() :
 	rigidbody->Init(true);
 
 	// モデルの読み込み
-	_animator->Init(MV1LoadModel(L"data/model/EnemyNormal_test.mv1"));
+	_animator->Init(MV1LoadModel(L"data/model/character/EnemyNormal.mv1"));
 
 	// 使用するアニメーションを全て入れる
 	_animator->SetAnimData(kAnimNameChase, true);
@@ -42,6 +43,8 @@ EnemyNormal::EnemyNormal() :
 	_animator->SetAnimData(kAnimNameDeath, false);
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameChase);
+
+	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * kScaleMul);
 }
 
 EnemyNormal::~EnemyNormal()
@@ -107,11 +110,11 @@ void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)
 void EnemyNormal::CheckStateTransition()
 {
 	// 死亡判定(最優先)
-	if (_hitPoint <= 0.0f) {
-		if (_nowUpdateState != &EnemyNormal::UpdateDeath) {
-			_nowUpdateState = &EnemyNormal::UpdateDeath;
-			_animator->ChangeAnim(kAnimNameDeath, false);
-		}
+	if (_hitPoint <= 0.0f && 
+		_state == State::Active) {
+		_state = State::Dying;
+		_nowUpdateState = &EnemyNormal::UpdateDeath;
+		_animator->ChangeAnim(kAnimNameDeath, false);
 		return;
 	}
 
@@ -125,6 +128,11 @@ void EnemyNormal::CheckStateTransition()
 		if (!_animator->IsEnd(kAnimNameDamage)) {
 			return;
 		}
+	}
+	// 攻撃中の場合は移行しない
+	if (_nowUpdateState == &EnemyNormal::UpdateAttack && 
+		!_animator->IsEnd(kAnimNameAttack)) {
+		return;
 	}
 
 	// プレイヤー情報の確認
@@ -143,9 +151,20 @@ void EnemyNormal::CheckStateTransition()
 	// 攻撃状態
 	// プレイヤーとの距離が攻撃移行範囲よりも近かったら
 	if (distance <= _transferAttackRad) {
+		// アニメーションが終了した直後でも、再度Attackに遷移できるように
+		// _nowUpdateState != &EnemyNormal::UpdateAttack の条件を外しても良いが、
+		// アニメーションの再アタッチコストを考えると、このままの方が効率的
 		if (_nowUpdateState != &EnemyNormal::UpdateAttack) {
 			_nowUpdateState = &EnemyNormal::UpdateAttack;
 			_animator->ChangeAnim(kAnimNameAttack, false);
+		}
+		else {
+			// アニメーションが終了している場合、再度再生するためにフレームをリセット
+			auto& animData = _animator->FindAnimData(kAnimNameAttack);
+			if (animData.isEnd) {
+				animData.frame = 0.0f;
+				animData.isEnd = false;
+			}
 		}
 		return; // 攻撃状態に決定
 	}
@@ -186,6 +205,7 @@ void EnemyNormal::UpdateDeath()
 	if (_animator->IsEnd(kAnimNameDeath)) {
 		// 物理判定から除外する
 		ReleasePhysics();
+		_state = State::Dead; // 状態を死亡完了にする
 	}
 }
 
@@ -212,7 +232,7 @@ void EnemyNormal::RotateToPlayer()
 	_rotAngle += turnAmount;
 
 	// モデルに回転を適用
-	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
+	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle+DX_PI_F, 0));
 
 	// Rigidbodyの向きも更新
 	Vector3 newDir = Vector3(sinf(_rotAngle), 0.0f, cosf(_rotAngle)).Normalize();

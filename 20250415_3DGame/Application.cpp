@@ -43,6 +43,10 @@ bool Application::Init()
 	SetWriteZBuffer3D(true);	// Zバッファへの書き込みを行う
 	SetUseBackCulling(true);	// バックカリングを有効にする
 
+	// GetRandシード設定
+	auto t = static_cast<unsigned int>(time(nullptr));
+	SRand(t);
+
 	return true;
 }
 

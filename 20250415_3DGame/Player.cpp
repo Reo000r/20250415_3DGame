@@ -104,6 +104,11 @@ Player::Player() :
 Player::~Player()
 {
 	// modelはanimator側で消している
+
+	// 死んでいなかったら物理判定から除外する
+	if (!_animator->IsEnd(kAnimNameDead)) {
+		ReleasePhysics();
+	}
 }
 
 void Player::Init(std::weak_ptr<Camera> camera)

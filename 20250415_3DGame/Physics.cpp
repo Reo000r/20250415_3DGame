@@ -79,7 +79,7 @@ void Physics::Update()
 		}
 
 		// もともとの情報、予定情報をデバッグ表示
-#if _DEBUG
+#ifdef _DEBUG
 		// 球
 		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
 		{

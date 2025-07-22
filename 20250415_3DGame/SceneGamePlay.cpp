@@ -6,6 +6,8 @@
 #include "Ground.h"
 #include "Skydome.h"
 #include "Physics.h"
+#include "DebugDraw.h"
+#include "WaveManager.h"
 
 #include "Statistics.h"
 #include "Input.h"
@@ -21,7 +23,8 @@ SceneGamePlay::SceneGamePlay() :
 	_camera(std::make_shared<Camera>()),
 	_player(std::make_shared<Player>()),
 	_ground(std::make_shared<Ground>()),
-	_skydome(std::make_shared<Skydome>()),
+	_skydome(std::make_unique<Skydome>()),
+	_waveManager(std::make_unique<WaveManager>()),
 	_nowUpdateState(&SceneGamePlay::FadeinUpdate),
 	_nowDrawState(&SceneGamePlay::FadeDraw)
 {
@@ -29,8 +32,6 @@ SceneGamePlay::SceneGamePlay() :
 
 SceneGamePlay::~SceneGamePlay()
 {
-	// playerの当たり判定処理登録を削除
-	_player->ReleasePhysics();
 }
 
 void SceneGamePlay::Init()
@@ -43,6 +44,8 @@ void SceneGamePlay::Init()
 
 	// playerの当たり判定処理登録
 	_player->EntryPhysics(_physics);
+
+	_waveManager->Init(_player, _physics);
 }
 
 void SceneGamePlay::Update()
@@ -70,9 +73,18 @@ void SceneGamePlay::NormalUpdate()
 {
 	// 更新
 	_camera->Update();
-	_player->Update();
-	_ground->Update();
 	_skydome->Update();
+
+#ifdef _DEBUG
+	_skydome->Draw();	// デバッグ表示を見るため早めにDraw
+	_ground->Draw();
+#endif // _DEBUG
+
+	_player->Update();
+	_waveManager->Update();
+
+	_ground->Update();
+	
 
 	// 物理演算更新
 	_physics->Update();
@@ -100,10 +112,15 @@ void SceneGamePlay::FadeDraw()
 {
 	_skydome->Draw();
 	_ground->Draw();
+
 	_camera->Draw();
+	_waveManager->Draw();
 	_player->Draw();
 
 #ifdef _DEBUG
+	DebugDraw::GetInstance().Draw();
+	DebugDraw::GetInstance().Clear();
+
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");
 #endif
 
@@ -118,12 +135,19 @@ void SceneGamePlay::FadeDraw()
 
 void SceneGamePlay::NormalDraw()
 {
+#ifndef _DEBUG
 	_skydome->Draw();
 	_ground->Draw();
+#endif // _DEBUG
+	
 	_camera->Draw();
+	_waveManager->Draw();
 	_player->Draw();
 
 #ifdef _DEBUG
+	DebugDraw::GetInstance().Draw();
+	DebugDraw::GetInstance().Clear();
+
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");
 #endif
 }

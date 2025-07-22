@@ -12,7 +12,7 @@
 EnemyBase::EnemyBase(float hitPoint, float transferAttackRad, float attackMul) :
 	Collider(PhysicsData::Priority::Middle,
 		PhysicsData::GameObjectTag::Enemy,
-		PhysicsData::ColliderKind::Sphere,
+		PhysicsData::ColliderKind::Capsule,
 		false),
 	_animator(std::make_shared<Animator>()),
 	_rotAngle(0.0f),
@@ -20,11 +20,17 @@ EnemyBase::EnemyBase(float hitPoint, float transferAttackRad, float attackMul) :
 	_quaternion(),
 	_hitPoint(hitPoint),
 	_transferAttackRad(transferAttackRad),
-	_attackMul(attackMul)
+	_attackMul(attackMul),
+	_state(State::Active)
 {
 	
 }
 
 EnemyBase::~EnemyBase()
 {
+}
+
+void EnemyBase::SetPos(const Vector3& pos)
+{
+	rigidbody->SetPos(pos);
 }

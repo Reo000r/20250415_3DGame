@@ -9,6 +9,13 @@ class Animator;
 class EnemyBase abstract : public Collider
 {
 public:
+	// 敵の状態を示すenum
+	enum class State {
+		Active, // 通常状態(生存)
+		Dying,  // 死亡(アニメーション再生中)
+		Dead    // 死亡(アニメーション終了)
+	};
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -25,6 +32,14 @@ public:
 	bool IsAlive() { return (_hitPoint > 0.0f); }
 
 	Matrix4x4 GetRotMtx() const { return _rotMtx; }
+
+	/// <summary>
+	/// 現在の状態を返す
+	/// </summary>
+	/// <returns></returns>
+	State GetState() const { return _state; }
+
+	void SetPos(const Vector3& pos);
 
 protected:
 	/// <summary>
@@ -47,4 +62,7 @@ protected:
 	float _transferAttackRad;
 	// 攻撃力補正値(武器に掛ける値)
 	float _attackMul;
+
+	// 自身の状態を保持
+	State _state;
 };
