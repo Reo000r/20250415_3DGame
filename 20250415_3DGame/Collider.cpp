@@ -49,8 +49,8 @@ Vector3 Collider::GetDir() const
 }
 
 std::shared_ptr<ColliderData> Collider::CreateColliderData(
-	PhysicsData::ColliderKind kind, bool isTrigger, 
-	float rad, float dist, Vector3 angle)
+	PhysicsData::ColliderKind kind, bool isTrigger,
+	float rad, Vector3 angle)
 {
 	if (colliderData != nullptr) {
 		assert(false && "colliderDataは既に作られている");
@@ -63,15 +63,15 @@ std::shared_ptr<ColliderData> Collider::CreateColliderData(
 		colliderData = std::make_shared<ColliderDataSphere>(isTrigger, rad);
 		break;
 	case PhysicsData::ColliderKind::Capsule:	// Capsule用の初期化
-		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, rad, dist, angle);
+		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, rad, angle);
 		break;
 	}
 	return colliderData;
 }
 
 void Collider::SetColliderData(
-	PhysicsData::ColliderKind kind, bool isTrigger, 
-	float rad, float dist, Vector3 angle)
+	PhysicsData::ColliderKind kind, bool isTrigger,
+	float rad, Vector3 offset)
 {
 	if (colliderData == nullptr) {
 		assert(false && "colliderDataが作られていない");
@@ -94,8 +94,7 @@ void Collider::SetColliderData(
 	{
 		auto colliderDataCapsule = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
 		colliderDataCapsule->_radius = rad;
-		colliderDataCapsule->_dist = dist;
-		colliderDataCapsule->_angle = angle;
+		colliderDataCapsule->_offset = offset;
 		colliderData = colliderDataCapsule;
 		break;
 	}

@@ -36,6 +36,6 @@ public:
 
 	PhysicsData::ColliderKind	kind;
 	bool	isTrigger;
-
+	bool	isCollision;
 };
 

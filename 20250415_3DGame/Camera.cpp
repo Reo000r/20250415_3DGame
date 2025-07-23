@@ -1,10 +1,9 @@
 ﻿#include "Camera.h"
 #include "Player.h"
 #include "Input.h"
+#include "Calculation.h"
 
 #include <DxLib.h>
-
-//#define USE_QUATERNION
 
 namespace {
 	constexpr float kTargetHormingRad = 1000;
@@ -16,6 +15,9 @@ namespace {
 	constexpr float kCameraFollowLerpFactor = 0.1f;
 
 	// 
+	const Vector3 kDefaultPosition = { 0.0f, 520.0f, -860.0f };
+	const float kDefaultRotation = Calc::ToRadian(180.0f);
+
 	const Vector3 kPlayerToCamera = { 0.0f, 520.0f, 860.0f };
 	const Vector3 kPlayerToTarget = { 0.0f, 220.0f, 0.0f };
 	// 初期位置
@@ -24,17 +26,13 @@ namespace {
 }
 
 Camera::Camera() :
-	_pos(0, 520, -860),
+	_pos(kDefaultPosition),
 	_player(),
-	_targetPos(0, 200, 0),
-#ifndef USE_QUATERNION
-	_rotAngle(Vector3(0.0f, DX_PI_F / 180.0f * 180.0f, 0.0f)),
-#else
-	_quaternion(ConvEulerToQuaternion(Vector3(0.0f, DX_PI_F / 180.0f * 180.0f, 0.0f))),
-#endif // !USE_QUATERNION
+	_targetPos(kPlayerToTarget),
+	_rotAngle(Vector3(0.0f, kDefaultRotation, 0.0f)),
 	_near(10.0f),
 	_far(10000.0f),
-	_viewAngle(DX_PI_F / 180.0f * 60.0f),
+	_viewAngle(Calc::ToRadian(60.0f)),
 	_lightHandle(-1)
 {
 }
@@ -51,79 +49,35 @@ void Camera::Init(std::weak_ptr<Player> player) {
 
 	//_lightHandle = CreatePointLightHandle(_pos, _far, 
 	//	1.0f, 0.005f, 0.0f);
-	_lightHandle = CreateSpotLightHandle(_pos, Vector3Up(),
-		_viewAngle, _viewAngle*0.9f, _far, 
-		1.0f, 0.005f, 0.0f);
+	_lightHandle = CreateSpotLightHandle(
+		_pos,
+		Vector3Up(),
+		_viewAngle,
+		_viewAngle * 0.9f,
+		_far,
+		1.0f,
+		0.005f,
+		0.0f);
 }
 
 void Camera::Update() {
 	auto& input = Input::GetInstance();
 
-#ifndef USE_QUATERNION
-#ifdef USE_STICK
 	// スティックによる平面移動
 	Vector3 stick = Input::GetInstance().GetPadRightSitck();
 	// Y軸回転
 	_rotAngle.y += stick.x * 0.001f * kRotSpeedY;
-#else
-	//LRでカメラを回転させる
-	if (input.IsPress("Rbutton")) {
-		_rotAngle.y -= 0.05f;
-	}
-	if (input.IsPress("Lbutton")) {
-		_rotAngle.y += 0.05f;
-	}
-#endif // USE_STICK
-
-#else
-
-	// 毎フレームの回転量 軸毎に作り合成する
-	Quaternion rotDelta = Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
-	Quaternion rotDeltaX = rotDelta;
-	Quaternion rotDeltaY = rotDelta;
-
-#ifdef USE_STICK
-	// スティックによる平面移動
-	Vector3 stick = Input::GetInstance().GetPadRightSitck();
-	// Y軸回転
-	// 横の入力を充てる
-	rotDeltaY = AngleAxis(Vector3Up(), stick.x * 0.001f * kRotSpeedY);
-	// X軸回転
-	// 縦の入力を充てる
-	rotDeltaX = AngleAxis(Vector3Right(), stick.z * 0.001f * kRotSpeedX);
-
-	rotDelta = rotDeltaY * rotDeltaX;	// 
-
-	_quaternion = _quaternion * rotDelta;
-#else
-	float rotSpeed = 0.0f;
-	//LRでカメラを回転させる
-	if (input.IsPress("Rbutton")) {
-		rotSpeed -= 0.05f;
-	}
-	if (input.IsPress("Lbutton")) {
-		rotSpeed += 0.05f;
-	}
-	rotDelta = AngleAxis(Vector3Up(), rotSpeed);
-#endif // USE_STICK
-#endif // !USE_QUATERNION
 
 
 	Matrix4x4 rotMtx = MatIdentity();
-	
 
-#ifndef USE_QUATERNION
+
 	Matrix4x4 playerRotMtx = MatIdentity();
 	// さらにカメラが持つ回転情報を加える
 	Matrix4x4 cameraRotMtx = MatRotateY(_rotAngle.y);
 	// プレイヤーが持つ回転情報とカメラが持つ回転情報を合わせ
 	// 最終的な回転情報を生成する
 	rotMtx = playerRotMtx * cameraRotMtx;
-#else
-	// クォータニオンから回転行列を生成
-	// プレイヤーを考慮していない
-	rotMtx = ConvQuaternionToMatrix4x4(_quaternion * rotDelta);
-#endif // !USE_QUATERNION
 
 	// プレイヤーの移動に合わせて移動を行う
 	Vector3 playerPos = _player.lock()->GetPos();
@@ -167,11 +121,7 @@ void Camera::Draw() {
 	DrawFormatString(0, y, color, L"Camera:Pos (%.3f,%.3f,%.3f)", _pos.x, _pos.y, _pos.z);
 	y += 16;
 	Vector3 rotAngle;
-#ifndef USE_QUATERNION
 	rotAngle = _rotAngle;
-#else
-	rotAngle = ConvQuaternionToEuler(_quaternion);
-#endif
 	DrawFormatString(0, y, color, L"Camera:RotAngle (%.3f,%.3f,%.3f)", rotAngle.x, rotAngle.y, rotAngle.z);
 #endif
 }

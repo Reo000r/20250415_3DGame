@@ -80,24 +80,26 @@ void Physics::Update()
 
 		// もともとの情報、予定情報をデバッグ表示
 #ifdef _DEBUG
-		// 球
-		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
-		{
-			auto sphereData = std::static_pointer_cast<ColliderDataSphere>(collider->colliderData);
-			float radius = sphereData->_radius;
-			DebugDraw::GetInstance().DrawSphere(pos, radius, 0xff00ff);
-		}
-		// カプセル
-		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule)
-		{
-			auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(collider->colliderData);
-			Position3 pos = collider->rigidbody->GetPos();
-			Position3 start = capsuleData->GetStartPos(pos);
-			Position3 end = capsuleData->GetEndPos(pos);
-			float radius = capsuleData->GetRad();
-			DebugDraw::GetInstance().DrawSphere(start, radius, 0x0000ff);
-			DebugDraw::GetInstance().DrawSphere(end, radius, 0xff0000);
-			DebugDraw::GetInstance().DrawCapsule(start, end, radius, 0xff00ff);
+		if (collider->colliderData->isCollision) {
+			// 球
+			if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
+			{
+				auto sphereData = std::static_pointer_cast<ColliderDataSphere>(collider->colliderData);
+				float radius = sphereData->_radius;
+				DebugDraw::GetInstance().DrawSphere(pos, radius, 0xff00ff);
+			}
+			// カプセル
+			if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule)
+			{
+				auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(collider->colliderData);
+				Position3 pos = collider->rigidbody->GetPos();
+				Position3 start = capsuleData->GetStartPos(pos);
+				Position3 end = capsuleData->GetEndPos(pos);
+				float radius = capsuleData->GetRad();
+				DebugDraw::GetInstance().DrawSphere(start, radius, 0x0000ff);
+				DebugDraw::GetInstance().DrawSphere(end, radius, 0xff0000);
+				DebugDraw::GetInstance().DrawCapsule(start, end, radius, 0xff00ff);
+			}
 		}
 #endif
 
@@ -217,6 +219,9 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 	if (objA->colliderData->IsThroughTarget(bTag) ||
 		objB->colliderData->IsThroughTarget(aTag)) return false;
 
+	if (!objA->colliderData->isCollision ||
+		!objB->colliderData->isCollision) return false;
+
 	// 球同士
 	if (aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Sphere)
 	{
@@ -233,17 +238,17 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 	{
 		auto capsuleA = std::static_pointer_cast<ColliderDataCapsule>(objA->colliderData);
 		auto capsuleB = std::static_pointer_cast<ColliderDataCapsule>(objB->colliderData);
-		
+
 		// カプセルAの線分と半径
 		Vector3 startA = capsuleA->GetStartPos(objA->nextPos);
 		Vector3 endA = capsuleA->GetEndPos(objA->nextPos);
 		float radiusA = capsuleA->_radius;
-		
+
 		// カプセルBの線分と半径
 		Vector3 startB = capsuleB->GetStartPos(objB->nextPos);
 		Vector3 endB = capsuleB->GetEndPos(objB->nextPos);
 		float radiusB = capsuleB->_radius;
-		
+
 		// 2つの線分の最近接点を求める
 		Vector3 pA, pB;
 		ClosestPointSegments(startA, endA, startB, endB, pA, pB);
@@ -251,13 +256,13 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 		// 最近接点間の距離の2乗を計算
 		float distSq = (pA - pB).SqrMagnitude();
 		float radSum = radiusA + radiusB;
-		
+
 		// 最近接点間の距離が、半径の合計より小さいかどうかで衝突を判定
 		isHit = distSq < (radSum * radSum);
 	}
 	// 球とカプセル
-	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) || 
-			(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
+	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) ||
+		(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
 	{
 		// 球とカプセルを判定する
 		std::shared_ptr<Collider> sphereObj;
@@ -276,27 +281,27 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 		// それぞれのコライダー情報を取得
 		auto sphereData = std::static_pointer_cast<ColliderDataSphere>(sphereObj->colliderData);
 		auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(capsuleObj->colliderData);
-		
+
 		// 球の情報を取得
 		Vector3 sphereCenter = sphereObj->nextPos;
 		float sphereRadius = sphereData->_radius;
-		
+
 		// カプセルの情報を取得
 		Vector3 capsuleStart = capsuleData->GetStartPos(capsuleObj->nextPos);
 		Vector3 capsuleEnd = capsuleData->GetEndPos(capsuleObj->nextPos);
 		float capsuleRadius = capsuleData->_radius;
-		
+
 		// 点と線分の最近接点を求める
-		Vector3 closestPointOnCapsuleAxis = 
+		Vector3 closestPointOnCapsuleAxis =
 			ClosestPointPointAndSegment(
-				sphereCenter, 
+				sphereCenter,
 				capsuleStart, capsuleEnd);
-		
+
 		// 最近接点間の距離の2乗を計算
 		float distSq = (sphereCenter - closestPointOnCapsuleAxis).SqrMagnitude();
 		// 半径の合計を計算
 		float radSum = sphereRadius + capsuleRadius;
-		
+
 		// 距離が半径の合計より小さいか判定
 		isHit = distSq < (radSum * radSum);
 	}
@@ -354,41 +359,6 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 	// カプセル同士
 	else if (aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Capsule)
 	{
-		/*
-		1. 衝突情報の取得
-      まず、衝突している2つのカプセル（仮にA、Bとします）それぞれの次のフレームの予測位置、中心線の始点と終
-  点、そして半径を取得します。
-
-
-   2. 最近傍点の計算
-      当たり判定の時と同様に、カプセルAの中心線（線分）とカプセルBの中心線の間で、最も距離が近くなる2つの点
-  （Aの中心線上の点Pa、Bの中心線上の点Pb）を計算します。これは ClosestPointSegments
-  関数を使えば求められます。
-
-
-   3. 押し戻し方向の決定
-      ステップ2で求めた2つの最近傍点（Pa と Pb）を結ぶベクトルを計算します。このベクトルが、お互いを引き離す
-  ための最も効率的な「押し戻し方向」になります。このベクトルを正規化（長さを1に）しておきます。
-
-
-   4. 押し戻し距離（貫通深度）の計算
-      次に、どれだけの距離を押し戻せばよいかを計算します。
-       * まず、2つのカプセルがどれだけめり込んでいるか（＝貫通深度）を求めます。これは「カプセルAとBの半径の合
-         計」から「最近傍点PaとPbの現在の距離」を引くことで計算できます。
-       * 押し戻した後に再び接触しないよう、計算した貫通深度に、ごくわずかなオフセット値（PhysicsData::kFixPosi
-         tionOffsetなど）を加えます。これが最終的な「押し戻し距離」となります。
-
-
-   5. 位置の修正
-      最後に、計算した「押し戻し方向」と「押し戻し距離」を使って、カプセルの位置を修正します。
-       * 優先度に応じて片方だけを動かす場合：
-         優先度の低い方のカプセルの予測位置（nextPos）を、算出した方向と距離だけ移動させます。
-       * 優先度が同じでお互いに押し戻す場合： 押し戻すベクトルを半分ずつに分け、片方はその方向に、もう片方はそ
-         の逆方向に、それぞれ予測位置を移動させます。
-
-		*/
-
-
 		// 当たり判定データ取得
 		auto priCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(primary->colliderData);
 		auto secCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(secondary->colliderData);
@@ -528,7 +498,7 @@ void Physics::FixPosition()
 			}
 		}
 		else {
-			
+
 		}
 		// Posを更新するので、velocityもそこに移動するvelocityに修正
 		toFixedPos = collider->nextPos - collider->rigidbody->GetPos();

@@ -7,13 +7,13 @@
 #include <DxLib.h>
 
 Weapon::Weapon() :
-	Collider(PhysicsData::Priority::Static, 
-		PhysicsData::GameObjectTag::PlayerAttack, 
-		PhysicsData::ColliderKind::Capsule, 
-		true),
-	_modelHandle(-1)
+    Collider(PhysicsData::Priority::Static,
+        PhysicsData::GameObjectTag::PlayerAttack,
+        PhysicsData::ColliderKind::Capsule,
+        true),
+    _modelHandle(-1)
 {
-	rigidbody->Init(false);
+    rigidbody->Init(false);
 }
 
 Weapon::~Weapon()
@@ -21,22 +21,25 @@ Weapon::~Weapon()
     // modelはanimator側で消している
 }
 
-void Weapon::Init(int modelHandle, float rad, float dist, Vector3 transOffset, Vector3 scale, Vector3 angle)
+void Weapon::Init(int modelHandle, float colRad, float colHeight, Vector3 transOffset, Vector3 scale, Vector3 angle)
 {
-	assert(modelHandle >= 0 && "モデルハンドルが正しくない");
-	_modelHandle = modelHandle;
-	_scale = scale;
+    assert(modelHandle >= 0 && "モデルハンドルが正しくない");
+    _modelHandle = modelHandle;
+    _scale = scale;
 
-	Matrix4x4 scaleMatrix = MatGetScale(scale);
-	
-	_transOffset = transOffset;
-	_rotAngle = angle;
-	_scale = scale;
+    Matrix4x4 scaleMatrix = MatGetScale(scale);
 
-	// 当たり判定のデータを適用
-	SetColliderData(
-		PhysicsData::ColliderKind::Capsule, 
-		true, rad, dist, Vector3());
+    _transOffset = transOffset;
+    _rotAngle = angle;
+    _scale = scale;
+
+    // 当たり判定のデータを適用
+    SetColliderData(
+        PhysicsData::ColliderKind::Capsule,
+        true,
+        colRad,
+        Vector3Up() * colHeight // Update内で計算するため
+    );
 }
 
 void Weapon::Update(Matrix4x4 parentWorldMatrix)
@@ -52,7 +55,7 @@ void Weapon::Update(Matrix4x4 parentWorldMatrix)
     // 親の行列に対して補正値を合成する
     // 親 -> 平行移動 -> 回転 -> 拡縮の順
     Matrix4x4 worldMatrix = MatMultiple(
-        scaleMatrix, MatMultiple(rotationMatrix, 
+        scaleMatrix, MatMultiple(rotationMatrix,
             MatMultiple(translationMatrix, parentWorldMatrix)));
 
     // モデルに最終的なワールド行列を適用
@@ -69,24 +72,35 @@ void Weapon::Update(Matrix4x4 parentWorldMatrix)
     rigidbody->SetPos(modelWorldPos);
 
     // 当たり判定の向きは回転まで適用した行列から取得
-    auto m2 = MatMultiple(rotationMatrix, m1);
-    Vector3 weaponDirection = Vector3(
-        m2.m[1][0],
-        m2.m[1][1],
-        m2.m[1][2]
+    // 武器の向き(Y軸方向)をワールド座標系で取得
+    Vector3 dir = Vector3(
+        worldMatrix.m[1][0],
+        worldMatrix.m[1][1],
+        worldMatrix.m[1][2]
     ).Normalize();
+
     auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
-    if (capsuleData) {
-        capsuleData->SetAngle(weaponDirection);
-    }
+    float dist = capsuleData->GetDist();
+    float rad = capsuleData->GetRad();
+
+    // 武器の向きと距離から、新しいoffsetベクトルを計算
+    Vector3 newOffset = dir * dist;
+
+    // 当たり判定のデータを更新
+    capsuleData->SetStartToEnd(newOffset);
 }
 
 void Weapon::Draw()
 {
-	// 描画
-	MV1DrawModel(_modelHandle);
+    // 描画
+    MV1DrawModel(_modelHandle);
 }
 
 void Weapon::OnCollide(const std::weak_ptr<Collider> collider)
 {
+}
+
+void Weapon::SetCollisionState(bool isCollision)
+{
+    colliderData->isCollision = isCollision;
 }

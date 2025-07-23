@@ -1,14 +1,18 @@
 ﻿#include "WaveManager.h"
 #include "EnemyFactory.h"
 #include "EnemyBase.h"
+#include "Calculation.h"
 
 #include <DxLib.h>
 
 namespace {
-	const int totalWaves = 10;			// ウェーブ数
-	const int baseEnemyCount = 2;		// 初期出現敵数
-	const int wavesPerIncrease = 3;		// このウェーブ数超えると敵が増える
-	const int increaseAmount = 1;		// 敵増加量
+	constexpr int kTotalWaves = 5;			// ウェーブ数
+	constexpr int kBaseEnemyCount = 2;		// 初期出現敵数
+	constexpr int kWavesPerIncrease = 2;	// このウェーブ数超えると敵が増える
+	constexpr int kIncreaseAmount = 1;		// 敵増加量
+
+	const Position3 kSpawnCenterPos = Vector3(0.0f, 0.0f, 700.0f);	// 敵出現中心位置
+	constexpr float kSpawnRadius = 1200.0f;	// 敵出現半径
 
 	// ウェーブ間のインターバル時間(秒)
 	constexpr float kWaveTransitionInterval = 3.0f;
@@ -83,18 +87,22 @@ void WaveManager::Draw()
 	for (auto& enemy : _enemies) {
 		enemy->Draw();
 	}
+#ifdef _DEBUG
+	DrawSphere3D(kSpawnCenterPos, kSpawnRadius, 16, 0xff00ff, 0xff00ff, false);
+#endif // _DEBUG
 }
 
 void WaveManager::InitWaveSettings()
 {
-	for (int i = 0; i < totalWaves; ++i) {
+	int spawnAmount = kBaseEnemyCount;
+	for (int i = 0; i < kTotalWaves; ++i) {
 		WaveData wave;
 		SpawnInfo info;
 		info.type = EnemyType::Normal;
-		// (i / wavesPerIncrease) で、何回増加タイミングを通過したかがわかる
-		info.count = baseEnemyCount + (i / wavesPerIncrease) * increaseAmount;
-		info.basePosition = Vector3(0.0f, 0.0f, 300.0f); // 生成中心位置
-		info.spawnRadius = 150.0f; // この半径内にランダム配置
+		if (i + 1 % kWavesPerIncrease == 0) spawnAmount += kIncreaseAmount;
+		info.count = spawnAmount;
+		info.basePosition = kSpawnCenterPos; // 生成中心位置
+		info.spawnRadius = kSpawnRadius; // この半径内にランダム配置
 
 		wave.spawnGroups.push_back(info);
 		_waveSettings.push_back(wave);
@@ -112,7 +120,7 @@ void WaveManager::SpawnEnemiesForCurrentWave()
 	for (const auto& group : currentWave.spawnGroups) {
 		for (int i = 0; i < group.count; ++i) {
 			// spawnRadius内にランダムな位置を計算
-			float angle = static_cast<float>(GetRand(360)) / 180.0f * DX_PI_F;
+			float angle = static_cast<float>(Calc::ToRadian(GetRand(360)));
 			float radius = static_cast<float>(GetRand(static_cast<int>(group.spawnRadius)));
 			Vector3 spawnPos = group.basePosition + Vector3(cos(angle) * radius, 0.0f, sin
 			(angle) *radius);
@@ -140,6 +148,7 @@ void WaveManager::CheckWaveCompletion()
 	if (!isAnyEnemyAlive) {
 		_state = State::WaitingForCleanup;
 		_waveTransitionTimer = 0.0f;
+		SpawnEnemiesForCurrentWave();
 	}
 }
 
@@ -152,7 +161,6 @@ void WaveManager::TransitionToNextWave()
 	if (_currentWaveIndex < _waveSettings.size()) {
 		// 次のウェーブの敵を生成
 		_state = State::Spawning;
-		SpawnEnemiesForCurrentWave();
 	}
 	else {
 		// 全ウェーブ完了
@@ -164,9 +172,9 @@ void WaveManager::CleanupDefeatedEnemies()
 {
 	// StateがDeadの敵をvectorの末尾に集めてから削除する
 	_enemies.erase(
-		std::remove_if(_enemies.begin(), _enemies.end(), 
+		std::remove_if(_enemies.begin(), _enemies.end(),
 			[](const std::shared_ptr<EnemyBase>&
-			enemy) {
+				enemy) {
 					return (enemy->GetState() == EnemyBase::State::Dead);
 			}),
 		_enemies.end()

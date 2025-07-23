@@ -48,12 +48,12 @@ protected:
 private:
 	std::shared_ptr<ColliderData> CreateColliderData(
 		PhysicsData::ColliderKind kind, bool isTrigger, 
-		float rad = 0.0f, float dist = 0.0f, Vector3 angle = Vector3Up());
+		float rad = 0.0f, Vector3 offset = Vector3Up());
 	
 protected:	// それぞれのオブジェクトから呼びたいため
 	void SetColliderData(
 		PhysicsData::ColliderKind kind, bool isTrigger, 
-		float rad = 0.0f, float dist = 0.0f, Vector3 angle = Vector3Up());
+		float rad = 0.0f, Vector3 offset = Vector3Up());
 
 private:
 	PhysicsData::GameObjectTag	tag;

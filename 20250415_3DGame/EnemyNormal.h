@@ -7,7 +7,7 @@
 class EnemyNormal final : public EnemyBase
 {
 public:
-	EnemyNormal();
+	EnemyNormal(int modelHandle);
 	~EnemyNormal();
 
 	void Init(std::weak_ptr<Player> player) override;

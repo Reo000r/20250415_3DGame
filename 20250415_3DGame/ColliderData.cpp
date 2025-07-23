@@ -6,8 +6,8 @@ void ColliderData::AddThroughTag(PhysicsData::GameObjectTag tag)
 {
 	// なければendが帰ってくる
 	auto it = std::find(
-		throughTags.begin(), 
-		throughTags.end(), 
+		throughTags.begin(),
+		throughTags.end(),
 		tag);
 	// endであれば(登録されていなければ)
 	if (it == throughTags.end())

@@ -65,4 +65,6 @@ protected:
 
 	// 自身の状態を保持
 	State _state;
+
+	int _reactCooltime;
 };

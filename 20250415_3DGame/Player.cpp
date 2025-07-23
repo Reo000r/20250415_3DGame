@@ -6,12 +6,19 @@
 #include "Collider.h"
 #include "ColliderData.h"
 #include "Rigidbody.h"
+#include "Calculation.h"
 #include <cassert>
 #include <algorithm>
 
 #include <DxLib.h>
 
 namespace {
+	// 当たり判定のパラメータ
+	constexpr float kColRadius = 70.0f; // 半径
+	constexpr float kColHeight = 350.0f; // 身長
+	// カプセルの始点(足元)から終点(頭頂部)までのベクトル
+	const Vector3 kColOffset = Vector3Up() * (kColHeight - kColRadius * 2.0f);
+	
 	constexpr float kWalkSpeed = 7.0f;
 	constexpr float kDashSpeed = 14.0f;
 	constexpr float kJumpForce = 20.0f;
@@ -24,31 +31,44 @@ namespace {
 	constexpr float kTempDamage = 10.0f;
 
 	const std::wstring kAnimName = L"Armature|Animation_";
-	const std::wstring kAnimNameIdle = kAnimName + L"Idle";
-	const std::wstring kAnimNameWalk = kAnimName + L"Walk";
-	const std::wstring kAnimNameRun = kAnimName + L"Run";
-	const std::wstring kAnimNameAttackNormal = kAnimName + L"Attack360High";
-	const std::wstring kAnimNameAttackBack	= kAnimName + L"AttackBackhand";
-	const std::wstring kAnimNameAttackCombo1 = kAnimName + L"AttackCombo1";
-	const std::wstring kAnimNameAttackCombo2 = kAnimName + L"AttackCombo2";
-	const std::wstring kAnimNameAttackCombo3 = kAnimName + L"AttackCombo3";
+	const std::wstring kAnimNameIdle =			kAnimName + L"Idle";
+	const std::wstring kAnimNameWalk =			kAnimName + L"Walk";
+	const std::wstring kAnimNameRun =			kAnimName + L"Run";
+	const std::wstring kAnimNameAttackNormal =	kAnimName + L"Attack360High";
+	const std::wstring kAnimNameAttackBack =	kAnimName + L"AttackBackhand";
+	const std::wstring kAnimNameAttackCombo1 =	kAnimName + L"AttackCombo1";
+	const std::wstring kAnimNameAttackCombo2 =	kAnimName + L"AttackCombo2";
+	const std::wstring kAnimNameAttackCombo3 =	kAnimName + L"AttackCombo3";
 	const std::wstring kAnimNameSpecialAttack1 = kAnimName + L"SpecialAttack1";
 	const std::wstring kAnimNameSpecialAttack2 = kAnimName + L"SpecialAttack2";
-	const std::wstring kAnimNameBlock		= kAnimName + L"Block";
-	const std::wstring kAnimNameBlockReact	= kAnimName + L"BlockReact";
-	const std::wstring kAnimNameReact		= kAnimName + L"React";
-	const std::wstring kAnimNameBuff	= kAnimName + L"Buff";
-	const std::wstring kAnimNameDead = kAnimName + L"Dying";
-	const std::wstring kAnimNameAppeal = kAnimName + L"WinAnim";
+	const std::wstring kAnimNameBlock =			kAnimName + L"Block";
+	const std::wstring kAnimNameBlockReact =	kAnimName + L"BlockReact";
+	const std::wstring kAnimNameReact =			kAnimName + L"React";
+	const std::wstring kAnimNameBuff =			kAnimName + L"Buff";
+	const std::wstring kAnimNameDead =			kAnimName + L"Dying";
+	const std::wstring kAnimNameAppeal =		kAnimName + L"WinAnim";
 
-	constexpr float kAttackCombo1InputStart = 0.0f;
+	constexpr float kAttackCombo1InputStart = 0.1f;
 	constexpr float kAttackCombo1InputEnd	= 1.0f;
-	constexpr float kAttackCombo2InputStart = 0.0f;
+	constexpr float kAttackCombo2InputStart = 0.1f;
 	constexpr float kAttackCombo2InputEnd	= 1.0f;
+
+
+	// 武器データ
+	constexpr float kWeaponRad = 50.0f;
+	constexpr float kWeaponDist = 500.0f;
+
+	const Vector3 kWeaponOffsetPos = Vector3Up();					// 位置補正
+	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f);	// 拡縮補正
+	// 角度補正
+	const Vector3 kWeaponOffsetDir = Vector3(
+		Calc::ToRadian(60.0f),
+		Calc::ToRadian(90.0f),
+		Calc::ToRadian(50.0f));
 }
 
 Player::Player() :
-	Collider(PhysicsData::Priority::High,
+	Collider(PhysicsData::Priority::Middle,
 		PhysicsData::GameObjectTag::Player,
 		PhysicsData::ColliderKind::Capsule,
 		false),
@@ -88,17 +108,27 @@ Player::Player() :
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameIdle);
 
+
+	// 当たり判定データ設定
+	SetColliderData(
+		PhysicsData::ColliderKind::Capsule,	// 種別
+		false,								// isTrigger
+		kColRadius,							// 半径
+		kColOffset							// 始点から終点
+	);
+
+
 	// 武器初期化
 	int weaponModelHandle = MV1LoadModel(L"data/model/weapon/PlayerWeapon.mv1");
 	assert(weaponModelHandle >= 0 && "モデルハンドルが正しくない");
-	// 武器補正
-	Matrix4x4 weaponOffsetMatrix = MatTranslate(Vector3(0.0f, 0.0f, 0.0f));
-	Vector3 weaponDir = Vector3(
-		DX_PI_F / 180 * 60.0f , 
-		DX_PI_F / 180 * 90.0f, 
-		DX_PI_F / 180 * 50.0f);
-	_weapon->Init(weaponModelHandle, 100.0f, 500, 
-		Vector3(), Vector3(1.0f, 1.3f, 2.0f), weaponDir);
+	_weapon->Init(
+		weaponModelHandle,
+		kWeaponRad,			// 当たり判定半径
+		kWeaponDist,		// 当たり判定長さ
+		kWeaponOffsetPos,	// 位置補正
+		kWeaponOffsetScale,	// 拡縮補正
+		kWeaponOffsetDir	// 角度補正
+	);
 }
 
 Player::~Player()
@@ -448,14 +478,8 @@ void Player::Rotate() {
 		// 現在の角度から目標角度までの最短差分を計算
 		float diff = targetAngle - _rotAngle;
 
-		// 角度の差が180度を超えないように正規化する
-		// (-270度は+90度として扱うなど)
-		while (diff > DX_PI_F) {
-			diff -= DX_PI_F * 2.0f;
-		}
-		while (diff < -DX_PI_F) {
-			diff += DX_PI_F * 2.0f;
-		}
+		// 角度の正規化
+		Calc::RadianNormalize(diff);
 		// 1フレームで回転できる最大量に制限する
 		float turnAmount = std::clamp(diff, -kTurnSpeed, kTurnSpeed);
 
@@ -463,12 +487,7 @@ void Player::Rotate() {
 		_rotAngle += turnAmount;
 
 		// 現在の角度も正規化しておく
-		while (_rotAngle > DX_PI_F) {
-			_rotAngle -= DX_PI_F * 2.0f;
-		}
-		while (_rotAngle < -DX_PI_F) {
-			_rotAngle += DX_PI_F * 2.0f;
-		}
+		Calc::RadianNormalize(_rotAngle);
 		// 適用
 		MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
 	}

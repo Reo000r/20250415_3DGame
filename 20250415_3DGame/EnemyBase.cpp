@@ -23,7 +23,7 @@ EnemyBase::EnemyBase(float hitPoint, float transferAttackRad, float attackMul) :
 	_attackMul(attackMul),
 	_state(State::Active)
 {
-	
+
 }
 
 EnemyBase::~EnemyBase()

@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Collider.h"
 #include "Rigidbody.h"
+#include "Calculation.h"
 #include <cassert>
 
 #include <DxLib.h>
@@ -16,17 +17,23 @@ namespace {
 	constexpr float kTempDamage = 1.0f;		// 仮の被弾時ダメージ
 	constexpr float kChaseSpeed = 4.0f * kScaleMul;		// 追いかける速度
 	constexpr float kTurnSpeed = 0.05f;		// 回転速度(ラジアン)
-	constexpr float kAttackRange = 150.0f * kScaleMul;	// 攻撃に移行する距離
+	constexpr float kAttackRange = 175.0f * kScaleMul;	// 攻撃に移行する距離
 	constexpr float kGround = 0.0f;			// (地面の高さ)
-	
+	constexpr int kReactCooltimeFrame = 30;	// 無敵時間
+
+	// 当たり判定のパラメータ
+	constexpr float kColRadius = 50.0f * kScaleMul; // 半径
+	constexpr float kColHeight = 200.0f * kScaleMul; // 身長
+	const Vector3 kColOffset = Vector3Up() * (kColHeight - kColRadius);
+
 	const std::wstring kAnimName = L"Armature|Animation_";
 	const std::wstring kAnimNameChase = kAnimName + L"Chase";
 	const std::wstring kAnimNameAttack = kAnimName + L"Attack";
-	const std::wstring kAnimNameDamage = kAnimName + L"Damage";
-	const std::wstring kAnimNameDeath = kAnimName + L"Death";
+	const std::wstring kAnimNameDamage = kAnimName + L"React";
+	const std::wstring kAnimNameDeath = kAnimName + L"Dying";
 }
 
-EnemyNormal::EnemyNormal() : 
+EnemyNormal::EnemyNormal(int modelHandle) :
 	EnemyBase(kHitPoint, kAttackRange, 1.0f),
 	_nowUpdateState(&EnemyNormal::UpdateChase)
 
@@ -34,7 +41,7 @@ EnemyNormal::EnemyNormal() :
 	rigidbody->Init(true);
 
 	// モデルの読み込み
-	_animator->Init(MV1LoadModel(L"data/model/character/EnemyNormal.mv1"));
+	_animator->Init(modelHandle);
 
 	// 使用するアニメーションを全て入れる
 	_animator->SetAnimData(kAnimNameChase, true);
@@ -45,6 +52,14 @@ EnemyNormal::EnemyNormal() :
 	_animator->SetStartAnim(kAnimNameChase);
 
 	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * kScaleMul);
+
+	// 当たり判定データ設定
+	SetColliderData(
+		PhysicsData::ColliderKind::Capsule,	// 種別
+		false,								// isTrigger
+		kColRadius,							// 半径
+		kColOffset							// 始点から終点
+	);
 }
 
 EnemyNormal::~EnemyNormal()
@@ -67,6 +82,8 @@ void EnemyNormal::Update()
 
 	// 現在のステートに応じたUpdateが行われる
 	(this->*_nowUpdateState)();
+
+	if (_reactCooltime > 0) _reactCooltime--;
 }
 
 void EnemyNormal::Draw()
@@ -85,14 +102,26 @@ void EnemyNormal::Draw()
 void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)
 {
 	// coliderと衝突
-	
+
 	// 死亡状態ではダメージを受けない
 	if (_nowUpdateState == &EnemyNormal::UpdateDeath) return;
-	
-	// プレイヤーの攻撃であれば
-	if (collider.lock()->GetTag() == PhysicsData::GameObjectTag::PlayerAttack) {
+
+	// プレイヤーの攻撃かつ
+	// 無敵時間外であれば
+	if (collider.lock()->GetTag() == PhysicsData::GameObjectTag::PlayerAttack &&
+		_reactCooltime <= 0) {
 		// (固定ダメージ)
 		_hitPoint -= kTempDamage;
+		_reactCooltime = kReactCooltimeFrame;
+
+		// 死亡判定
+		if (_hitPoint <= 0.0f &&
+			_state == State::Active) {
+			_state = State::Dying;
+			_nowUpdateState = &EnemyNormal::UpdateDeath;
+			_animator->ChangeAnim(kAnimNameDeath, false);
+			return;
+		}
 		// 既に被弾状態ならアニメーションを最初から再生
 		if (_nowUpdateState == &EnemyNormal::UpdateDamage) {
 			auto& animData = _animator->FindAnimData(kAnimNameDamage);
@@ -110,7 +139,7 @@ void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)
 void EnemyNormal::CheckStateTransition()
 {
 	// 死亡判定(最優先)
-	if (_hitPoint <= 0.0f && 
+	if (_hitPoint <= 0.0f &&
 		_state == State::Active) {
 		_state = State::Dying;
 		_nowUpdateState = &EnemyNormal::UpdateDeath;
@@ -130,7 +159,7 @@ void EnemyNormal::CheckStateTransition()
 		}
 	}
 	// 攻撃中の場合は移行しない
-	if (_nowUpdateState == &EnemyNormal::UpdateAttack && 
+	if (_nowUpdateState == &EnemyNormal::UpdateAttack &&
 		!_animator->IsEnd(kAnimNameAttack)) {
 		return;
 	}
@@ -202,7 +231,7 @@ void EnemyNormal::UpdateDamage()
 void EnemyNormal::UpdateDeath()
 {
 	// 死亡アニメーションが終了したら、更新を止める
-	if (_animator->IsEnd(kAnimNameDeath)) {
+	if (_animator->IsEnd(kAnimNameDeath) && _state != State::Dead) {
 		// 物理判定から除外する
 		ReleasePhysics();
 		_state = State::Dead; // 状態を死亡完了にする
@@ -224,15 +253,15 @@ void EnemyNormal::RotateToPlayer()
 	// 現在の角度から目標角度までの差分を計算
 	float diff = targetAngle - _rotAngle;
 	// 角度が-180度以下,180度以上にならないように正規化
-	while (diff > DX_PI_F)  diff -= DX_PI_F * 2.0f;
-	while (diff < -DX_PI_F) diff += DX_PI_F * 2.0f;
+	while (diff > Calc::ToRadian(180.0f))  diff -= Calc::ToRadian(360.0f);
+	while (diff < Calc::ToRadian(-180.0f)) diff += Calc::ToRadian(360.0f);
 
 	// 回転量を制限
 	float turnAmount = std::clamp<float>(diff, -kTurnSpeed, kTurnSpeed);
 	_rotAngle += turnAmount;
 
 	// モデルに回転を適用
-	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle+DX_PI_F, 0));
+	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle + Calc::ToRadian(180.0f), 0));
 
 	// Rigidbodyの向きも更新
 	Vector3 newDir = Vector3(sinf(_rotAngle), 0.0f, cosf(_rotAngle)).Normalize();

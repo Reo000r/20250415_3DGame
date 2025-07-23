@@ -147,13 +147,13 @@ void Animator::UpdateAnimBlendRate()
 		UpdateAnim(FindAnimData(_currentAnimName));
 	}
 
-	// 2. ブレンド中かどうか
+	// ブレンド中かどうか
 	if (_blendRate < 1.0f) {
 		// 古いアニメーションのフレームは更新せず
 		// 影響度だけを下げる
 
 		// ブレンド率を更新
-		_blendRate += 1.0f / kAnimBlendFrame;
+		if (kAnimBlendFrame) _blendRate += 1.0f / kAnimBlendFrame;
 
 		// ブレンドが完了した場合の処理
 		if (_blendRate >= 1.0f) {
@@ -203,6 +203,9 @@ void Animator::ChangeAnim(const std::wstring animName, bool isLoop)
 	// 新しいアニメーションをアタッチ
 	AttachAnim(_currentAnimName, isLoop);
 	_blendRate = 0.0f;
+
+	// アタッチしたばかりのアニメーションに少しだけ影響力を持たせる
+	UpdateAnimBlendRate();
 }
 
 Animator::AnimData& Animator::FindAnimData(const std::wstring animName)
