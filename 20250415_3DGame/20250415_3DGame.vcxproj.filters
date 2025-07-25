@@ -129,6 +129,12 @@
     <ClCompile Include="ColliderDataCapsule.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
+    <ClCompile Include="WeaponPlayer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponEnemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -234,6 +240,12 @@
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="Calculation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponPlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponEnemy.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

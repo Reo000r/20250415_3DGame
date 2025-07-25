@@ -2,6 +2,7 @@
 #include "WaveData.h"
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 class EnemyBase;
 class Player;
@@ -36,7 +37,7 @@ private:
 	void SpawnEnemiesForCurrentWave();
 
 	/// <summary>
-	/// ウェーブの完了条件（敵の全滅）をチェックする
+	/// ウェーブの完了条件(敵の全滅)をチェックする
 	/// </summary>
 	void CheckWaveCompletion();
 
@@ -46,7 +47,7 @@ private:
 	void TransitionToNextWave();
 
 	/// <summary>
-	/// 倒された（死亡完了した）敵をリストから削除する
+	/// 倒された(死亡が完了した)敵をリストから削除する
 	/// </summary>
 	void CleanupDefeatedEnemies();
 
@@ -57,8 +58,8 @@ private:
 
 private:
 	State _state;
-	int _currentWaveIndex; // 現在のウェーブ番号 (0-indexed)
-	float _waveTransitionTimer; // ウェーブ間のインターバルタイマー
+	int _currentWaveIndex; // 現在のウェーブ番号(0 - (データサイズ-1))
+	int _waveTransitionFrameCount; // ウェーブ間の待機フレームカウンター
 
 	// このマネージャーが生成し、管理下にある全ての敵
 	std::vector<std::shared_ptr<EnemyBase>> _enemies;

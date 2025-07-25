@@ -5,15 +5,17 @@
 
 class Player;
 class Animator;
+class WeaponEnemy;
 
 class EnemyBase abstract : public Collider
 {
 public:
 	// 敵の状態を示すenum
 	enum class State {
-		Active, // 通常状態(生存)
-		Dying,  // 死亡(アニメーション再生中)
-		Dead    // 死亡(アニメーション終了)
+		Spawning,	// 生成中
+		Active,		// 通常状態(生存)
+		Dying,		// 死亡(アニメーション再生中)
+		Dead		// 死亡(アニメーション終了)
 	};
 
 	/// <summary>
@@ -21,8 +23,8 @@ public:
 	/// </summary>
 	/// <param name="hitPoint">HP</param>
 	/// <param name="transferAttackRad">攻撃移行範囲</param>
-	/// <param name="attackMul">攻撃力補正値(武器に掛ける値)</param>
-	EnemyBase(float hitPoint, float transferAttackRad, float attackMul);
+	/// <param name="attackPower">攻撃力</param>
+	EnemyBase(float hitPoint, float transferAttackRad, float attackPower);
 	virtual ~EnemyBase();
 
 	virtual void Init(std::weak_ptr<Player> player) abstract;
@@ -41,14 +43,21 @@ public:
 
 	void SetPos(const Vector3& pos);
 
+	/// <summary>
+	/// ダメージを受ける処理
+	/// </summary>
+	/// <param name="damage">受けるダメージ量</param>
+	/// <param name="attacker">攻撃してきた相手</param>
+	virtual void TakeDamage(float damage, std::shared_ptr<Collider> attacker) abstract;
+
 protected:
 	/// <summary>
 	/// ステートの遷移条件を確認し、変更可能なステートがあればそれに遷移する
 	/// </summary>
 	virtual void CheckStateTransition() abstract;
 
-	std::shared_ptr<Animator> _animator;
-
+	std::unique_ptr<Animator> _animator;
+	
 	std::weak_ptr<Player> _player;
 
 	float _rotAngle;
@@ -60,8 +69,8 @@ protected:
 
 	// 攻撃移行範囲
 	float _transferAttackRad;
-	// 攻撃力補正値(武器に掛ける値)
-	float _attackMul;
+	// 攻撃力
+	float _attackPower;
 
 	// 自身の状態を保持
 	State _state;

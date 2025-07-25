@@ -80,26 +80,29 @@ void Physics::Update()
 
 		// もともとの情報、予定情報をデバッグ表示
 #ifdef _DEBUG
-		if (collider->colliderData->isCollision) {
-			// 球
-			if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
-			{
-				auto sphereData = std::static_pointer_cast<ColliderDataSphere>(collider->colliderData);
-				float radius = sphereData->_radius;
-				DebugDraw::GetInstance().DrawSphere(pos, radius, 0xff00ff);
-			}
-			// カプセル
-			if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule)
-			{
-				auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(collider->colliderData);
-				Position3 pos = collider->rigidbody->GetPos();
-				Position3 start = capsuleData->GetStartPos(pos);
-				Position3 end = capsuleData->GetEndPos(pos);
-				float radius = capsuleData->GetRad();
-				DebugDraw::GetInstance().DrawSphere(start, radius, 0x0000ff);
-				DebugDraw::GetInstance().DrawSphere(end, radius, 0xff0000);
-				DebugDraw::GetInstance().DrawCapsule(start, end, radius, 0xff00ff);
-			}
+		int color = 0xff00ff;
+		// 当たらない場合は色を変える
+		if (!(collider->colliderData->isCollision)) {
+			color = 0x101010;
+		}
+		// 球
+		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Sphere)
+		{
+			auto sphereData = std::static_pointer_cast<ColliderDataSphere>(collider->colliderData);
+			float radius = sphereData->_radius;
+			DebugDraw::GetInstance().DrawSphere(pos, radius, color);
+		}
+		// カプセル
+		if (collider->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule)
+		{
+			auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(collider->colliderData);
+			Position3 pos = collider->rigidbody->GetPos();
+			Position3 start = capsuleData->GetStartPos(pos);
+			Position3 end = capsuleData->GetEndPos(pos);
+			float radius = capsuleData->GetRad();
+			DebugDraw::GetInstance().DrawSphere(start, radius, color);
+			DebugDraw::GetInstance().DrawSphere(end, radius, color);
+			DebugDraw::GetInstance().DrawCapsule(start, end, radius, color);
 		}
 #endif
 

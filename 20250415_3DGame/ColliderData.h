@@ -5,9 +5,10 @@
 class ColliderData abstract {
 public:
 	// コンストラクタ
-	ColliderData(PhysicsData::ColliderKind kind_, bool isTrigger_) :
+	ColliderData(PhysicsData::ColliderKind kind_, bool isTrigger_, bool isCollision_) :
 		kind(kind_),
-		isTrigger(isTrigger_)
+		isTrigger(isTrigger_),
+		isCollision(isCollision_)
 	{
 	}
 

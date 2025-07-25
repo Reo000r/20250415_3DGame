@@ -20,7 +20,13 @@ public:
 	/// <param name="tag">タグ</param>
 	/// <param name="colliderKind">当たり判定種別</param>
 	/// <param name="isTrigger"></param>
-	Collider(PhysicsData::Priority priority, PhysicsData::GameObjectTag tag, PhysicsData::ColliderKind colliderKind, bool isTrigger);
+	/// <param name="isCollision"></param>
+	Collider(
+		PhysicsData::Priority priority_, 
+		PhysicsData::GameObjectTag tag_, 
+		PhysicsData::ColliderKind colliderKind, 
+		bool isTrigger,
+		bool isCollision);
 	virtual ~Collider();
 	void EntryPhysics(std::weak_ptr<Physics> physics_);
 	void ReleasePhysics();
@@ -47,12 +53,12 @@ protected:
 
 private:
 	std::shared_ptr<ColliderData> CreateColliderData(
-		PhysicsData::ColliderKind kind, bool isTrigger, 
+		PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
 		float rad = 0.0f, Vector3 offset = Vector3Up());
 	
 protected:	// それぞれのオブジェクトから呼びたいため
 	void SetColliderData(
-		PhysicsData::ColliderKind kind, bool isTrigger, 
+		PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
 		float rad = 0.0f, Vector3 offset = Vector3Up());
 
 private:

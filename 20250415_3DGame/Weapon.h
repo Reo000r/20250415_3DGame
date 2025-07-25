@@ -3,13 +3,13 @@
 #include "Collider.h"
 
 /// <summary>
-/// プレイヤーや敵が使う武器クラス
+/// 武器の基底クラス
 /// </summary>
-class Weapon : public Collider
+class Weapon abstract : public Collider
 {
 public:
-	Weapon();
-	~Weapon();
+	Weapon(PhysicsData::GameObjectTag tag);
+	virtual ~Weapon();
 
 	/// <summary>
 	/// 武器初期化
@@ -37,6 +37,10 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 武器の所有者と攻撃力を設定する
+	/// </summary>
+	void SetOwnerStatus(std::weak_ptr<Collider> owner, float attackPower);
 
 	/// <summary>
 	/// 衝突したときに呼ばれる
@@ -46,12 +50,15 @@ public:
 
 	void SetCollisionState(bool isCollision);
 
-private:
+protected:
 	// モデルハンドル
 	int _modelHandle;
 
 	Vector3 _transOffset;
 	Vector3 _rotAngle;
 	Vector3 _scale;
+
+	std::weak_ptr<Collider> _owner;
+	float _attackPower;
 };
 

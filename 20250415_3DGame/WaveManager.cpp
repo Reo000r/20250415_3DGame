@@ -15,13 +15,13 @@ namespace {
 	constexpr float kSpawnRadius = 1200.0f;	// 敵出現半径
 
 	// ウェーブ間のインターバル時間(秒)
-	constexpr float kWaveTransitionInterval = 3.0f;
+	constexpr int kWaveTransitionIntervalFrame = 60.0f * 3;
 }
 
 WaveManager::WaveManager() :
 	_state(State::Spawning),
 	_currentWaveIndex(0),
-	_waveTransitionTimer(0.0f),
+	_waveTransitionFrameCount(0),
 	_enemies(),
 	_waveSettings(),
 	_player(),
@@ -66,8 +66,8 @@ void WaveManager::Update()
 
 	case State::WaitingForCleanup:
 		// 次のウェーブが始まるまでの待機時間を処理
-		_waveTransitionTimer += 1.0f / 60.0f;
-		if (_waveTransitionTimer >= kWaveTransitionInterval) {
+		_waveTransitionFrameCount++;
+		if (_waveTransitionFrameCount >= kWaveTransitionIntervalFrame) {
 			// 待機時間が終了したら、次のウェーブへ移行
 			TransitionToNextWave();
 		}
@@ -94,16 +94,20 @@ void WaveManager::Draw()
 
 void WaveManager::InitWaveSettings()
 {
+	// 最初のウェーブで出現する敵の数
 	int spawnAmount = kBaseEnemyCount;
+	// kTotalWaves の数だけウェーブ設定を生成
 	for (int i = 0; i < kTotalWaves; ++i) {
-		WaveData wave;
-		SpawnInfo info;
-		info.type = EnemyType::Normal;
-		if (i + 1 % kWavesPerIncrease == 0) spawnAmount += kIncreaseAmount;
-		info.count = spawnAmount;
-		info.basePosition = kSpawnCenterPos; // 生成中心位置
-		info.spawnRadius = kSpawnRadius; // この半径内にランダム配置
+		WaveData wave;	// ウェーブデータ
+		SpawnInfo info;	// 1グループ分の敵の出現情報を格納する変数
+		info.type = EnemyType::Normal;	// 出現させる敵の種類設定
+		// 特定のウェーブ数を超えるごとに、出現する敵の数を増やす
+		if ((i + 1) % kWavesPerIncrease == 0) spawnAmount += kIncreaseAmount;
+		info.count = spawnAmount;				// 出現数
+		info.basePosition = kSpawnCenterPos;	// 生成中心位置
+		info.spawnRadius = kSpawnRadius;		// この半径内にランダム配置
 
+		// 設定登録
 		wave.spawnGroups.push_back(info);
 		_waveSettings.push_back(wave);
 	}
@@ -120,9 +124,10 @@ void WaveManager::SpawnEnemiesForCurrentWave()
 	for (const auto& group : currentWave.spawnGroups) {
 		for (int i = 0; i < group.count; ++i) {
 			// spawnRadius内にランダムな位置を計算
-			float angle = static_cast<float>(Calc::ToRadian(GetRand(360)));
-			float radius = static_cast<float>(GetRand(static_cast<int>(group.spawnRadius)));
-			Vector3 spawnPos = group.basePosition + Vector3(cos(angle) * radius, 0.0f, sin
+			float angle = static_cast<float>(Calc::ToRadian(GetRand(360)));						// ランダムな角度
+			float radius = static_cast<float>(GetRand(static_cast<int>(group.spawnRadius)));	// 生成範囲内のランダムな半径
+			// 具体的な生成位置を求める
+			Position3 spawnPos = group.basePosition + Vector3(cos(angle) * radius, 0.0f, sin
 			(angle) *radius);
 
 			// Factoryを使って敵を生成し、リストに追加
@@ -147,7 +152,7 @@ void WaveManager::CheckWaveCompletion()
 	// もし生きている敵が一人もいなければ、ウェーブクリア
 	if (!isAnyEnemyAlive) {
 		_state = State::WaitingForCleanup;
-		_waveTransitionTimer = 0.0f;
+		_waveTransitionFrameCount = 0;
 		SpawnEnemiesForCurrentWave();
 	}
 }

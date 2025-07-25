@@ -4,26 +4,29 @@
 #include "Animator.h"
 #include "Input.h"
 #include "Collider.h"
+#include "ColliderData.h"
 #include "Rigidbody.h"
 #include <cassert>
 
 #include <DxLib.h>
 
-EnemyBase::EnemyBase(float hitPoint, float transferAttackRad, float attackMul) :
+EnemyBase::EnemyBase(float hitPoint, float transferAttackRad, float attackPower) :
 	Collider(PhysicsData::Priority::Middle,
 		PhysicsData::GameObjectTag::Enemy,
 		PhysicsData::ColliderKind::Capsule,
-		false),
-	_animator(std::make_shared<Animator>()),
+		false, true),
+	_animator(std::make_unique<Animator>()),
 	_rotAngle(0.0f),
 	_rotMtx(),
 	_quaternion(),
 	_hitPoint(hitPoint),
 	_transferAttackRad(transferAttackRad),
-	_attackMul(attackMul),
-	_state(State::Active)
+	_attackPower(attackPower),
+	_state(State::Spawning),
+	_reactCooltime(0)
 {
-
+	// 自身の武器やほかの敵の武器とは当たり判定を行わない
+	colliderData->AddThroughTag(PhysicsData::GameObjectTag::EnemyAttack);
 }
 
 EnemyBase::~EnemyBase()

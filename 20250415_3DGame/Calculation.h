@@ -22,26 +22,20 @@ namespace Calculation {
 	}
 
 	/// <summary>
-	/// 
+	/// 角度を -Pi から +Pi の範囲に正規化
 	/// </summary>
 	/// <param name="radian"></param>
 	/// <returns></returns>
 	inline float RadianNormalize(float radian) {
-		// まず、入力値を kPi*2 で割った剰余を求めることで、
-		// 計算量を少なくしつつ、値を kPi*-2 から kPi*2 の間に収める。
-		float wrapped = fmodf(radian, 2.0f * kPi);
-
-		// 剰余計算の結果がまだ範囲外にある場合、
-		// -kPi <= wrapped <= kPi
-		// になるように調整
-		if (wrapped < -kPi) {
-			wrapped += 2.0f * kPi;
+		// 角度を +Pi することで、剰余演算の結果を
+		// 0 から 2Pi の範囲に調整しやすくする
+		float remainder = fmodf(radian + kPi, 2.0f * kPi);
+		// 剰余が負の場合は 2Pi を足して正の範囲に収める
+		if (remainder < 0.0f) {
+			remainder = 2.0f * kPi;
 		}
-		else if (wrapped >= kPi) {
-			wrapped -= 2.0f * kPi;
-		}
-
-		return wrapped;
+		// 最後に Pi を引くことで、-Pi から Pi の範囲に正規化する
+		return remainder - kPi;
 	}
 }
 

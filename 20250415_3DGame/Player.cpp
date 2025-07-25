@@ -1,7 +1,7 @@
 ﻿#include "Player.h"
 #include "Camera.h"
 #include "Animator.h"
-#include "Weapon.h"
+#include "WeaponPlayer.h"
 #include "Input.h"
 #include "Collider.h"
 #include "ColliderData.h"
@@ -19,10 +19,12 @@ namespace {
 	// カプセルの始点(足元)から終点(頭頂部)までのベクトル
 	const Vector3 kColOffset = Vector3Up() * (kColHeight - kColRadius * 2.0f);
 	
+	constexpr float kAttackPower = 100.0f;
 	constexpr float kWalkSpeed = 7.0f;
 	constexpr float kDashSpeed = 14.0f;
 	constexpr float kJumpForce = 20.0f;
 	constexpr float kGround = 0.0f;
+	constexpr int kReactCooltimeFrame = 60;	// 無敵時間
 
 	// 回転速度(ラジアン)
 	constexpr float kTurnSpeed = 0.2f;
@@ -71,13 +73,15 @@ Player::Player() :
 	Collider(PhysicsData::Priority::Middle,
 		PhysicsData::GameObjectTag::Player,
 		PhysicsData::ColliderKind::Capsule,
-		false),
+		false, true),
 	_nowUpdateState(&Player::UpdateIdle),
-	_animator(std::make_shared<Animator>()),
-	_weapon(std::make_shared<Weapon>()),
+	_animator(std::make_unique<Animator>()),
+	_weapon(std::make_unique<WeaponPlayer>()),
 	_rotAngle(0.0f),
 	_hasDerivedAttackInput(false),
-	_hitpoint(kHitPoint)
+	_hitPoint(kHitPoint),
+	_attackPower(kAttackPower),
+	_reactCooltime(0)
 {
 	rigidbody->Init(true);
 
@@ -113,6 +117,7 @@ Player::Player() :
 	SetColliderData(
 		PhysicsData::ColliderKind::Capsule,	// 種別
 		false,								// isTrigger
+		true,								// isCollision
 		kColRadius,							// 半径
 		kColOffset							// 始点から終点
 	);
@@ -129,6 +134,9 @@ Player::Player() :
 		kWeaponOffsetScale,	// 拡縮補正
 		kWeaponOffsetDir	// 角度補正
 	);
+
+	// 武器に自分自身と自分の攻撃力を設定
+	_weapon->SetOwnerStatus(shared_from_this(), _attackPower);
 }
 
 Player::~Player()
@@ -160,6 +168,9 @@ void Player::Update()
 	// 現在のステートに応じたUpdateが行われる
 	(this->*_nowUpdateState)();
 
+	// 無敵時間更新
+	if (_reactCooltime > 0) _reactCooltime--;
+
 	// 武器更新
 	WeaponUpdate();
 }
@@ -187,8 +198,11 @@ void Player::Draw()
 void Player::OnCollide(const std::weak_ptr<Collider> collider)
 {
 	// coliderと衝突
+}
 
-	// 死亡状態、または攻撃の無敵時間中はダメージを受け付けない
+void Player::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
+{
+	// 死亡状態、または攻撃中はダメージを受け付けない
 	if (_nowUpdateState == &Player::UpdateDeath ||
 		_nowUpdateState == &Player::UpdateAttackFirst ||
 		_nowUpdateState == &Player::UpdateAttackSecond ||
@@ -196,10 +210,23 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 		return;
 	}
 
-	// 敵の攻撃なら
-	if (collider.lock()->GetTag() == PhysicsData::GameObjectTag::EnemyAttack) {
+	// 無敵時間外であれば
+	if (_reactCooltime <= 0) {
 		// HPを減らす
-		_hitpoint -= kTempDamage;
+		_hitPoint -= damage;
+		_reactCooltime = kReactCooltimeFrame;
+
+		// 武器の当たり判定を無効化
+		_weapon->SetCollisionState(false);
+
+		// hpが0以下の場合は死亡
+		if (_hitPoint <= 0.0f) {
+			if (_nowUpdateState != &Player::UpdateDeath) {
+				_nowUpdateState = &Player::UpdateDeath;
+				_animator->ChangeAnim(kAnimNameDead, false);
+			}
+			return;
+		}
 
 		// 既に被弾状態ならアニメーションを最初から再生
 		if (_nowUpdateState == &Player::UpdateDamage) {
@@ -220,10 +247,12 @@ void Player::CheckStateTransition()
 {
 	// 死亡判定を最優先
 	// hpが0以下の場合は死亡
-	if (_hitpoint <= 0.0f) {
+	if (_hitPoint <= 0.0f) {
 		if (_nowUpdateState != &Player::UpdateDeath) {
 			_nowUpdateState = &Player::UpdateDeath;
 			_animator->ChangeAnim(kAnimNameDead, false);
+			// 武器の当たり判定を無効化
+			_weapon->SetCollisionState(false);
 		}
 		return;
 	}
@@ -261,18 +290,29 @@ void Player::CheckStateTransition()
 					_nowUpdateState = &Player::UpdateAttackSecond;
 					_animator->ChangeAnim(kAnimNameAttackCombo2, false);
 					_hasDerivedAttackInput = false;
+					// 武器の当たり判定を有効化
+					_weapon->SetCollisionState(true);
 					return; // 遷移したので処理終了
 				}
 				else if (_nowUpdateState == &Player::UpdateAttackSecond) {
 					_nowUpdateState = &Player::UpdateAttackThird;
 					_animator->ChangeAnim(kAnimNameAttackCombo3, false);
 					_hasDerivedAttackInput = false;
+					// 武器の当たり判定を有効化
+					_weapon->SetCollisionState(true);
 					return; // 遷移したので処理終了
 				}
 			}
 
 			// 派生入力がなければ
-			if (stick.Magnitude() != 0.0f) {
+			// 武器の当たり判定を無効化
+			_weapon->SetCollisionState(false);
+			// スティックが一定以上傾いているなら
+			if (stick.Magnitude() >= 1000 * 0.8f) {
+				_nowUpdateState = &Player::UpdateDash;
+				_animator->ChangeAnim(kAnimNameRun, true);
+			}
+			else if (stick.Magnitude() != 0.0f) {
 				_nowUpdateState = &Player::UpdateWalk;
 				_animator->ChangeAnim(kAnimNameWalk, true);
 			}
@@ -295,6 +335,8 @@ void Player::CheckStateTransition()
 		_nowUpdateState = &Player::UpdateAttackFirst;
 		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
 		_hasDerivedAttackInput = false;
+		// 武器の当たり判定を有効化
+		_weapon->SetCollisionState(true);
 		return;
 	}
 
@@ -305,6 +347,8 @@ void Player::CheckStateTransition()
 		if (_nowUpdateState != &Player::UpdateDash) {
 			_nowUpdateState = &Player::UpdateDash;
 			_animator->ChangeAnim(kAnimNameRun, true);
+			// 武器の当たり判定を無効化
+			_weapon->SetCollisionState(false);
 		}
 		return;
 	}
@@ -316,6 +360,8 @@ void Player::CheckStateTransition()
 		if (_nowUpdateState != &Player::UpdateWalk) {
 			_nowUpdateState = &Player::UpdateWalk;
 			_animator->ChangeAnim(kAnimNameWalk, true);
+			// 武器の当たり判定を無効化
+			_weapon->SetCollisionState(false);
 		}
 		return;
 	}
@@ -326,6 +372,8 @@ void Player::CheckStateTransition()
 		if (_nowUpdateState != &Player::UpdateIdle) {
 			_nowUpdateState = &Player::UpdateIdle;
 			_animator->ChangeAnim(kAnimNameIdle, true);
+			// 武器の当たり判定を無効化
+			_weapon->SetCollisionState(false);
 		}
 		return;
 	}

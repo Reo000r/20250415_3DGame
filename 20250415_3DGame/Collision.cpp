@@ -18,11 +18,11 @@ Position3 ClosestPointPointAndSegment(const Position3& point, const Position3& s
 		return start;
 	}
 	
-	// 点を線分ベクトルに射影したときのパラメータtを計算
-	// t = (point - start)・(end - start) / |end - start|^2
+	// 点を線分ベクトルに射影したときの t を計算
+	// t = (point - start)・(end - start) / |end - start| ^ 2
 	float t = Dot(pointToStart, segmentVec) / segmentLengthSq;
 	
-	// パラメータtを0.0～1.0の範囲にクランプする
+	// t を0.0～1.0の範囲にクランプする
 	t = std::clamp(t, 0.0f, 1.0f);
 	
 	// 最近接点を計算して返す
@@ -65,7 +65,7 @@ void ClosestPointSegments(const Position3& startA, const Position3& endA, const 
 	float segADotOffset = Dot(segAVec, offsetVec);
 	// 線分Aと線分Bの方向ベクトルの内積
 	float segADotSegB = Dot(segAVec, segBVec);
-	// 線分上の最近接点を求めるための変数(0.0～1.0)
+	// 線分上の最近接点を求めるための変数 (0.0～1.0)
 	float paramA, paramB;
 
 	// 最近接点のパラメータを計算
@@ -86,7 +86,7 @@ void CalculateClosestSegmentParameters(
 	// 最近接点を求める式の分母
 	float denom = segALenSq * segBLenSq - segADotSegB * segADotSegB;
 
-	// 2直線が平行でない場合
+	// 二直線が平行でない場合
 	if (std::abs(denom) > PhysicsData::kZeroTolerance) {
 		// 直線上の最近接点を計算
 		paramA = (segADotSegB * segBDotOffset - segADotOffset * segBLenSq) / denom;
@@ -99,7 +99,7 @@ void CalculateClosestSegmentParameters(
 		paramB = segBDotOffset / segBLenSq;
 	}
 
-	// 計算されたパラメータが両方とも0-1の範囲内にあるかチェック
+	// 計算されたパラメータが両方とも 0-1 の範囲内にあるかチェック
 	// 最近接点が両線分の内部にあるケース
 	if (paramA >= 0.0f && paramA <= 1.0f && paramB >= 0.0f && paramB <= 1.0f) {
 		// 範囲内なので何もしない
@@ -109,13 +109,13 @@ void CalculateClosestSegmentParameters(
 	// それ以外の場合、最近接点は少なくとも片方の線分の端点にある
 	// 最近接点が線分の外側にある場合、端点にクランプして再計算する
 
-	// paramAを0-1にクランプ
+	// paramA を 0-1 にクランプ
 	paramA = std::clamp(paramA, 0.0f, 1.0f);
-	// クランプしたparamAを元にparamBを再計算
+	// クランプした paramA を元に paramB を再計算
 	paramB = (segBDotOffset + segADotSegB * paramA) / segBLenSq;
 	paramB = std::clamp(paramB, 0.0f, 1.0f);
 
-	// さらに、クランプしたparamBを元にparamAを再々計算
+	// さらに、クランプした paramB を元に paramA を再々計算
 	// これにより、両方の範囲が互いに最適な状態に収束する
 	paramA = (-segADotOffset + segADotSegB * paramB) / segALenSq;
 	paramA = std::clamp(paramA, 0.0f, 1.0f);

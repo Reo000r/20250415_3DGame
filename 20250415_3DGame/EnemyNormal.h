@@ -20,6 +20,14 @@ public:
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
+	/// <summary>
+	/// ダメージを受ける処理
+	/// </summary>
+	/// <param name="damage">受けるダメージ量</param>
+	/// <param name="attacker">攻撃してきた相手</param>
+	void TakeDamage(float damage, std::shared_ptr<Collider> attacker) override;
+
+
 private:
 	/// <summary>
 	/// ステートの遷移条件を確認し、変更可能なステートがあればそれに遷移する
@@ -31,6 +39,10 @@ private:
 
 private:
 
+	/// <summary>
+	/// 出現
+	/// </summary>
+	void UpdateSpawning();
 	/// <summary>
 	/// 対象を追いかける
 	/// </summary>
@@ -52,4 +64,13 @@ private:
 	/// プレイヤーの方を向く
 	/// </summary>
 	void RotateToPlayer();
+
+
+	/// <summary>
+	/// 武器の更新
+	/// </summary>
+	void WeaponUpdate();
+
+	// 武器
+	std::unique_ptr<WeaponEnemy> _weapon;
 };

@@ -8,6 +8,7 @@
 #include "Physics.h"
 #include "DebugDraw.h"
 #include "WaveManager.h"
+#include "EnemyFactory.h"
 
 #include "Statistics.h"
 #include "Input.h"
@@ -32,10 +33,15 @@ SceneGamePlay::SceneGamePlay() :
 
 SceneGamePlay::~SceneGamePlay()
 {
+	// 敵のモデルを解放する
+	EnemyFactory::ReleaseResources();
 }
 
 void SceneGamePlay::Init()
 {
+	// 敵のモデルを読み込む
+	EnemyFactory::LoadResources();
+
 	// 初期化処理
 	_camera->Init(_player);
 	_player->Init(_camera);

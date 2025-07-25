@@ -6,14 +6,15 @@
 
 #include <cassert>
 
-Collider::Collider(PhysicsData::Priority priority_, PhysicsData::GameObjectTag tag_, PhysicsData::ColliderKind colliderKind, bool isTrigger) :
+Collider::Collider(PhysicsData::Priority priority_, PhysicsData::GameObjectTag tag_, 
+	PhysicsData::ColliderKind colliderKind, bool isTrigger, bool isCollision) :
 	priority(priority_),
 	tag(tag_),
 	rigidbody(std::make_shared<Rigidbody>()),
 	colliderData(nullptr),
 	nextPos()
 {
-	CreateColliderData(colliderKind, isTrigger);
+	CreateColliderData(colliderKind, isTrigger, isCollision);
 }
 
 Collider::~Collider()
@@ -49,7 +50,7 @@ Vector3 Collider::GetDir() const
 }
 
 std::shared_ptr<ColliderData> Collider::CreateColliderData(
-	PhysicsData::ColliderKind kind, bool isTrigger,
+	PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
 	float rad, Vector3 angle)
 {
 	if (colliderData != nullptr) {
@@ -60,17 +61,17 @@ std::shared_ptr<ColliderData> Collider::CreateColliderData(
 	// kindに応じたColliderを作成
 	switch (kind) {
 	case PhysicsData::ColliderKind::Sphere:		// Sphere用の初期化
-		colliderData = std::make_shared<ColliderDataSphere>(isTrigger, rad);
+		colliderData = std::make_shared<ColliderDataSphere>(isTrigger, isCollision, rad);
 		break;
 	case PhysicsData::ColliderKind::Capsule:	// Capsule用の初期化
-		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, rad, angle);
+		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, isCollision, rad, angle);
 		break;
 	}
 	return colliderData;
 }
 
 void Collider::SetColliderData(
-	PhysicsData::ColliderKind kind, bool isTrigger,
+	PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
 	float rad, Vector3 offset)
 {
 	if (colliderData == nullptr) {
@@ -80,6 +81,7 @@ void Collider::SetColliderData(
 
 	// 共通のデータを変更
 	colliderData->isTrigger = isTrigger;
+	colliderData->isCollision = isCollision;
 
 	// kindに応じたColliderを編集
 	switch (kind) {

@@ -52,6 +52,8 @@
     <ClCompile Include="WaveData.cpp" />
     <ClCompile Include="WaveManager.cpp" />
     <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="WeaponEnemy.cpp" />
+    <ClCompile Include="WeaponPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h" />
@@ -89,6 +91,8 @@
     <ClInclude Include="WaveData.h" />
     <ClInclude Include="WaveManager.h" />
     <ClInclude Include="Weapon.h" />
+    <ClInclude Include="WeaponEnemy.h" />
+    <ClInclude Include="WeaponPlayer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

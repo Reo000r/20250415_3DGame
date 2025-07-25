@@ -6,7 +6,7 @@ class Physics;
 
 class ColliderDataCapsule : public ColliderData {
 public:
-	ColliderDataCapsule(bool isTrigger, float rad, 
+	ColliderDataCapsule(bool isTrigger, bool isCollision, float rad,
 		Vector3 angle = Vector3Up());
 	
 	/// <summary>

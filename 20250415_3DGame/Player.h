@@ -5,7 +5,7 @@
 
 class Camera;
 class Animator;
-class Weapon;
+class WeaponPlayer;
 
 /// <summary>
 /// 
@@ -25,9 +25,16 @@ public:
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
-	float GetHitPoint() { return _hitpoint; }
-	bool IsAlive() { return (_hitpoint > 0.0f); }
+	float GetHitPoint() { return _hitPoint; }
+	bool IsAlive() { return (_hitPoint > 0.0f); }
 	
+	/// <summary>
+	/// ダメージを受ける処理
+	/// </summary>
+	/// <param name="damage">受けるダメージ量</param>
+	/// <param name="attacker">攻撃してきた相手</param>
+	void TakeDamage(float damage, std::shared_ptr<Collider> attacker);
+
 private:
 	// UpdateのStateパターン
 	// _nowUpdateStateが変数であることを分かりやすくしている
@@ -63,11 +70,11 @@ private:
 	/// </summary>
 	void Rotate();
 
-	std::shared_ptr<Animator> _animator;
+	std::unique_ptr<Animator> _animator;
 
 	std::weak_ptr<Camera> _camera;
 
-	std::shared_ptr<Weapon> _weapon;
+	std::unique_ptr<WeaponPlayer> _weapon;
 
 	float _rotAngle;
 	//Matrix4x4 _rotMtx;
@@ -76,6 +83,11 @@ private:
 	// 攻撃の派生入力があったかどうか
 	bool  _hasDerivedAttackInput;
 
-	float _hitpoint;
+	float _hitPoint;
+
+	// 攻撃力
+	float _attackPower;
+
+	int _reactCooltime;
 };
 

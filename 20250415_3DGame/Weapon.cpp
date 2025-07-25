@@ -2,26 +2,30 @@
 #include "Rigidbody.h"
 #include "ColliderData.h"
 #include "ColliderDataCapsule.h"
+#include "Player.h"
 #include <cassert>
 
 #include <DxLib.h>
 
-Weapon::Weapon() :
-    Collider(PhysicsData::Priority::Static,
-        PhysicsData::GameObjectTag::PlayerAttack,
+Weapon::Weapon(PhysicsData::GameObjectTag tag) :
+        Collider(PhysicsData::Priority::Static,
+        tag,
         PhysicsData::ColliderKind::Capsule,
-        true),
-    _modelHandle(-1)
+        true, false),
+    _modelHandle(-1),
+    _attackPower(0)
 {
     rigidbody->Init(false);
 }
 
 Weapon::~Weapon()
 {
-    // modelはanimator側で消している
+    // モデル解放
+    if (_modelHandle != -1) MV1DeleteModel(_modelHandle);
 }
 
-void Weapon::Init(int modelHandle, float colRad, float colHeight, Vector3 transOffset, Vector3 scale, Vector3 angle)
+void Weapon::Init(int modelHandle, float colRad, float colHeight, 
+    Vector3 transOffset, Vector3 scale, Vector3 angle)
 {
     assert(modelHandle >= 0 && "モデルハンドルが正しくない");
     _modelHandle = modelHandle;
@@ -37,6 +41,7 @@ void Weapon::Init(int modelHandle, float colRad, float colHeight, Vector3 transO
     SetColliderData(
         PhysicsData::ColliderKind::Capsule,
         true,
+        false,
         colRad,
         Vector3Up() * colHeight // Update内で計算するため
     );
@@ -96,8 +101,36 @@ void Weapon::Draw()
     MV1DrawModel(_modelHandle);
 }
 
+void Weapon::SetOwnerStatus(std::weak_ptr<Collider> owner, float attackPower)
+{
+    _owner = owner;
+    _attackPower = attackPower;
+}
+
 void Weapon::OnCollide(const std::weak_ptr<Collider> collider)
 {
+    auto other = collider.lock();
+    auto owner = _owner.lock();
+
+    // 相手や所有者が不明な場合は何もしない
+    if (collider.expired() || owner == nullptr) {
+        return;
+    }
+
+    // プレイヤーでないなら攻撃しない
+    if (other->GetTag() != PhysicsData::GameObjectTag::Player) {
+        return;
+    }
+
+    auto player = std::static_pointer_cast<Player>(other);
+    // 相手にダメージ処理を依頼する
+    player->TakeDamage(_attackPower, owner);
+
+    // 所有者がPlayerでない場合は
+    if (owner->GetTag() != PhysicsData::GameObjectTag::Player) {
+        // 一度ダメージを与えたら、連続ヒットを防ぐため当たり判定を無効にする
+        SetCollisionState(false);
+    }
 }
 
 void Weapon::SetCollisionState(bool isCollision)

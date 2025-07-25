@@ -1,7 +1,7 @@
 ﻿#include "ColliderDataCapsule.h"
 
-ColliderDataCapsule::ColliderDataCapsule(bool isTrigger, float rad, Vector3 offset) :
-	ColliderData(PhysicsData::ColliderKind::Capsule, isTrigger),
+ColliderDataCapsule::ColliderDataCapsule(bool isTrigger, bool isCollision, float rad, Vector3 offset) :
+	ColliderData(PhysicsData::ColliderKind::Capsule, isTrigger, isCollision),
 	_radius(rad),
 	_offset(offset)
 {
