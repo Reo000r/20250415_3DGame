@@ -137,7 +137,8 @@ Player::Player() :
 	);
 
 	// 武器に自分自身と自分の攻撃力を設定
-	_weapon->SetOwnerStatus(shared_from_this(), _attackPower);
+	auto thisptr = Collider::shared_from_this();
+	_weapon->SetOwnerStatus(thisptr, _attackPower);
 }
 
 Player::~Player()
