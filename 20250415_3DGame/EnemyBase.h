@@ -23,8 +23,7 @@ public:
 	/// </summary>
 	/// <param name="hitPoint">HP</param>
 	/// <param name="transferAttackRad">攻撃移行範囲</param>
-	/// <param name="attackPower">攻撃力</param>
-	EnemyBase(float hitPoint, float transferAttackRad, float attackPower);
+	EnemyBase(float hitPoint, float transferAttackRad);
 	virtual ~EnemyBase();
 
 	virtual void Init(std::weak_ptr<Player> player) abstract;
@@ -69,8 +68,6 @@ protected:
 
 	// 攻撃移行範囲
 	float _transferAttackRad;
-	// 攻撃力
-	float _attackPower;
 
 	// 自身の状態を保持
 	State _state;

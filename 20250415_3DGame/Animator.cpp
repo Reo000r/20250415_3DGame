@@ -6,8 +6,8 @@
 namespace {
 	// アニメーションのブレンド時間(frame)
 	constexpr float kAnimBlendFrame = 15.0f;
-	// アニメーションの再生速度(60fなら1.0、30fなら0.5が等速)
-	constexpr float kAnimSpeed = 0.7f;
+	// 全てにかかるアニメーションの再生速度(60fなら1.0、30fなら0.5が等速)
+	constexpr float kAnimSpeed = 1.0f;
 }
 
 Animator::Animator() :
@@ -65,7 +65,7 @@ void Animator::SetStartAnim(const std::wstring animName, const bool isLoop)
 		_blendRate);
 }
 
-void Animator::SetAnimData(const std::wstring animName, const bool isLoop, float inputAcceptanceStartRatio, float inputAcceptanceEndRatio)
+void Animator::SetAnimData(const std::wstring animName, const float animSpeed, const bool isLoop, float inputAcceptanceStartRatio, float inputAcceptanceEndRatio)
 {
 	// すでに同じアニメーションが登録されていないか確認
 	for (const auto& anim : _animDataList) {
@@ -78,6 +78,7 @@ void Animator::SetAnimData(const std::wstring animName, const bool isLoop, float
 	animData.animIndex = MV1GetAnimIndex(_model, animName.c_str());
 	animData.attachNo = -1;	// 実際に使う際に更新する
 	animData.animName = animName;
+	animData.animSpeed = animSpeed * kAnimSpeed;
 	animData.frame = 0.0f;
 	animData.totalFrame = MV1GetAnimTotalTime(_model, animData.animIndex);
 	animData.isLoop = isLoop;
@@ -113,7 +114,7 @@ void Animator::UpdateAnim(AnimData& data)
 	// アニメーションがアタッチされていない場合return
 	if (data.attachNo == -1) return;
 	// アニメーションを進める
-	data.frame += kAnimSpeed;
+	data.frame += data.animSpeed;
 	// 現在再生中のアニメーションの総時間を取得する
 	const float totalTime = data.totalFrame;
 	

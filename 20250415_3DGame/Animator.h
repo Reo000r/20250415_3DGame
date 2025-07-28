@@ -36,7 +36,7 @@ public:
 	/// <summary>
 	/// ゲーム中で使用するアニメーションデータ
 	/// </summary>
-	void SetAnimData(const std::wstring animName, const bool isLoop, 
+	void SetAnimData(const std::wstring animName, const float animSpeed, const bool isLoop, 
 		float inputAcceptanceStartRatio = 0.0f, 
 		float inputAcceptanceEndRatio = 1.0f);
 	/// <summary>

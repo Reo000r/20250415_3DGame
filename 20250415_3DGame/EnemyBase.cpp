@@ -10,7 +10,7 @@
 
 #include <DxLib.h>
 
-EnemyBase::EnemyBase(float hitPoint, float transferAttackRad, float attackPower) :
+EnemyBase::EnemyBase(float hitPoint, float transferAttackRad) :
 	Collider(PhysicsData::Priority::Middle,
 		PhysicsData::GameObjectTag::Enemy,
 		PhysicsData::ColliderKind::Capsule,
@@ -21,7 +21,6 @@ EnemyBase::EnemyBase(float hitPoint, float transferAttackRad, float attackPower)
 	_quaternion(),
 	_hitPoint(hitPoint),
 	_transferAttackRad(transferAttackRad),
-	_attackPower(attackPower),
 	_state(State::Spawning),
 	_reactCooltime(0)
 {

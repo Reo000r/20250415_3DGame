@@ -29,6 +29,7 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="EnemyBase.cpp" />
+    <ClCompile Include="EnemyBoss.cpp" />
     <ClCompile Include="EnemyFactory.cpp" />
     <ClCompile Include="EnemyNormal.cpp" />
     <ClCompile Include="Ground.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="EnemyBase.h" />
+    <ClInclude Include="EnemyBoss.h" />
     <ClInclude Include="EnemyFactory.h" />
     <ClInclude Include="EnemyNormal.h" />
     <ClInclude Include="Geometry.h" />

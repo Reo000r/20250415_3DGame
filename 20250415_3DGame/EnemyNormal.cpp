@@ -1,6 +1,5 @@
 ﻿#include "EnemyNormal.h"
 #include "Player.h"
-#include "Camera.h"
 #include "Animator.h"
 #include "WeaponEnemy.h"
 #include "Input.h"
@@ -15,7 +14,6 @@
 namespace {
 	constexpr float kScaleMul = 2.0f;		// 拡大倍率
 	constexpr float kHitPoint = 3.0f;		// HP
-	constexpr float kTempDamage = 1.0f;		// 仮の被弾時ダメージ
 	constexpr float kChaseSpeed = 4.0f * kScaleMul;		// 追いかける速度
 	constexpr float kTurnSpeed = 0.05f;		// 回転速度(ラジアン)
 	constexpr float kAttackRange = 175.0f * kScaleMul;	// 攻撃に移行する距離
@@ -25,8 +23,8 @@ namespace {
 	constexpr float kAttackPower = 50.0f;	// 攻撃力
 
 	// 当たり判定のパラメータ
-	constexpr float kColRadius = 50.0f * kScaleMul; // 半径
-	constexpr float kColHeight = 200.0f * kScaleMul; // 身長
+	constexpr float kColRadius = 50.0f * kScaleMul;		// 半径
+	constexpr float kColHeight = 200.0f * kScaleMul;	// 身長
 	const Vector3 kColOffset = Vector3Up() * (kColHeight - kColRadius);
 
 	const std::wstring kAnimName = L"Armature|Animation_";
@@ -36,7 +34,7 @@ namespace {
 	const std::wstring kAnimNameDamage = kAnimName + L"React";
 	const std::wstring kAnimNameDeath = kAnimName + L"Dying";
 
-
+	constexpr float kBaseAnimSpeed = 1.0f;
 
 	// 武器データ
 	const std::wstring kWeaponModelPath = L"data/model/weapon/PlayerWeapon.mv1";
@@ -44,16 +42,20 @@ namespace {
 	constexpr float kWeaponDist = 500.0f;
 
 	const Vector3 kWeaponOffsetPos = Vector3Up();							// 位置補正
-	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f) * 0.75f;	// 拡縮補正
+	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f) * 0.35f * kScaleMul;	// 拡縮補正
 	// 角度補正
 	const Vector3 kWeaponOffsetDir = Vector3(
 		Calc::ToRadian(60.0f),
 		Calc::ToRadian(90.0f),
 		Calc::ToRadian(50.0f));
+
+	// 武器の当たり判定を切り替えるタイミング
+	constexpr float kAttackColStart = 0.1f;	// 当たり判定を付け始める
+	constexpr float kAttackColEnd = 1.0f;	// 当たり判定を切る
 }
 
 EnemyNormal::EnemyNormal(int modelHandle) :
-	EnemyBase(kHitPoint, kAttackRange, 1.0f),
+	EnemyBase(kHitPoint, kAttackRange),
 	_nowUpdateState(&EnemyNormal::UpdateSpawning),
 	_weapon(std::make_unique<WeaponEnemy>())
 
@@ -64,11 +66,11 @@ EnemyNormal::EnemyNormal(int modelHandle) :
 	_animator->Init(modelHandle);
 
 	// 使用するアニメーションを全て入れる
-	_animator->SetAnimData(kAnimNameSpawn, false);
-	_animator->SetAnimData(kAnimNameChase, true);
-	_animator->SetAnimData(kAnimNameAttack, false);
-	_animator->SetAnimData(kAnimNameDamage, false);
-	_animator->SetAnimData(kAnimNameDeath, false);
+	_animator->SetAnimData(kAnimNameSpawn,	false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameChase,	true,  kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameAttack, false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameDamage, false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameDeath,	false, kBaseAnimSpeed);
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameSpawn);
 
@@ -311,6 +313,29 @@ void EnemyNormal::UpdateAttack()
 {
 	// 攻撃中は移動を止める
 	rigidbody->SetVel(Vector3());
+
+
+	// 攻撃アニメーションの情報を取得
+	auto& animData = _animator->FindAnimData(kAnimNameAttack);
+
+	// アニメーションの総フレーム数が0より大きい場合のみ処理
+	if (animData.totalFrame > 0.0f) {
+		// 現在の再生フレームと総フレームから進行度を計算 (0.0 ~ 1.0)
+		float progress = animData.frame / animData.totalFrame;
+
+		// 進行度が指定の範囲内(0.35~0.88)であれば当たり判定を有効にする
+		if (progress >= kAttackColStart && progress <= kAttackColEnd) {
+			_weapon->SetCollisionState(true);
+		}
+		else {
+			_weapon->SetCollisionState(false);
+		}
+	}
+	else {
+		// もしアニメーションが再生されていない、または終了している場合は
+		// 当たり判定を無効にする
+		_weapon->SetCollisionState(false);
+	}
 }
 
 void EnemyNormal::UpdateDamage()

@@ -30,7 +30,6 @@ namespace {
 	constexpr float kTurnSpeed = 0.2f;
 	
 	constexpr float kHitPoint = 100.0f;
-	constexpr float kTempDamage = 10.0f;
 
 	const std::wstring kAnimName = L"Armature|Animation_";
 	const std::wstring kAnimNameIdle =			kAnimName + L"Idle";
@@ -49,6 +48,8 @@ namespace {
 	const std::wstring kAnimNameBuff =			kAnimName + L"Buff";
 	const std::wstring kAnimNameDead =			kAnimName + L"Dying";
 	const std::wstring kAnimNameAppeal =		kAnimName + L"WinAnim";
+
+	constexpr float kBaseAnimSpeed = 1.0f;
 
 	constexpr float kAttackCombo1InputStart = 0.1f;
 	constexpr float kAttackCombo1InputEnd	= 1.0f;
@@ -93,22 +94,22 @@ Player::Player() :
 	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * 2.0f);
 
 	// 使用するアニメーションを全て入れる
-	_animator->SetAnimData(kAnimNameIdle, true);
-	_animator->SetAnimData(kAnimNameWalk, true);
-	_animator->SetAnimData(kAnimNameRun, true);
-	_animator->SetAnimData(kAnimNameAttackNormal, false);
-	_animator->SetAnimData(kAnimNameAttackBack, false);
-	_animator->SetAnimData(kAnimNameAttackCombo1, false, kAttackCombo1InputStart, kAttackCombo1InputEnd);
-	_animator->SetAnimData(kAnimNameAttackCombo2, false, kAttackCombo2InputStart, kAttackCombo2InputEnd);
-	_animator->SetAnimData(kAnimNameAttackCombo3, false);
-	_animator->SetAnimData(kAnimNameSpecialAttack1, false);
-	_animator->SetAnimData(kAnimNameSpecialAttack2, false);
-	_animator->SetAnimData(kAnimNameBlock, true);
-	_animator->SetAnimData(kAnimNameBlockReact, false);
-	_animator->SetAnimData(kAnimNameReact, false);
-	_animator->SetAnimData(kAnimNameBuff, false);
-	_animator->SetAnimData(kAnimNameDead, false);
-	_animator->SetAnimData(kAnimNameAppeal, false);
+	_animator->SetAnimData(kAnimNameIdle,			true,  kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameWalk,			true,  kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameRun,			true,  kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameAttackNormal,	false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameAttackBack,		false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameAttackCombo1,	false, kBaseAnimSpeed, kAttackCombo1InputStart, kAttackCombo1InputEnd);
+	_animator->SetAnimData(kAnimNameAttackCombo2,	false, kBaseAnimSpeed, kAttackCombo2InputStart, kAttackCombo2InputEnd);
+	_animator->SetAnimData(kAnimNameAttackCombo3,	false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameSpecialAttack1, false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameSpecialAttack2, false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameBlock,			true,  kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameBlockReact,		false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameReact,			false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameBuff,			false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameDead,			false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameAppeal,			false, kBaseAnimSpeed);
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameIdle);
 
