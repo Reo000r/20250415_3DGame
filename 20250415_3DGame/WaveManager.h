@@ -26,8 +26,12 @@ public:
 	void Update();
 	void Draw();
 
-	bool IsClear() const 
-	{ return (_state == State::AllWavesComplete); }
+	bool IsClear() const { return (_state == State::AllWavesComplete); }
+	
+	int GetCurrentWaveIndex() const { return _currentWaveIndex; }
+	int GetTotalWaveCount() const { return _waveSettings.size(); }
+
+	std::vector<std::shared_ptr<EnemyBase>> GetEnemies() const { return _enemies; }
 
 private:
 

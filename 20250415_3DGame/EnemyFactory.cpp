@@ -83,9 +83,7 @@ std::shared_ptr<EnemyBase> EnemyFactory::CreateAndRegister(
 		// 位置設定
 		newEnemy->SetPos(position);
 		// 派生先のInitを呼び出す
-		newEnemy->Init(player);
-		// physicsに登録
-		newEnemy->EntryPhysics(physics);
+		newEnemy->Init(player, physics);
 	}
 	else {
 		// 生成に失敗した場合もハンドルを解放

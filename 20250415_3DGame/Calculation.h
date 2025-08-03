@@ -32,7 +32,7 @@ namespace Calculation {
 		float remainder = fmodf(radian + kPi, 2.0f * kPi);
 		// 剰余が負の場合は 2Pi を足して正の範囲に収める
 		if (remainder < 0.0f) {
-			remainder = 2.0f * kPi;
+			remainder += 2.0f * kPi;
 		}
 		// 最後に Pi を引くことで、-Pi から Pi の範囲に正規化する
 		return remainder - kPi;

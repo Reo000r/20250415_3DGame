@@ -31,8 +31,7 @@ public:
 	/// 最初に使用するアニメーションを設定
 	/// </summary>
 	/// <param name="animName"></param>
-	/// <param name="isLoop"></param>
-	void SetStartAnim(const std::wstring animName, const bool isLoop = true);
+	void SetStartAnim(const std::wstring animName);
 	/// <summary>
 	/// ゲーム中で使用するアニメーションデータ
 	/// </summary>
@@ -45,7 +44,7 @@ public:
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <param name="isLoop"></param>
-	void AttachAnim(const std::wstring animName, const bool isLoop = false);
+	void AttachAnim(const std::wstring animName, const bool isLoop);
 
 	/// <summary>
 	/// 指定されたアニメーションの更新
@@ -63,7 +62,7 @@ public:
 	/// </summary>
 	/// <param name="animName"></param>
 	/// <param name="isLoop"></param>
-	void ChangeAnim(const std::wstring animName, bool isLoop = false);
+	void ChangeAnim(const std::wstring animName, bool isLoop);
 
 	/// <summary>
 	/// アニメーションデータを名前で検索し参照を返す

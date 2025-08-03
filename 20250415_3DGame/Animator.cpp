@@ -36,26 +36,27 @@ void Animator::Update()
 	// そうでなければ現在のアニメーションを更新
 	UpdateAnimBlendRate();
 
-#ifdef _DEBUG	// 複数所持は対応していない
-	int y = 16 * 9;
-	DrawFormatString(0, y, 0xffffff, L"CurrentState = %s", _currentAnimName.c_str());
-	y += 16;
-	DrawFormatString(0, y, 0xffffff, L"PrevState = %s", _prevAnimName.c_str());
-	y += 16;
-	DrawFormatString(0, y, 0xffffff, L"BlendRate = %.2f", _blendRate);
-	y += 16;
-	for (auto& data : _animDataList) {
-		y += 16;
-		DrawFormatString(0, y, 0xffffff, L"name:%s frame:%.2f", data.animName.c_str(), data.frame);
-	}
+#ifdef _DEBUG
+	//int y = 16 * 9;
+	//DrawFormatString(0, y, 0xffffff, L"CurrentState = %s", _currentAnimName.c_str());
+	//y += 16;
+	//DrawFormatString(0, y, 0xffffff, L"PrevState = %s", _prevAnimName.c_str());
+	//y += 16;
+	//DrawFormatString(0, y, 0xffffff, L"BlendRate = %.2f", _blendRate);
+	//y += 16;
+	//for (auto& data : _animDataList) {
+	//	y += 16;
+	//	DrawFormatString(0, y, 0xffffff, L"name:%s frame:%.2f", data.animName.c_str(), data.frame);
+	//}
 #endif
 }
 
-void Animator::SetStartAnim(const std::wstring animName, const bool isLoop)
+void Animator::SetStartAnim(const std::wstring animName)
 {
 	// 最初のアニメーションを現在のものとして設定
 	_currentAnimName = animName;
-	AttachAnim(_currentAnimName, isLoop);
+	AnimData& currentAnim = FindAnimData(_currentAnimName);
+	AttachAnim(_currentAnimName, currentAnim.isLoop);
 
 	// ブレンドは不要なので、ウェイトを100%にする
 	_blendRate = 1.0f;
@@ -76,6 +77,7 @@ void Animator::SetAnimData(const std::wstring animName, const float animSpeed, c
 	}
 	AnimData animData;
 	animData.animIndex = MV1GetAnimIndex(_model, animName.c_str());
+	assert(animData.animIndex >= 0 && "存在しないアニメーションを登録しようとしている");
 	animData.attachNo = -1;	// 実際に使う際に更新する
 	animData.animName = animName;
 	animData.animSpeed = animSpeed * kAnimSpeed;

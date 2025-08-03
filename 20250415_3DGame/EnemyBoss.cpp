@@ -62,11 +62,11 @@ EnemyBoss::EnemyBoss(int modelHandle) :
 	_animator->Init(modelHandle);
 
 	// 使用するアニメーションを全て入れる
-	_animator->SetAnimData(kAnimNameSpawn,	false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameChase,	true,  kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameAttack, false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameDamage, false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameDeath,	false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameSpawn,	kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameChase,	kBaseAnimSpeed, true);
+	_animator->SetAnimData(kAnimNameAttack, kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameDamage, kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameDeath,	kBaseAnimSpeed, false);
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameSpawn);
 
@@ -110,7 +110,7 @@ EnemyBoss::~EnemyBoss()
 	// modelはanimator側で消している
 }
 
-void EnemyBoss::Init(std::weak_ptr<Player> player)
+void EnemyBoss::Init(std::weak_ptr<Player> player, std::weak_ptr<Physics> physics)
 {
 	_player = player;
 
@@ -153,6 +153,11 @@ void EnemyBoss::Draw()
 	int color = 0xffffff;
 	int y = 16 * 6;
 #endif
+}
+
+float EnemyBoss::GetMaxHitPoint() const
+{
+	return kHitPoint;
 }
 
 void EnemyBoss::OnCollide(const std::weak_ptr<Collider> collider)

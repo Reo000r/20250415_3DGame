@@ -10,9 +10,11 @@ public:
 	EnemyNormal(int modelHandle);
 	~EnemyNormal();
 
-	void Init(std::weak_ptr<Player> player) override;
+	void Init(std::weak_ptr<Player> player, std::weak_ptr<Physics> physics) override;
 	void Update() override;
 	void Draw() override;
+
+	float GetMaxHitPoint() const override;
 
 	/// <summary>
 	/// 衝突したときに呼ばれる
@@ -72,5 +74,5 @@ private:
 	void WeaponUpdate();
 
 	// 武器
-	std::unique_ptr<WeaponEnemy> _weapon;
+	std::shared_ptr<WeaponEnemy> _weapon;
 };

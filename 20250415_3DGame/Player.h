@@ -6,6 +6,7 @@
 class Camera;
 class Animator;
 class WeaponPlayer;
+class Physics;
 
 /// <summary>
 /// 
@@ -15,7 +16,7 @@ public:
 	Player();
 	~Player();
 
-	void Init(/*int modelHandle, */std::weak_ptr<Camera> camera);
+	void Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics);
 	void Update();
 	void Draw();
 
@@ -25,7 +26,8 @@ public:
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
-	float GetHitPoint() { return _hitPoint; }
+	float GetHitPoint() const { return _hitPoint; }
+	float GetMaxHitPoint() const;
 	bool IsAlive() { return (_hitPoint > 0.0f); }
 	
 	/// <summary>
@@ -74,7 +76,7 @@ private:
 
 	std::weak_ptr<Camera> _camera;
 
-	std::unique_ptr<WeaponPlayer> _weapon;
+	std::shared_ptr<WeaponPlayer> _weapon;
 
 	float _rotAngle;
 	//Matrix4x4 _rotMtx;

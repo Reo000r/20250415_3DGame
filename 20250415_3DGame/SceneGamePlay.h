@@ -10,6 +10,7 @@ class Player;
 class Ground;
 class Skydome;
 class WaveManager;
+class StatusUI;
 
 class SceneGamePlay final : public SceneBase {
 public:
@@ -44,7 +45,8 @@ private:
 	std::shared_ptr<Player> _player;
 	std::shared_ptr<Ground> _ground;
 	std::unique_ptr<Skydome> _skydome;
-	std::unique_ptr<WaveManager> _waveManager;
+	std::shared_ptr<WaveManager> _waveManager;
+	std::unique_ptr<StatusUI> _statusUI;
 
 	// UpdateとDrawのStateパターン
 	// _updateや_drawが変数であることを分かりやすくしている

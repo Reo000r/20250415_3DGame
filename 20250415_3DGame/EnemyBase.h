@@ -5,6 +5,7 @@
 
 class Player;
 class Animator;
+class Physics;
 class WeaponEnemy;
 
 class EnemyBase abstract : public Collider
@@ -26,7 +27,7 @@ public:
 	EnemyBase(float hitPoint, float transferAttackRad);
 	virtual ~EnemyBase();
 
-	virtual void Init(std::weak_ptr<Player> player) abstract;
+	virtual void Init(std::weak_ptr<Player> player, std::weak_ptr<Physics> physics) abstract;
 	virtual void Update() abstract;
 	virtual void Draw() abstract;
 
@@ -39,6 +40,9 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	State GetState() const { return _state; }
+
+	float GetHitPoint() const { return _hitPoint; }
+	virtual float GetMaxHitPoint() const abstract;
 
 	void SetPos(const Vector3& pos);
 
@@ -71,6 +75,4 @@ protected:
 
 	// 自身の状態を保持
 	State _state;
-
-	int _reactCooltime;
 };

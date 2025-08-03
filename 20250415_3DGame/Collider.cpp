@@ -24,8 +24,9 @@ Collider::~Collider()
 void Collider::EntryPhysics(std::weak_ptr<Physics> physics_)
 {
 	physics = physics_;
+	auto thisptr = shared_from_this();
 	// Physicsに自身を登録
-	physics.lock()->Entry(shared_from_this());
+	physics.lock()->Entry(thisptr);
 }
 
 void Collider::ReleasePhysics()

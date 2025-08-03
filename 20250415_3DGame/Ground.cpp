@@ -1,11 +1,20 @@
 ﻿#include "Ground.h"
 #include "Geometry.h"
 #include <DxLib.h>
+#include <vector>
 
 namespace {
 	constexpr int kMaxXZ = 1000;
 	constexpr int kDivNum = 30;
 	constexpr int kPerOneDist = (kMaxXZ * 2) / kDivNum;
+
+
+	const float kFieldWidth = 2000.0f; // 四角形の幅(X軸方向)
+	const float kFieldDepth = 2000.0f; // 四角形の奥行き(Z軸方向)
+	const float kFieldY = 0.0f;        // 地面のY座標
+	const unsigned int kFieldColor = GetColor(180, 200, 240); // 地面の色
+	const Position3 kFieldCenter = VGet(0.0f, 0.0f, 700.0f);
+
 }
 
 Ground::Ground() {
@@ -21,6 +30,43 @@ void Ground::Update() {
 }
 
 void Ground::Draw() {
+#if true
+
+	// 四角形を構成する4つの頂点を定義
+	// 左奥、右奥、左手前、右手前
+	VERTEX3D vertices[4];
+	float w = kFieldWidth / 2.0f;
+	float d = kFieldDepth / 2.0f;
+
+	// 頂点座標
+	vertices[0].pos = VGet(kFieldCenter.x - w, kFieldCenter.y, kFieldCenter.z + d); // 左奥
+	vertices[1].pos = VGet(kFieldCenter.x + w, kFieldCenter.y, kFieldCenter.z + d); // 右奥
+	vertices[2].pos = VGet(kFieldCenter.x - w, kFieldCenter.y, kFieldCenter.z - d); // 左手前
+	vertices[3].pos = VGet(kFieldCenter.x + w, kFieldCenter.y, kFieldCenter.z - d); // 右手前
+
+	// 全頂点に共通の設定を適用
+	for (int i = 0; i < 4; ++i) {
+		vertices[i].dif = GetColorU8(
+			kFieldColor >> 16,          // 赤(R)成分の取得: 16ビット右にずらす
+			(kFieldColor >> 8) & 0xFF,  // 緑(G)成分の取得: 8ビット右にずらし、下位8ビットを取り出す
+			kFieldColor & 0xFF,         // 青(B)成分の取得: 下位8ビットを取り出す
+			255                         // アルファ(A)成分: 255で完全不透明
+		);
+		vertices[i].spc = GetColorU8(0, 0, 0, 0);
+		vertices[i].norm = VGet(0.0f, 1.0f, 0.0f); // 法線はすべて上向き
+		vertices[i].u = 0.0f;
+		vertices[i].v = 0.0f;
+	}
+
+	// 1つ目の三角形 (左奥、右奥、左手前)
+	VERTEX3D triangle1[3] = { vertices[0], vertices[1], vertices[2] };
+	DrawPolygon3D(triangle1, 1, DX_NONE_GRAPH, false);
+
+	// 2つ目の三角形 (右手前、左手前、右奥)
+	VERTEX3D triangle2[3] = { vertices[3], vertices[2], vertices[1] };
+	DrawPolygon3D(triangle2, 1, DX_NONE_GRAPH, false);
+
+#else
 	unsigned int color = 0xffffff;
 	Vector3 pos1, pos2;
 	pos1 = { 0,0,0 };
@@ -43,4 +89,5 @@ void Ground::Draw() {
 		pos1.z += kPerOneDist;
 		pos2.z = pos1.z;
 	}
+#endif
 }

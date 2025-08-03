@@ -9,6 +9,8 @@
 #include "DebugDraw.h"
 #include "WaveManager.h"
 #include "EnemyFactory.h"
+#include "StatusUI.h"
+#include "GameManager.h"
 
 #include "Statistics.h"
 #include "Input.h"
@@ -25,7 +27,8 @@ SceneGamePlay::SceneGamePlay() :
 	_player(std::make_shared<Player>()),
 	_ground(std::make_shared<Ground>()),
 	_skydome(std::make_unique<Skydome>()),
-	_waveManager(std::make_unique<WaveManager>()),
+	_waveManager(std::make_shared<WaveManager>()),
+	_statusUI(std::make_unique<StatusUI>()),
 	_nowUpdateState(&SceneGamePlay::FadeinUpdate),
 	_nowDrawState(&SceneGamePlay::FadeDraw)
 {
@@ -44,14 +47,17 @@ void SceneGamePlay::Init()
 
 	// 初期化処理
 	_camera->Init(_player);
-	_player->Init(_camera);
+	_player->Init(_camera, _physics);
 	_ground->Init();
 	_skydome->Init(_camera);
 
 	// playerの当たり判定処理登録
-	_player->EntryPhysics(_physics);
+	//_player->EntryPhysics(_physics);
 
 	_waveManager->Init(_player, _physics);
+	_statusUI->Init(_player, _waveManager);
+
+	GameManager::GetInstance().Init(_player, _waveManager);
 }
 
 void SceneGamePlay::Update()
@@ -89,6 +95,7 @@ void SceneGamePlay::NormalUpdate()
 	_player->Update();
 	_waveManager->Update();
 
+	_statusUI->Update();
 	_ground->Update();
 	
 
@@ -123,6 +130,8 @@ void SceneGamePlay::FadeDraw()
 	_waveManager->Draw();
 	_player->Draw();
 
+	_statusUI->Draw();
+
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();
 	DebugDraw::GetInstance().Clear();
@@ -141,14 +150,14 @@ void SceneGamePlay::FadeDraw()
 
 void SceneGamePlay::NormalDraw()
 {
-#ifndef _DEBUG
 	_skydome->Draw();
 	_ground->Draw();
-#endif // _DEBUG
 	
 	_camera->Draw();
 	_waveManager->Draw();
 	_player->Draw();
+
+	_statusUI->Draw();
 
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();

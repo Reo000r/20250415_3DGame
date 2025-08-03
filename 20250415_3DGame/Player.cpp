@@ -7,6 +7,7 @@
 #include "ColliderData.h"
 #include "Rigidbody.h"
 #include "Calculation.h"
+#include "Physics.h"
 #include <cassert>
 #include <algorithm>
 
@@ -29,7 +30,7 @@ namespace {
 	// 回転速度(ラジアン)
 	constexpr float kTurnSpeed = 0.2f;
 	
-	constexpr float kHitPoint = 100.0f;
+	constexpr float kHitPoint = 1000.0f;
 
 	const std::wstring kAnimName = L"Armature|Animation_";
 	const std::wstring kAnimNameIdle =			kAnimName + L"Idle";
@@ -43,26 +44,40 @@ namespace {
 	const std::wstring kAnimNameSpecialAttack1 = kAnimName + L"SpecialAttack1";
 	const std::wstring kAnimNameSpecialAttack2 = kAnimName + L"SpecialAttack2";
 	const std::wstring kAnimNameBlock =			kAnimName + L"Block";
-	const std::wstring kAnimNameBlockReact =	kAnimName + L"BlockReact";
-	const std::wstring kAnimNameReact =			kAnimName + L"React";
+	//const std::wstring kAnimNameBlockReact =	kAnimName + L"BlockReact";
+	const std::wstring kAnimNameReact =			kAnimName + L"BlockReact";
 	const std::wstring kAnimNameBuff =			kAnimName + L"Buff";
 	const std::wstring kAnimNameDead =			kAnimName + L"Dying";
 	const std::wstring kAnimNameAppeal =		kAnimName + L"WinAnim";
 
 	constexpr float kBaseAnimSpeed = 1.0f;
+	constexpr float kAttackAnim1Speed = 0.7f;
+	constexpr float kAttackAnim2Speed = 0.8f;
+	constexpr float kAttackAnim3Speed = 0.8f;
+	constexpr float kDeadAnimSpeed = 0.7f;
 
-	constexpr float kAttackCombo1InputStart = 0.1f;
+	// 攻撃入力受付
+	constexpr float kAttackCombo1InputStart = 0.05f;
 	constexpr float kAttackCombo1InputEnd	= 1.0f;
-	constexpr float kAttackCombo2InputStart = 0.1f;
+	constexpr float kAttackCombo2InputStart = 0.05f;
 	constexpr float kAttackCombo2InputEnd	= 1.0f;
+
+	// 攻撃判定を切り替えるタイミング
+	constexpr float kAttackCombo1Start	= 0.5f;
+	constexpr float kAttackCombo1End	= 1.0f;
+	constexpr float kAttackCombo2Start	= 0.3f;
+	constexpr float kAttackCombo2End	= 1.0f;
+	constexpr float kAttackCombo3Start	= 0.3f;
+	constexpr float kAttackCombo3End	= 0.6f;
 
 
 	// 武器データ
-	constexpr float kWeaponRad = 50.0f;
-	constexpr float kWeaponDist = 500.0f;
-
 	const Vector3 kWeaponOffsetPos = Vector3Up();					// 位置補正
-	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f);	// 拡縮補正
+	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f) * 1.2f;	// 拡縮補正
+
+	const float kWeaponRad = 50.0f * kWeaponOffsetScale.x;		// 武器半径
+	const float kWeaponDist = 200.0f * kWeaponOffsetScale.y;	// 武器長さ
+
 	// 角度補正
 	const Vector3 kWeaponOffsetDir = Vector3(
 		Calc::ToRadian(60.0f),
@@ -94,22 +109,22 @@ Player::Player() :
 	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * 2.0f);
 
 	// 使用するアニメーションを全て入れる
-	_animator->SetAnimData(kAnimNameIdle,			true,  kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameWalk,			true,  kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameRun,			true,  kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameAttackNormal,	false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameAttackBack,		false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameAttackCombo1,	false, kBaseAnimSpeed, kAttackCombo1InputStart, kAttackCombo1InputEnd);
-	_animator->SetAnimData(kAnimNameAttackCombo2,	false, kBaseAnimSpeed, kAttackCombo2InputStart, kAttackCombo2InputEnd);
-	_animator->SetAnimData(kAnimNameAttackCombo3,	false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameSpecialAttack1, false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameSpecialAttack2, false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameBlock,			true,  kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameBlockReact,		false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameReact,			false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameBuff,			false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameDead,			false, kBaseAnimSpeed);
-	_animator->SetAnimData(kAnimNameAppeal,			false, kBaseAnimSpeed);
+	_animator->SetAnimData(kAnimNameIdle,			kBaseAnimSpeed, true);
+	_animator->SetAnimData(kAnimNameWalk,			kBaseAnimSpeed, true);
+	_animator->SetAnimData(kAnimNameRun,			kBaseAnimSpeed, true);
+	_animator->SetAnimData(kAnimNameAttackNormal,	kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameAttackBack,		kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameAttackCombo1,	kAttackAnim1Speed, false, kAttackCombo1InputStart, kAttackCombo1InputEnd);
+	_animator->SetAnimData(kAnimNameAttackCombo2,	kAttackAnim2Speed, false, kAttackCombo2InputStart, kAttackCombo2InputEnd);
+	_animator->SetAnimData(kAnimNameAttackCombo3,	kAttackAnim3Speed, false);
+	_animator->SetAnimData(kAnimNameSpecialAttack1, kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameSpecialAttack2, kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameBlock,			kBaseAnimSpeed, true);
+	//_animator->SetAnimData(kAnimNameBlockReact,		kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameReact,			kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameBuff,			kBaseAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameDead,			kDeadAnimSpeed, false);
+	_animator->SetAnimData(kAnimNameAppeal,			kBaseAnimSpeed, false);
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameIdle);
 
@@ -122,6 +137,17 @@ Player::Player() :
 		kColRadius,							// 半径
 		kColOffset							// 始点から終点
 	);
+}
+
+Player::~Player()
+{
+	// modelはanimator側で消している
+}
+
+void Player::Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics)
+{
+	_camera = camera;
+	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
 
 
 	// 武器初期化
@@ -137,41 +163,27 @@ Player::Player() :
 	);
 
 	// 武器に自分自身と自分の攻撃力を設定
-	auto thisptr = Collider::shared_from_this();
-	_weapon->SetOwnerStatus(thisptr, _attackPower);
-}
+	_weapon->SetOwnerStatus(shared_from_this(), _attackPower);
 
-Player::~Player()
-{
-	// modelはanimator側で消している
-
-	// 死んでいなかったら物理判定から除外する
-	if (!_animator->IsEnd(kAnimNameDead)) {
-		ReleasePhysics();
-	}
-}
-
-void Player::Init(std::weak_ptr<Camera> camera)
-{
-	_camera = camera;
-	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
+	EntryPhysics(physics);
+	_weapon->EntryPhysics(physics);
 }
 
 void Player::Update()
 {
 	_animator->Update();
 
-	// 死んでいるならアニメーション以外の更新を停止
-	if (!IsAlive()) return;
+	// 死んでいないなら
+	if (IsAlive()) {
+		// 状態遷移確認
+		CheckStateTransition();
 
-	// 状態遷移確認
-	CheckStateTransition();
+		// 現在のステートに応じたUpdateが行われる
+		(this->*_nowUpdateState)();
 
-	// 現在のステートに応じたUpdateが行われる
-	(this->*_nowUpdateState)();
-
-	// 無敵時間更新
-	if (_reactCooltime > 0) _reactCooltime--;
+		// 無敵時間更新
+		if (_reactCooltime > 0) _reactCooltime--;
+	}
 
 	// 武器更新
 	WeaponUpdate();
@@ -202,6 +214,11 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 	// coliderと衝突
 }
 
+float Player::GetMaxHitPoint() const
+{
+	return kHitPoint;
+}
+
 void Player::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
 {
 	// 死亡状態、または攻撃中はダメージを受け付けない
@@ -216,11 +233,21 @@ void Player::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
 	if (_reactCooltime <= 0) {
 		// HPを減らす
 		_hitPoint -= damage;
-		_reactCooltime = kReactCooltimeFrame;
+		//_reactCooltime = kReactCooltimeFrame;
 
 		// 武器の当たり判定を無効化
 		_weapon->SetCollisionState(false);
-
+		// 攻撃してきた相手の方向を向く
+		if (attacker) {
+			// 相手への方向ベクトルを計算
+			Vector3 dirToAttacker = (GetPos() - attacker->GetPos());
+			// 距離が0でなければ
+			if (dirToAttacker.SqrMagnitude() > 0.0f) {
+				// Y軸の回転角度を計算し、モデルの向きに反映する
+				_rotAngle = atan2f(dirToAttacker.x, dirToAttacker.z);
+				MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
+			}
+		}
 		// hpが0以下の場合は死亡
 		if (_hitPoint <= 0.0f) {
 			if (_nowUpdateState != &Player::UpdateDeath) {
@@ -292,16 +319,18 @@ void Player::CheckStateTransition()
 					_nowUpdateState = &Player::UpdateAttackSecond;
 					_animator->ChangeAnim(kAnimNameAttackCombo2, false);
 					_hasDerivedAttackInput = false;
-					// 武器の当たり判定を有効化
-					_weapon->SetCollisionState(true);
+					//// 武器の当たり判定を有効化
+					//_weapon->SetCollisionState(true);
+					//_weapon->ClearAttackedList();
 					return; // 遷移したので処理終了
 				}
 				else if (_nowUpdateState == &Player::UpdateAttackSecond) {
 					_nowUpdateState = &Player::UpdateAttackThird;
 					_animator->ChangeAnim(kAnimNameAttackCombo3, false);
 					_hasDerivedAttackInput = false;
-					// 武器の当たり判定を有効化
-					_weapon->SetCollisionState(true);
+					//// 武器の当たり判定を有効化
+					//_weapon->SetCollisionState(true);
+					//_weapon->ClearAttackedList();
 					return; // 遷移したので処理終了
 				}
 			}
@@ -337,8 +366,6 @@ void Player::CheckStateTransition()
 		_nowUpdateState = &Player::UpdateAttackFirst;
 		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
 		_hasDerivedAttackInput = false;
-		// 武器の当たり判定を有効化
-		_weapon->SetCollisionState(true);
 		return;
 	}
 
@@ -383,6 +410,8 @@ void Player::CheckStateTransition()
 
 void Player::WeaponUpdate()
 {
+	// 位置更新
+
 	// 手の行列を武器のワールド行列とする
 	std::wstring handName = L"mixamorig:RightHandThumb3";
 	// 武器をアタッチするフレームの番号を検索
@@ -398,6 +427,74 @@ void Player::WeaponUpdate()
 
 	// 手のワールド行列を渡す
 	_weapon->Update(handWorldMatrix);
+
+
+
+	// 判定更新
+
+	// 攻撃状態でないならreturn
+	if (!(_nowUpdateState == &Player::UpdateAttackFirst ||
+		_nowUpdateState == &Player::UpdateAttackSecond ||
+		_nowUpdateState == &Player::UpdateAttackThird)) {
+		return;
+	}
+
+	std::wstring animName = L"";
+	float start = 0.0f;
+	float end = 0.0f;
+
+	if (_nowUpdateState == &Player::UpdateAttackFirst) {
+		animName = kAnimNameAttackCombo1;
+		start = kAttackCombo1Start;
+		end = kAttackCombo1End;
+	}
+	else if (_nowUpdateState == &Player::UpdateAttackSecond) {
+		animName = kAnimNameAttackCombo2;
+		start = kAttackCombo2Start;
+		end = kAttackCombo2End;
+	}
+	else {
+		animName = kAnimNameAttackCombo3;
+		start = kAttackCombo3Start;
+		end = kAttackCombo3End;
+	}
+
+	// 攻撃アニメーションの情報を取得
+	auto& animData = _animator->FindAnimData(animName);
+
+#ifdef _DEBUG
+	float prog = animData.frame / animData.totalFrame;
+	int color = 0xffffff;
+	int y = 16 * 12;
+	DrawFormatString(0, y, color, 
+		L"Player:AttackAnimProgress : %.3f", 
+		prog);
+#endif // _DEBUG
+
+	
+	// アニメーションの総フレーム数が0より大きい場合のみ処理
+	if (animData.totalFrame > 0.0f) {
+		// 現在の再生フレームと総フレームから進行度を計算(0.0f - 1.0f)
+		float progress = animData.frame / animData.totalFrame;
+
+		// 進行度が指定の範囲内である場合攻撃
+		if (progress >= start && progress <= end) {
+			// 当たり判定が行われていない場合は
+			// 攻撃リストをリセット
+			if (!_weapon->GetCollisionState()) {
+				_weapon->ResetAttackState();
+			}
+			_weapon->SetCollisionState(true);	// 当たり判定を有効にする	
+		}
+		else {
+			_weapon->SetCollisionState(false);
+		}
+	}
+	else {
+		// もしアニメーションが再生されていない、または終了している場合は
+		// 当たり判定を無効にする
+		_weapon->SetCollisionState(false);
+	}
 }
 
 void Player::UpdateIdle()
@@ -529,7 +626,7 @@ void Player::Rotate() {
 		float diff = targetAngle - _rotAngle;
 
 		// 角度の正規化
-		Calc::RadianNormalize(diff);
+		diff = Calc::RadianNormalize(diff);
 		// 1フレームで回転できる最大量に制限する
 		float turnAmount = std::clamp(diff, -kTurnSpeed, kTurnSpeed);
 

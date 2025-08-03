@@ -14,15 +14,16 @@ namespace {
 	// 
 	constexpr float kCameraFollowLerpFactor = 0.1f;
 
-	// 
-	const Vector3 kDefaultPosition = { 0.0f, 520.0f, -860.0f };
-	const float kDefaultRotation = Calc::ToRadian(180.0f);
+	const Vector3 kPlayerToTarget = Vector3(0.0f, 220.0f, 0.0f);
+	const Vector3 kTargetToCamera = Vector3(0.0f, 350.0f, 700.0f);
+	const Vector3 kPlayerToCamera = kTargetToCamera + kPlayerToTarget;
 
-	const Vector3 kPlayerToCamera = { 0.0f, 520.0f, 860.0f };
-	const Vector3 kPlayerToTarget = { 0.0f, 220.0f, 0.0f };
 	// 初期位置
-	const Vector3 kDefaultPos = { -300, 500, -700 };
-	const Vector3 kTargetOffset = { 0, 200, 0 };
+	const Vector3 kDefaultPosition = Vector3(
+		kTargetToCamera.x, kTargetToCamera.y, kTargetToCamera.z * -1
+		) + kPlayerToTarget;
+	// 初期回転量
+	const float kDefaultRotation = Calc::ToRadian(180.0f);
 }
 
 Camera::Camera() :

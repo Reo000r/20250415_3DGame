@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Geometry.h"
 #include "Collider.h"
+#include <list>
 
 /// <summary>
 /// 武器の基底クラス
@@ -43,12 +44,15 @@ public:
 	void SetOwnerStatus(std::weak_ptr<Collider> owner, float attackPower);
 
 	/// <summary>
-	/// 衝突したときに呼ばれる
+	/// 当たり判定を行うか切り替える
 	/// </summary>
-	/// <param name="colider"></param>
-	void OnCollide(const std::weak_ptr<Collider> collider) override;
-
+	/// <param name="isCollision"></param>
 	void SetCollisionState(bool isCollision);
+
+	bool GetCollisionState();
+	bool IsHit();
+
+	void ResetAttackState();
 
 protected:
 	// モデルハンドル
@@ -60,5 +64,10 @@ protected:
 
 	std::weak_ptr<Collider> _owner;
 	float _attackPower;
+
+	// 攻撃がヒットした相手のリスト
+	std::list<std::weak_ptr<Collider>> _attackedColliders;
+
+	bool _isHit;
 };
 

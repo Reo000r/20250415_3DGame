@@ -21,8 +21,7 @@ EnemyBase::EnemyBase(float hitPoint, float transferAttackRad) :
 	_quaternion(),
 	_hitPoint(hitPoint),
 	_transferAttackRad(transferAttackRad),
-	_state(State::Spawning),
-	_reactCooltime(0)
+	_state(State::Spawning)
 {
 	// 自身の武器やほかの敵の武器とは当たり判定を行わない
 	colliderData->AddThroughTag(PhysicsData::GameObjectTag::EnemyAttack);
