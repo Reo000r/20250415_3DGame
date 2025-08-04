@@ -19,4 +19,8 @@ public:
 	/// 描画全般
 	/// </summary>
 	void Draw();
+
+private:
+
+	int _textureHandle;
 };

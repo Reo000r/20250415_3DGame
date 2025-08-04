@@ -115,6 +115,9 @@ void WaveManager::InitWaveSettings()
 
 void WaveManager::SpawnEnemiesForCurrentWave()
 {
+	// 死亡済みの敵をリストから完全に削除
+	CleanupDefeatedEnemies();
+
 	if (_currentWaveIndex >= _waveSettings.size()) {
 		_state = State::AllWavesComplete;
 		return;
@@ -159,9 +162,6 @@ void WaveManager::CheckWaveCompletion()
 
 void WaveManager::TransitionToNextWave()
 {
-	// 死亡済みの敵をリストから完全に削除
-	CleanupDefeatedEnemies();
-
 	_currentWaveIndex++;
 	if (_currentWaveIndex < _waveSettings.size()) {
 		// 次のウェーブの敵を生成

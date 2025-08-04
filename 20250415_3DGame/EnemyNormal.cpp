@@ -38,9 +38,9 @@ namespace {
 	const std::wstring kAnimNameDeath = kAnimName + L"Dying";
 
 	constexpr float kBaseAnimSpeed = 1.0f;
-
+	
 	// 武器データ
-	const std::wstring kWeaponModelPath = L"data/model/weapon/PlayerWeapon.mv1";
+	const std::wstring kWeaponModelPath = L"data/model/weapon/EnemyWeapon.mv1";
 
 	const Vector3 kWeaponOffsetPos = Vector3Up();					// 位置補正
 	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f) * 1.2f;	// 拡縮補正

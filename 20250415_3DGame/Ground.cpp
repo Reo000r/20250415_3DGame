@@ -9,27 +9,35 @@ namespace {
 	constexpr int kPerOneDist = (kMaxXZ * 2) / kDivNum;
 
 
-	const float kFieldWidth = 2000.0f; // 四角形の幅(X軸方向)
-	const float kFieldDepth = 2000.0f; // 四角形の奥行き(Z軸方向)
+	const float kFieldWidth = 3000.0f; // 四角形の幅(X軸方向)
+	const float kFieldDepth = 3000.0f; // 四角形の奥行き(Z軸方向)
 	const float kFieldY = 0.0f;        // 地面のY座標
-	const unsigned int kFieldColor = GetColor(180, 200, 240); // 地面の色
+	const unsigned int kFieldColor = GetColor(255, 255, 255); // 地面の色
 	const Position3 kFieldCenter = VGet(0.0f, 0.0f, 700.0f);
 
 }
 
-Ground::Ground() {
+Ground::Ground() :
+	_textureHandle(-1)
+{
+	_textureHandle = LoadGraph(L"data/texture/Texture_Ground.jpg");
 }
 
-Ground::~Ground() {
+Ground::~Ground() 
+{
+	DeleteGraph(_textureHandle);
 }
 
-void Ground::Init() {
+void Ground::Init() 
+{
 }
 
-void Ground::Update() {
+void Ground::Update() 
+{
 }
 
-void Ground::Draw() {
+void Ground::Draw() 
+{
 #if true
 
 	// 四角形を構成する4つの頂点を定義
@@ -54,17 +62,23 @@ void Ground::Draw() {
 		);
 		vertices[i].spc = GetColorU8(0, 0, 0, 0);
 		vertices[i].norm = VGet(0.0f, 1.0f, 0.0f); // 法線はすべて上向き
-		vertices[i].u = 0.0f;
+		vertices[i].u = 0.0f;	// 初期化
 		vertices[i].v = 0.0f;
 	}
 
+	// UV座標を設定
+	vertices[0].u = 0.0f; vertices[0].v = 0.0f; // 左奥
+	vertices[1].u = 1.0f; vertices[1].v = 0.0f; // 右奥
+	vertices[2].u = 0.0f; vertices[2].v = 1.0f; // 左手前
+	vertices[3].u = 1.0f; vertices[3].v = 1.0f; // 右手前
+
 	// 1つ目の三角形 (左奥、右奥、左手前)
 	VERTEX3D triangle1[3] = { vertices[0], vertices[1], vertices[2] };
-	DrawPolygon3D(triangle1, 1, DX_NONE_GRAPH, false);
+	DrawPolygon3D(triangle1, 1, _textureHandle, true);
 
 	// 2つ目の三角形 (右手前、左手前、右奥)
 	VERTEX3D triangle2[3] = { vertices[3], vertices[2], vertices[1] };
-	DrawPolygon3D(triangle2, 1, DX_NONE_GRAPH, false);
+	DrawPolygon3D(triangle2, 1, _textureHandle, true);
 
 #else
 	unsigned int color = 0xffffff;
