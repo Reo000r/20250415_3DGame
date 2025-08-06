@@ -31,6 +31,7 @@
     <ClCompile Include="EnemyBase.cpp" />
     <ClCompile Include="EnemyBoss.cpp" />
     <ClCompile Include="EnemyFactory.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="EnemyNormal.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Ground.cpp" />
@@ -52,6 +53,7 @@
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="WaveAnnouncer.cpp" />
     <ClCompile Include="WaveData.cpp" />
     <ClCompile Include="WaveManager.cpp" />
     <ClCompile Include="Weapon.cpp" />
@@ -72,6 +74,7 @@
     <ClInclude Include="EnemyBase.h" />
     <ClInclude Include="EnemyBoss.h" />
     <ClInclude Include="EnemyFactory.h" />
+    <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="EnemyNormal.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Geometry.h" />
@@ -94,6 +97,7 @@
     <ClInclude Include="StringUtility.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="WaveAnnouncer.h" />
     <ClInclude Include="WaveData.h" />
     <ClInclude Include="WaveManager.h" />
     <ClInclude Include="Weapon.h" />

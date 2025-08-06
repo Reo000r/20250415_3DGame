@@ -8,6 +8,8 @@
 #include "Physics.h"
 #include "DebugDraw.h"
 #include "WaveManager.h"
+#include "EnemyManager.h"
+#include "WaveAnnouncer.h"
 #include "EnemyFactory.h"
 #include "StatusUI.h"
 #include "GameManager.h"
@@ -28,6 +30,8 @@ SceneGamePlay::SceneGamePlay() :
 	_ground(std::make_shared<Ground>()),
 	_skydome(std::make_unique<Skydome>()),
 	_waveManager(std::make_shared<WaveManager>()),
+	_enemyManager(std::make_shared<EnemyManager>()),
+	_waveAnnouncer(std::make_shared<WaveAnnouncer>()),
 	_statusUI(std::make_unique<StatusUI>()),
 	_nowUpdateState(&SceneGamePlay::FadeinUpdate),
 	_nowDrawState(&SceneGamePlay::FadeDraw)
@@ -48,14 +52,11 @@ void SceneGamePlay::Init()
 	// 初期化処理
 	_camera->Init(_player);
 	_player->Init(_camera, _physics);
-	_ground->Init();
 	_skydome->Init(_camera);
 
-	// playerの当たり判定処理登録
-	//_player->EntryPhysics(_physics);
-
-	_waveManager->Init(_player, _physics);
-	_statusUI->Init(_player, _waveManager);
+	_enemyManager->Init(_player, _physics);
+	_waveManager->Init(_enemyManager, _waveAnnouncer);
+	_statusUI->Init(_player, _waveManager, _enemyManager);
 
 	GameManager::GetInstance().Init(_player, _waveManager);
 }
@@ -87,23 +88,22 @@ void SceneGamePlay::NormalUpdate()
 	_camera->Update();
 	_skydome->Update();
 
-#ifdef _DEBUG
-	_skydome->Draw();	// デバッグ表示を見るため早めにDraw
-	_ground->Draw();
-#endif // _DEBUG
-
 	_player->Update();
-	_waveManager->Update();
 
 	_statusUI->Update();
-	_ground->Update();
-	
+	_enemyManager->Update();
+	_waveAnnouncer->Update();
+	_waveManager->Update();
 
 	// 物理演算更新
 	_physics->Update();
 
-	// 決定を押したら
-	if (Input::GetInstance().IsTrigger("next")) {
+	// クリア条件を満たしたら
+	if (_waveManager->IsClear()
+#ifdef _DEBUG
+		|| Input::GetInstance().IsTrigger("next")	// 決定を押したら
+#endif // _DEBUG
+		) {
 		_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
 		_nowDrawState = &SceneGamePlay::FadeDraw;
 		_frame = 0;
@@ -127,10 +127,11 @@ void SceneGamePlay::FadeDraw()
 	_ground->Draw();
 
 	_camera->Draw();
-	_waveManager->Draw();
 	_player->Draw();
 
+	_enemyManager->Draw();
 	_statusUI->Draw();
+	_waveAnnouncer->Draw();
 
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();
@@ -154,10 +155,11 @@ void SceneGamePlay::NormalDraw()
 	_ground->Draw();
 	
 	_camera->Draw();
-	_waveManager->Draw();
 	_player->Draw();
 
+	_enemyManager->Draw();
 	_statusUI->Draw();
+	_waveAnnouncer->Draw();
 
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();

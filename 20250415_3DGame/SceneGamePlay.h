@@ -10,6 +10,8 @@ class Player;
 class Ground;
 class Skydome;
 class WaveManager;
+class EnemyManager;
+class WaveAnnouncer;
 class StatusUI;
 
 class SceneGamePlay final : public SceneBase {
@@ -46,6 +48,8 @@ private:
 	std::shared_ptr<Ground> _ground;
 	std::unique_ptr<Skydome> _skydome;
 	std::shared_ptr<WaveManager> _waveManager;
+	std::shared_ptr<EnemyManager> _enemyManager;
+	std::shared_ptr<WaveAnnouncer> _waveAnnouncer;
 	std::unique_ptr<StatusUI> _statusUI;
 
 	// UpdateとDrawのStateパターン

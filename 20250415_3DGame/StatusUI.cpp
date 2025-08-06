@@ -1,8 +1,9 @@
 ﻿#include "StatusUI.h"
 #include "Player.h"
 #include "WaveManager.h"
+#include "EnemyManager.h"
 #include "EnemyBase.h"
-#include "GameManager.h" 
+#include "GameManager.h"
 #include <DxLib.h>
 #include <string>
 
@@ -48,14 +49,15 @@ StatusUI::~StatusUI()
 	}
 }
 
-void StatusUI::Init(std::weak_ptr<Player> player, std::weak_ptr<WaveManager> waveManager)
+void StatusUI::Init(std::weak_ptr<Player> player, std::weak_ptr<WaveManager> waveManager, std::weak_ptr<EnemyManager> enemyManager)
 {
 	_player = player;
 	_waveManager = waveManager;
+	_enemyManager = enemyManager;
 
 	_scoreFontHandle = CreateFontToHandle(
-		kScoreFontName.c_str(), 
-		kScoreFontSize, 
+		kScoreFontName.c_str(),
+		kScoreFontSize,
 		-1,
 		DX_FONTTYPE_ANTIALIASING_EDGE);
 }
@@ -72,8 +74,8 @@ void StatusUI::Draw()
 	DrawPlayerHp();
 
 	// 敵HP描画
-	if (auto waveManager = _waveManager.lock()) {
-		const auto& enemies = waveManager->GetEnemies();
+	if (auto enemyManager = _enemyManager.lock()) {
+		const auto& enemies = enemyManager->GetEnemies();
 		for (const auto& enemy : enemies) {
 			if (enemy) {
 				DrawEnemyHp(enemy);

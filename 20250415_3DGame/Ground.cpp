@@ -28,14 +28,6 @@ Ground::~Ground()
 	DeleteGraph(_textureHandle);
 }
 
-void Ground::Init() 
-{
-}
-
-void Ground::Update() 
-{
-}
-
 void Ground::Draw() 
 {
 #if true
