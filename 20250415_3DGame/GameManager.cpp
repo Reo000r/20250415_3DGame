@@ -18,6 +18,7 @@ void GameManager::Init(std::weak_ptr<Player> player, std::weak_ptr<WaveManager> 
 	_player = player;
 	_waveManager = waveManager;
 	_score = 0;
+	_clearTime = 0.0f;
 }
 
 void GameManager::Update()
@@ -32,6 +33,11 @@ void GameManager::AddScore(int score)
 	}
 }
 
+void GameManager::UpdateClearTime()
+{
+	_clearTime += 1.0f / 60.0f;
+}
+
 int GameManager::GetCurrentWaveIndex() const
 {
 	auto waveManager = _waveManager.lock();
@@ -44,7 +50,8 @@ int GameManager::GetCurrentWaveIndex() const
 
 int GameManager::GetTotalWaves() const
 {
-	if (auto waveManager = _waveManager.lock()) {
+	auto waveManager = _waveManager.lock();
+	if (waveManager) {
 		return waveManager->GetTotalWaveCount();
 	}
 	return 0;
@@ -52,7 +59,8 @@ int GameManager::GetTotalWaves() const
 
 bool GameManager::IsPlayerAlive() const
 {
-	if (auto player = _player.lock()) {
+	auto player = _player.lock();
+	if (player) {
 		return player->IsAlive();
 	}
 	return false;

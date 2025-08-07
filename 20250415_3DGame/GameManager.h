@@ -37,8 +37,15 @@ public:
 	/// <param name="score">加算するスコア</param>
 	void AddScore(int score);
 
+	/// <summary>
+	/// クリアタイムを更新する
+	/// 呼ばれるたび1f経ったとみなす
+	/// </summary>
+	void UpdateClearTime();
+
 	// getter
 	int GetScore() const { return _score; }
+	float GetClearTime() const { return _clearTime; }
 	int GetCurrentWaveIndex() const;
 	int GetTotalWaves() const;
 	bool IsPlayerAlive() const;
@@ -51,5 +58,6 @@ private:
 
 	// 管理するデータ
 	int _score;
+	float _clearTime;
 };
 

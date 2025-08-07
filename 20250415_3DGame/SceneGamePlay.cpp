@@ -84,6 +84,9 @@ void SceneGamePlay::FadeinUpdate()
 
 void SceneGamePlay::NormalUpdate()
 {
+	// クリアタイムの加算
+	GameManager::GetInstance().UpdateClearTime();
+
 	// 更新
 	_camera->Update();
 	_skydome->Update();

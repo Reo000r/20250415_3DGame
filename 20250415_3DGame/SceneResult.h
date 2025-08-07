@@ -3,6 +3,8 @@
 
 #include <memory>
 
+class ResultDisplay;
+
 class SceneResult final : public SceneBase {
 public:
 	SceneResult();
@@ -24,6 +26,20 @@ public:
 	virtual void Draw() override;
 
 private:
+
+	// フェードイン時の更新処理
+	void FadeinUpdate();
+	// 通常時の更新処理
+	void NormalUpdate();
+	// フェードアウト時の更新処理
+	void FadeoutUpdate();
+
+	// フェード時の描画
+	void FadeDraw();
+	// 通常時の描画
+	void NormalDraw();
+
+private:
 	enum class SceneName {
 		Title,
 		GamePlay,
@@ -41,16 +57,6 @@ private:
 	UpdateFunc_t _nowUpdateState = nullptr;
 	DrawFunc_t   _nowDrawState = nullptr;
 
-	// フェードイン時の更新処理
-	void FadeinUpdate();
-	// 通常時の更新処理
-	void NormalUpdate();
-	// フェードアウト時の更新処理
-	void FadeoutUpdate();
-
-	// フェード時の描画
-	void FadeDraw();
-	// 通常時の描画
-	void NormalDraw();
+	std::unique_ptr<ResultDisplay> _resultDisplay;
 };
 

@@ -3,6 +3,7 @@
 #include "SceneGamePlay.h"  // 遷移先のシーン
 #include "SceneBase.h"
 #include "SceneController.h"
+#include "ResultDisplay.h"
 
 #include "Input.h"
 #include "Statistics.h"
@@ -16,19 +17,18 @@ SceneResult::SceneResult() :
 	_nextSceneName(SceneName::Title),
 	_nextScene(nullptr),
 	_nowUpdateState(&SceneResult::FadeinUpdate),
-	_nowDrawState(&SceneResult::FadeDraw)
+	_nowDrawState(&SceneResult::FadeDraw),
+	_resultDisplay(std::make_unique<ResultDisplay>())
 {
-	//_a = LoadGraph(L"data/img/background/Background.png");
-	//assert(_backgroundGraphHandle >= 0);
 }
 
 SceneResult::~SceneResult()
 {
-	//DeleteGraph();
 }
 
 void SceneResult::Init()
 {
+	_resultDisplay->Init();
 }
 
 void SceneResult::Update()
@@ -52,6 +52,9 @@ void SceneResult::FadeinUpdate()
 
 void SceneResult::NormalUpdate()
 {
+	_resultDisplay->Update();
+
+#ifdef _DEBUG
 	// 決定を押したら
 	if (Input::GetInstance().IsTrigger("next")) {
 		_nextSceneName = SceneName::GamePlay;
@@ -65,6 +68,7 @@ void SceneResult::NormalUpdate()
 		_nowDrawState = &SceneResult::FadeDraw;
 		_frame = 0;
 	}
+#endif // _DEBUG
 }
 
 void SceneResult::FadeoutUpdate()
@@ -93,6 +97,7 @@ void SceneResult::FadeoutUpdate()
 
 void SceneResult::FadeDraw()
 {
+	_resultDisplay->Draw();
 
 #ifdef _DEBUG
 	DrawFormatString(0, 0, 0xffffff, L"Scene Result");
@@ -109,6 +114,7 @@ void SceneResult::FadeDraw()
 
 void SceneResult::NormalDraw()
 {
+	_resultDisplay->Draw();
 
 #ifdef _DEBUG
 	DrawFormatString(0, 0, 0xffffff, L"Scene Result");
