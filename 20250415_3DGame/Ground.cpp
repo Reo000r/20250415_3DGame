@@ -18,18 +18,26 @@ namespace {
 }
 
 Ground::Ground() :
+	_modelHandle(-1),
 	_textureHandle(-1)
 {
+	_modelHandle = MV1LoadModel(L"data/model/field/Arena.mv1");
 	_textureHandle = LoadGraph(L"data/texture/Texture_Ground.jpg");
+
+	MV1SetPosition(_modelHandle, Vector3(0, 0, 0));
+	MV1SetScale(_modelHandle, Vector3(1, 1, 1) * 0.5f);
 }
 
 Ground::~Ground() 
 {
+	MV1DeleteModel(_modelHandle);
 	DeleteGraph(_textureHandle);
 }
 
 void Ground::Draw() 
 {
+	MV1DrawModel(_modelHandle);
+
 #if true
 
 	// 四角形を構成する4つの頂点を定義

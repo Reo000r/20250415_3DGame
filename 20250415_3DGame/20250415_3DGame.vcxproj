@@ -42,9 +42,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="ResultDisplay.cpp" />
-    <ClCompile Include="ResultItemBase.cpp" />
-    <ClCompile Include="ResultScoreItem.cpp" />
-    <ClCompile Include="ResultTimeItem.cpp" />
+    <ClCompile Include="ResultItemDrawer.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneController.cpp" />
@@ -90,9 +88,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="ResultDisplay.h" />
-    <ClInclude Include="ResultItemBase.h" />
-    <ClInclude Include="ResultScoreItem.h" />
-    <ClInclude Include="ResultTimeItem.h" />
+    <ClInclude Include="ResultItemDrawer.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneController.h" />

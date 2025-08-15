@@ -4,6 +4,7 @@
 #include "SceneBase.h"
 #include "SceneController.h"
 #include "ResultDisplay.h"
+#include "GameManager.h"
 
 #include "Input.h"
 #include "Statistics.h"
@@ -28,6 +29,9 @@ SceneResult::~SceneResult()
 
 void SceneResult::Init()
 {
+	// リザルト表示の前に、まずタイムボーナスを計算させる
+	GameManager::GetInstance().CalculateTimeBonus();
+
 	_resultDisplay->Init();
 }
 

@@ -191,7 +191,7 @@ void EnemyNormal::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
 		_state = State::Dying;
 		_nowUpdateState = &EnemyNormal::UpdateDeath;
 		_animator->ChangeAnim(kAnimNameDeath, false);
-		GameManager::GetInstance().AddScore(kAddScore);	// スコア加算
+		GameManager::GetInstance().AddEnemyDefeatScore(kAddScore);	// スコア加算
 		// 物理判定から除外する
 		ReleasePhysics();
 		_weapon->ReleasePhysics();

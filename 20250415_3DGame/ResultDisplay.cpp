@@ -1,9 +1,7 @@
 ﻿#include "ResultDisplay.h"
 #include "Statistics.h"
 #include "GameManager.h"
-#include "ResultItemBase.h"
-#include "ResultScoreItem.h"
-#include "ResultTimeItem.h"
+#include "ResultItemDrawer.h"
 #include <DxLib.h>
 #include <cassert>
 #include <string>
@@ -12,10 +10,13 @@ namespace {
 
     const unsigned int kTextColor = GetColor(255, 255, 255);
     const std::wstring kFontName = L"Impact";
-    constexpr int kResultFontSize = 92;     // 上部文字用サイズ
+    constexpr int kResultFontSize = 128;     // 上部文字用サイズ
     constexpr int kFontThickness = 3;
     const std::wstring kResultText = L"RESULT";
-    const std::wstring kScoreText = L"SCORE : ";    // テキスト部分
+    const std::wstring kScoreText = L"SCORE : ";
+    const std::wstring kTimeText = L"TIME  : ";
+    const std::wstring kTimeBonusText = L"TIME BONUS : ";
+    const std::wstring kTotalScoreText = L"TOTAL SCORE : ";
     const std::wstring kScoreFormat = L"%05d";      // 5桁0埋め部分
 
     // アニメーション用の定数
@@ -23,7 +24,7 @@ namespace {
 
     // 描画レイアウト用の定数
     constexpr int kResultTextY = 100;               // "RESULT"文字のY座標
-    constexpr int kItemStartY = 250;
+    constexpr int kItemStartY = kResultTextY + 200;
     constexpr int kItemOffsetY = 80;
 }
 
@@ -52,12 +53,20 @@ ResultDisplay::~ResultDisplay()
 void ResultDisplay::Init()
 {
     // GameManagerから値を取得
-    int finalScore = GameManager::GetInstance().GetScore();
+    int enemyDefeatScore = GameManager::GetInstance().GetEnemyDefeatScore();
+    int timeBonus = GameManager::GetInstance().GetTimeBonusScore();
     float clearTime = GameManager::GetInstance().GetClearTime();
+    int totalScore = GameManager::GetInstance().GetTotalScore();
 
     // 表示項目を生成してリストに追加
-    _resultItems.push_back(std::make_unique<ResultScoreItem>(finalScore));
-    _resultItems.push_back(std::make_unique<ResultTimeItem>(clearTime));
+    _resultItems.push_back(std::make_unique<ResultItemDrawer>(
+        ResultItemDrawer::ValueType::Number, kScoreText, static_cast<float>(enemyDefeatScore)));
+    _resultItems.push_back(std::make_unique<ResultItemDrawer>(
+        ResultItemDrawer::ValueType::Number, kTimeBonusText, static_cast<float>(timeBonus)));
+    _resultItems.push_back(std::make_unique<ResultItemDrawer>(
+        ResultItemDrawer::ValueType::Time, kTimeText, clearTime));
+    _resultItems.push_back(std::make_unique<ResultItemDrawer>(
+        ResultItemDrawer::ValueType::Number, kTotalScoreText, static_cast<float>(totalScore)));
 
     // 描画レイアウトの計算
     _labelTargetDrawX = Statistics::kScreenWidth * 0.3f;
@@ -113,7 +122,7 @@ void ResultDisplay::Draw()
         _resultFontHandle);
 
     // 各項目の描画
-    for (size_t i = 0; i < _resultItems.size(); ++i) {
+    for (int i = 0; i < _resultItems.size(); ++i) {
         float drawY = static_cast<float>(kItemStartY + (kItemOffsetY * i));
         _resultItems[i]->Draw(_labelDrawX, _valueDrawX, drawY);
     }

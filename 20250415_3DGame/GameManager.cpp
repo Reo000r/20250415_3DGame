@@ -1,6 +1,7 @@
 ﻿#include "GameManager.h"
 #include "Player.h"
 #include "WaveManager.h"
+#include <algorithm>
 
 GameManager::~GameManager()
 {
@@ -17,8 +18,9 @@ void GameManager::Init(std::weak_ptr<Player> player, std::weak_ptr<WaveManager> 
 {
 	_player = player;
 	_waveManager = waveManager;
-	_score = 0;
+	_enemyDefeatScore = 0;
 	_clearTime = 0.0f;
+	_timeBonusScore = 0;
 }
 
 void GameManager::Update()
@@ -26,10 +28,10 @@ void GameManager::Update()
 	// 処理なし
 }
 
-void GameManager::AddScore(int score)
+void GameManager::AddEnemyDefeatScore(int score)
 {
 	if (score > 0) {
-		_score += score;
+		_enemyDefeatScore += score;
 	}
 }
 
@@ -64,4 +66,20 @@ bool GameManager::IsPlayerAlive() const
 		return player->IsAlive();
 	}
 	return false;
+}
+
+void GameManager::CalculateTimeBonus()
+{
+	// タイムが速いほど1.0、遅いほど0.0に近づく割合を計算
+	// (現在のタイム - 最小ボーナスタイム) / (最大ボーナスタイム - 最小ボーナスタイム)
+	// 分母が (速いタイム - 遅いタイム)なので、結果がマイナスになるため
+	// -1をかけて反転させる
+	float ratio = (_clearTime - kMinBonusTime) / (kMaxBonusTime - kMinBonusTime);
+
+	// 割合を 0.0f - 1.0f の範囲に収める
+	ratio = std::clamp(ratio, 0.0f, 1.0f);
+
+	// 割合に応じてボーナススコアを線形補間で算出
+	_timeBonusScore = static_cast<int>(kMinTimeBonusScore + (kMaxTimeBonusScore - kMinTimeBonusScore) *
+		ratio);
 }

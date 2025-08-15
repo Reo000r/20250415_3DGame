@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 
-class ResultItemBase;
+class ResultItemDrawer;
 
 class ResultDisplay
 {
@@ -50,5 +50,5 @@ private:
 	float _valueDrawX;
 	float _valueTargetDrawX;
 
-	std::vector<std::unique_ptr<ResultItemBase>> _resultItems;
+	std::vector<std::unique_ptr<ResultItemDrawer>> _resultItems;
 };

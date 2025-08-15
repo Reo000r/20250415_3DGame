@@ -8,11 +8,22 @@ class WaveManager;
 class GameManager {
 	// シングルトン化
 private:
-	GameManager() : _score(0) {}
+	GameManager() : 
+		_enemyDefeatScore(0),
+		_clearTime(0.0f),
+		_timeBonusScore(0)
+	{}
 	GameManager(const GameManager&) = delete;
 	void operator=(const GameManager&) = delete;
 
 	~GameManager();
+
+public:
+	// タイムボーナス計算用の定数
+	static constexpr float kMaxBonusTime = (0 * 60.0f + 0.0f);	// 最大ボーナスがもらえるタイム（秒）
+	static constexpr float kMinBonusTime = (2 * 60.0f + 0.0f);	// 最小ボーナスがもらえるタイム（秒）
+	static constexpr int kMaxTimeBonusScore = 10000;	// 最大ボーナススコア
+	static constexpr int kMinTimeBonusScore = 500;		// 最小ボーナススコア
 
 public:
 	/// <summary>
@@ -32,10 +43,10 @@ public:
 	void Update();
 
 	/// <summary>
-	/// スコアを加算する
+	/// 敵撃破時のスコアを加算する
 	/// </summary>
 	/// <param name="score">加算するスコア</param>
-	void AddScore(int score);
+	void AddEnemyDefeatScore(int score);
 
 	/// <summary>
 	/// クリアタイムを更新する
@@ -43,8 +54,15 @@ public:
 	/// </summary>
 	void UpdateClearTime();
 
+	/// <summary>
+	/// クリアタイムに応じてタイムボーナスを計算する
+	/// </summary>
+	void CalculateTimeBonus();
+
 	// getter
-	int GetScore() const { return _score; }
+	int GetTotalScore() const { return _enemyDefeatScore + _timeBonusScore; }
+	int GetEnemyDefeatScore() const { return _enemyDefeatScore; }
+	int GetTimeBonusScore() const { return _timeBonusScore; }
 	float GetClearTime() const { return _clearTime; }
 	int GetCurrentWaveIndex() const;
 	int GetTotalWaves() const;
@@ -57,7 +75,8 @@ private:
 	std::weak_ptr<WaveManager> _waveManager;
 
 	// 管理するデータ
-	int _score;
+	int _enemyDefeatScore;
 	float _clearTime;
+	int _timeBonusScore;
 };
 

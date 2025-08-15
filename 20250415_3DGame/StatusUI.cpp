@@ -4,6 +4,7 @@
 #include "EnemyManager.h"
 #include "EnemyBase.h"
 #include "GameManager.h"
+#include "Statistics.h"
 #include <DxLib.h>
 #include <string>
 
@@ -29,7 +30,7 @@ namespace {
 
 
 	// スコア表示
-	const int kScorePosX = 1280 - 32; // 画面右端から30ピクセル内側
+	const int kScorePosX = Statistics::kScreenWidth - 32; // 画面右端から30ピクセル内側
 	const int kScorePosY = 32;
 	const unsigned int kScoreColor = GetColor(255, 255, 255);
 	const std::wstring kScoreFontName = L"Impact"; // フォント名
@@ -156,8 +157,8 @@ void StatusUI::DrawEnemyHp(std::shared_ptr<EnemyBase> enemy)
 
 void StatusUI::DrawScore()
 {
-	// GameManagerからスコアを取得
-	int score = GameManager::GetInstance().GetScore();
+	// GameManagerから敵撃破スコアを取得
+	int score = GameManager::GetInstance().GetEnemyDefeatScore();
 
 	// スコアの文字列を作成
 	std::wstring scoreText = L"Score : ";
