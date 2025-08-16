@@ -3,7 +3,7 @@
 #include "SceneController.h"
 #include "Camera.h"
 #include "Player.h"
-#include "Ground.h"
+#include "Arena.h"
 #include "Skydome.h"
 #include "Physics.h"
 #include "DebugDraw.h"
@@ -27,7 +27,7 @@ SceneGamePlay::SceneGamePlay() :
 	_physics(std::make_shared<Physics>()),
 	_camera(std::make_shared<Camera>()),
 	_player(std::make_shared<Player>()),
-	_ground(std::make_shared<Ground>()),
+	_arena(std::make_shared<Arena>()),
 	_skydome(std::make_unique<Skydome>()),
 	_waveManager(std::make_shared<WaveManager>()),
 	_enemyManager(std::make_shared<EnemyManager>()),
@@ -53,6 +53,7 @@ void SceneGamePlay::Init()
 	_camera->Init(_player);
 	_player->Init(_camera, _physics);
 	_skydome->Init(_camera);
+	_arena->Init(_physics);
 
 	_enemyManager->Init(_player, _physics);
 	_waveManager->Init(_enemyManager, _waveAnnouncer);
@@ -127,7 +128,7 @@ void SceneGamePlay::FadeoutUpdate()
 void SceneGamePlay::FadeDraw()
 {
 	_skydome->Draw();
-	_ground->Draw();
+	_arena->Draw();
 
 	_camera->Draw();
 	_player->Draw();
@@ -155,7 +156,7 @@ void SceneGamePlay::FadeDraw()
 void SceneGamePlay::NormalDraw()
 {
 	_skydome->Draw();
-	_ground->Draw();
+	_arena->Draw();
 	
 	_camera->Draw();
 	_player->Draw();

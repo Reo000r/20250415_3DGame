@@ -22,9 +22,10 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
+	/// <param name="desc"></param>
 	/// <param name="hitPoint">HP</param>
 	/// <param name="transferAttackRad">攻撃移行範囲</param>
-	EnemyBase(float hitPoint, float transferAttackRad);
+	EnemyBase(CapsuleColliderDesc desc, float hitPoint, float transferAttackRad);
 	virtual ~EnemyBase();
 
 	virtual void Init(std::weak_ptr<Player> player, std::weak_ptr<Physics> physics) abstract;

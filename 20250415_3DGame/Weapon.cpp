@@ -37,13 +37,14 @@ void Weapon::Init(int modelHandle, float colRad, float colHeight,
     _rotAngle = angle;
     _scale = scale;
 
-    // 当たり判定のデータを適用
-    SetColliderData(
-        PhysicsData::ColliderKind::Capsule,
-        true,
-        false,
-        colRad,
-        Vector3Up() * colHeight // Update内で計算するため
+    // 当たり判定データ設定
+    CapsuleColliderDesc desc;
+    desc.radius = colRad;
+    desc.startToEnd = Vector3Up() * colHeight;  // Update内で計算するため
+    colliderData = CreateColliderData(
+        desc,	// 種別
+        true,	// isTrigger
+        false	// isCollision
     );
 }
 

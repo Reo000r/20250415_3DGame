@@ -118,7 +118,7 @@ void Camera::Draw() {
 
 #ifdef _DEBUG
 	int color = 0xffffff;
-	int y = 16 * 6;
+	int y = 16 * 11;
 	DrawFormatString(0, y, color, L"Camera:Pos (%.3f,%.3f,%.3f)", _pos.x, _pos.y, _pos.z);
 	y += 16;
 	Vector3 rotAngle;

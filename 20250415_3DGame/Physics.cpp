@@ -3,6 +3,7 @@
 #include "ColliderData.h"
 #include "ColliderDataSphere.h"
 #include "ColliderDataCapsule.h"
+#include "ColliderDataInvertedCylinder.h"
 #include "Rigidbody.h"
 #include "DebugDraw.h"
 #include "Collision.h"
@@ -263,6 +264,12 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 		// 最近接点間の距離が、半径の合計より小さいかどうかで衝突を判定
 		isHit = distSq < (radSum * radSum);
 	}
+	// 反転円柱同士
+	else if (aKind == PhysicsData::ColliderKind::InvertedCylinder && 
+		bKind == PhysicsData::ColliderKind::InvertedCylinder)
+	{
+		// 未実装
+	}
 	// 球とカプセル
 	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) ||
 		(aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::Sphere))
@@ -307,6 +314,71 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 
 		// 距離が半径の合計より小さいか判定
 		isHit = distSq < (radSum * radSum);
+	}
+	// 球と反転円柱
+	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::InvertedCylinder) ||
+		(aKind == PhysicsData::ColliderKind::InvertedCylinder && bKind == PhysicsData::ColliderKind::Sphere))
+	{
+		// 未実装
+	}
+	// カプセルと反転円柱
+	else if ((aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::InvertedCylinder) ||
+		(aKind == PhysicsData::ColliderKind::InvertedCylinder && bKind == PhysicsData::ColliderKind::Capsule))
+	{
+		// 球とカプセルを判定する
+		std::shared_ptr<Collider> capsuleObj;
+		std::shared_ptr<Collider> cylinderObj;
+		// objAがカプセルであるかをチェック
+		if (aKind == PhysicsData::ColliderKind::Sphere) {
+			cylinderObj = objA;
+			capsuleObj = objB;
+		}
+		// でなければobjAは反転円柱、objBがカプセル
+		else {
+			cylinderObj = objB;
+			capsuleObj = objA;
+		}
+
+		// それぞれのコライダー情報を取得
+		auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(capsuleObj->colliderData);
+		auto cylinderData = std::static_pointer_cast<ColliderDataInvertedCylinder>(cylinderObj->colliderData);
+
+		// カプセル
+		float capsuleRad = capsuleData->GetRad();
+		Position3 capsuleStart = capsuleData->GetStartPos(capsuleObj->nextPos);
+		Position3 capsuleEnd = capsuleData->GetEndPos(capsuleObj->nextPos);
+
+		// 反転円柱
+		float cylinderInnerRad = cylinderData->GetInnerRadius();
+		float cylinderOuterRad = cylinderData->GetOuterRadius();
+		Vector3 cylinderHeightVec = cylinderData->_startToEnd;
+		Position3 cylinderStart = cylinderObj->nextPos - cylinderHeightVec * 0.5f;
+		Position3 cylinderEnd = cylinderObj->nextPos + cylinderHeightVec * 0.5f;
+
+		// 最近接点の計算
+		// カプセルの中心線と、円柱の中心軸の最近接点を求める
+		Position3 closestPointOnCapsule, closestPointOnCylinderAxis;
+		ClosestPointSegments(
+			capsuleStart, capsuleEnd,
+			cylinderStart, cylinderEnd,
+			closestPointOnCapsule, closestPointOnCylinderAxis);
+
+		// 衝突判定
+		// 最近接点間のXZ平面上でのベクトルと距離を計算
+		Vector3 vecBetweenClosestPoints = closestPointOnCapsule - closestPointOnCylinderAxis;
+		Vector2 vecXZ(vecBetweenClosestPoints.x, vecBetweenClosestPoints.z);
+		float distXZ = vecXZ.Magnitude();
+
+		// 距離のみ確認し、衝突していない場合
+		if (distXZ > cylinderOuterRad + capsuleRad || 
+			distXZ < cylinderInnerRad - capsuleRad) {
+			// 上面/下面のフチとの判定は
+			// 未実装
+			return false;
+		}
+
+		// 衝突している
+		return true;
 	}
 
 	return isHit;
@@ -365,7 +437,6 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 		// 当たり判定データ取得
 		auto priCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(primary->colliderData);
 		auto secCapsuleData = std::static_pointer_cast<ColliderDataCapsule>(secondary->colliderData);
-
 		// primaryカプセルの情報を取得
 		Position3 priStart = priCapsuleData->GetStartPos(primary->nextPos);
 		Position3 priEnd = priCapsuleData->GetEndPos(primary->nextPos);
@@ -413,6 +484,12 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 		else {
 			secondary->nextPos += fixVec;
 		}
+	}
+	// 反転円柱同士
+	else if (aKind == PhysicsData::ColliderKind::InvertedCylinder &&
+		bKind == PhysicsData::ColliderKind::InvertedCylinder)
+	{
+		// 未実装
 	}
 	// 球とカプセル
 	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::Capsule) ||
@@ -487,6 +564,115 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 				secondary->nextPos -= fixVec;	// secondary(カプセル)を押し戻す
 			}
 		}
+	}
+	// 球と反転円柱
+	else if ((aKind == PhysicsData::ColliderKind::Sphere && bKind == PhysicsData::ColliderKind::InvertedCylinder) ||
+		(aKind == PhysicsData::ColliderKind::InvertedCylinder && bKind == PhysicsData::ColliderKind::Sphere))
+	{
+			// 未実装
+	}
+	// カプセルと反転円柱
+	else if ((aKind == PhysicsData::ColliderKind::Capsule && bKind == PhysicsData::ColliderKind::InvertedCylinder) ||
+		(aKind == PhysicsData::ColliderKind::InvertedCylinder && bKind == PhysicsData::ColliderKind::Capsule))
+	{
+		// 押し戻し量
+		Vector3 fixVec;
+		// 球とカプセルを判定する
+		std::shared_ptr<Collider> capsuleObj;
+		std::shared_ptr<Collider> cylinderObj;
+		// primaryとsecondaryがそれぞれカプセルか反転円柱かを判別
+		if (primary->colliderData->GetKind() == PhysicsData::ColliderKind::Capsule) {
+			capsuleObj = primary;
+			cylinderObj = secondary;
+		}
+		else {
+			capsuleObj = secondary;
+			cylinderObj = primary;
+		}
+
+		// それぞれのコライダー情報を取得
+		auto capsuleData = std::static_pointer_cast<ColliderDataCapsule>(capsuleObj->colliderData);
+		auto cylinderData = std::static_pointer_cast<ColliderDataInvertedCylinder>(cylinderObj->colliderData);
+
+		// カプセル
+		float capsuleRad = capsuleData->GetRad();
+		Position3 capsuleStart = capsuleData->GetStartPos(capsuleObj->nextPos);
+		Position3 capsuleEnd = capsuleData->GetEndPos(capsuleObj->nextPos);
+
+		// 反転円柱
+		float cylinderInnerRad = cylinderData->GetInnerRadius();
+		float cylinderOuterRad = cylinderData->GetOuterRadius();
+		Vector3 cylinderHeightVec = cylinderData->_startToEnd;
+		Position3 cylinderStart = cylinderObj->nextPos - cylinderHeightVec * 0.5f;
+		Position3 cylinderEnd = cylinderObj->nextPos + cylinderHeightVec * 0.5f;
+
+		// 最近接点の計算
+		// カプセルの中心線と、円柱の中心軸の最近接点を求める
+		Position3 closestPointOnCapsule, closestPointOnCylinderAxis;
+		ClosestPointSegments(
+			capsuleStart, capsuleEnd,
+			cylinderStart, cylinderEnd,
+			closestPointOnCapsule, closestPointOnCylinderAxis);
+
+		// 衝突判定
+		// 最近接点間のXZ平面上でのベクトルと距離を計算
+		Vector3 vecBetweenClosestPoints = closestPointOnCapsule - closestPointOnCylinderAxis;
+		Vector2 vecXZ(vecBetweenClosestPoints.x, vecBetweenClosestPoints.z);
+		float distXZ = vecXZ.Magnitude();
+
+		// 衝突していない場合 (単純な距離チェック)
+		if (distXZ > cylinderOuterRad + capsuleRad || distXZ < cylinderInnerRad - capsuleRad) {
+			// 上面/下面のフチとの判定は
+			// 未実装
+			return;
+		}
+
+		// 衝突している場合
+		// 貫通深度と押し戻し方向を計算
+		float penetration = 0.0f;
+		Vector3 pushDir = { vecBetweenClosestPoints.x, 0.0f, vecBetweenClosestPoints.z };
+		if (pushDir.SqrMagnitude() < PhysicsData::kZeroTolerance) {
+			// ほぼ真上/真下にいる場合、仮の方向を設定
+			pushDir = { 1.0f, 0.0f, 0.0f };
+		}
+		pushDir.Normalized();
+
+		// 内側と外側のどちらにめり込んでいるか判定
+		float distToInner = std::abs(distXZ - cylinderInnerRad);
+		float distToOuter = std::abs(distXZ - cylinderOuterRad);
+
+		if (distToInner < distToOuter) {
+			// 内側にめり込んでいる場合は外側へ押し出す
+			penetration = (cylinderInnerRad - distXZ) + capsuleRad;
+			fixVec = pushDir * penetration;
+		}
+		else {
+			// 外側にめり込んでいる場合は内側へ押し出す
+			penetration = (cylinderOuterRad - distXZ) + capsuleRad;
+			fixVec = -pushDir * penetration;
+		}
+
+		// 補正量分追加で押し戻す
+		fixVec *= 1.0f + PhysicsData::kFixPositionOffset;
+
+		// 優先度が同じでお互いに押し戻す場合
+		if (isMutualPushback) {
+			Vector3 halfFixVec = fixVec * 0.5f;
+			// 押し戻しベクトルは円柱→カプセルの方向で計算されている
+			capsuleObj->nextPos += halfFixVec;
+			cylinderObj->nextPos -= halfFixVec;
+		}
+		else {
+			// 優先度の低い方(secondary)を押し戻す
+			if (secondary == capsuleObj) {
+				secondary->nextPos += fixVec;
+			}
+			else { // secondary == cylinderObj
+				secondary->nextPos -= fixVec;
+			}
+		}
+
+		return;
 	}
 }
 

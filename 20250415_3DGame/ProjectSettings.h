@@ -22,6 +22,7 @@ namespace PhysicsData {
 	enum class ColliderKind {
 		Sphere,
 		Capsule,
+		InvertedCylinder,
 	};
 
 	/// <summary>

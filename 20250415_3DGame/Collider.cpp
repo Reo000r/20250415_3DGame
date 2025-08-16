@@ -3,6 +3,7 @@
 #include "Rigidbody.h"
 #include "ColliderDataSphere.h"
 #include "ColliderDataCapsule.h"
+#include "ColliderDataInvertedCylinder.h"
 
 #include <cassert>
 
@@ -14,7 +15,6 @@ Collider::Collider(PhysicsData::Priority priority_, PhysicsData::GameObjectTag t
 	colliderData(nullptr),
 	nextPos()
 {
-	CreateColliderData(colliderKind, isTrigger, isCollision);
 }
 
 Collider::~Collider()
@@ -23,6 +23,11 @@ Collider::~Collider()
 
 void Collider::EntryPhysics(std::weak_ptr<Physics> physics_)
 {
+	if (colliderData == nullptr) {
+		assert(false && "colliderDataが作られていない");
+		return;
+	}
+
 	physics = physics_;
 	auto thisptr = shared_from_this();
 	// Physicsに自身を登録
@@ -50,30 +55,46 @@ Vector3 Collider::GetDir() const
 	return rigidbody->GetDir();
 }
 
-std::shared_ptr<ColliderData> Collider::CreateColliderData(
-	PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
-	float rad, Vector3 angle)
+std::shared_ptr<ColliderData> Collider::CreateColliderData(SphereColliderDesc desc, bool isTrigger, bool isCollision)
 {
 	if (colliderData != nullptr) {
 		assert(false && "colliderDataは既に作られている");
 		return colliderData;
 	}
 
-	// kindに応じたColliderを作成
-	switch (kind) {
-	case PhysicsData::ColliderKind::Sphere:		// Sphere用の初期化
-		colliderData = std::make_shared<ColliderDataSphere>(isTrigger, isCollision, rad);
-		break;
-	case PhysicsData::ColliderKind::Capsule:	// Capsule用の初期化
-		colliderData = std::make_shared<ColliderDataCapsule>(isTrigger, isCollision, rad, angle);
-		break;
-	}
+	colliderData = std::make_shared<ColliderDataSphere>(
+		isTrigger, isCollision, desc.radius);
+
 	return colliderData;
 }
 
-void Collider::SetColliderData(
-	PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
-	float rad, Vector3 offset)
+std::shared_ptr<ColliderData> Collider::CreateColliderData(CapsuleColliderDesc desc, bool isTrigger, bool isCollision)
+{
+	if (colliderData != nullptr) {
+		assert(false && "colliderDataは既に作られている");
+		return colliderData;
+	}
+
+	colliderData = std::make_shared<ColliderDataCapsule>(
+		isTrigger, isCollision, desc.radius, desc.startToEnd);
+
+	return colliderData;
+}
+
+std::shared_ptr<ColliderData> Collider::CreateColliderData(InvertedCylinderColliderDesc desc, bool isTrigger, bool isCollision)
+{
+	if (colliderData != nullptr) {
+		assert(false && "colliderDataは既に作られている");
+		return colliderData;
+	}
+
+	colliderData = std::make_shared<ColliderDataInvertedCylinder>(
+		isTrigger, isCollision, desc.startToEnd, desc.innerRadius, desc.outerRadius);
+
+	return colliderData;
+}
+
+void Collider::SetColliderData(SphereColliderDesc desc, bool isTrigger, bool isCollision)
 {
 	if (colliderData == nullptr) {
 		assert(false && "colliderDataが作られていない");
@@ -84,23 +105,42 @@ void Collider::SetColliderData(
 	colliderData->isTrigger = isTrigger;
 	colliderData->isCollision = isCollision;
 
-	// kindに応じたColliderを編集
-	switch (kind) {
-	case PhysicsData::ColliderKind::Sphere:		// Sphere用の代入
-	{
-		auto colliderDataSphere = std::static_pointer_cast<ColliderDataSphere>(colliderData);
-		colliderDataSphere->_radius = rad;
-		colliderData = colliderDataSphere;
-		break;
+	auto colliderDataSphere = std::static_pointer_cast<ColliderDataSphere>(colliderData);
+	colliderDataSphere->_radius = desc.radius;
+	colliderData = colliderDataSphere;
+}
+
+void Collider::SetColliderData(CapsuleColliderDesc desc, bool isTrigger, bool isCollision)
+{
+	if (colliderData == nullptr) {
+		assert(false && "colliderDataが作られていない");
+		return;
 	}
-	case PhysicsData::ColliderKind::Capsule:	// Capsule用の代入
-	{
-		auto colliderDataCapsule = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
-		colliderDataCapsule->_radius = rad;
-		colliderDataCapsule->_offset = offset;
-		colliderData = colliderDataCapsule;
-		break;
+
+	// 共通のデータを変更
+	colliderData->isTrigger = isTrigger;
+	colliderData->isCollision = isCollision;
+
+	auto colliderDataCapsule = std::static_pointer_cast<ColliderDataCapsule>(colliderData);
+	colliderDataCapsule->_radius = desc.radius;
+	colliderDataCapsule->_startToEnd = desc.startToEnd;
+	colliderData = colliderDataCapsule;
+}
+
+void Collider::SetColliderData(InvertedCylinderColliderDesc desc, bool isTrigger, bool isCollision)
+{
+	if (colliderData == nullptr) {
+		assert(false && "colliderDataが作られていない");
+		return;
 	}
-	}
-	return;
+
+	// 共通のデータを変更
+	colliderData->isTrigger = isTrigger;
+	colliderData->isCollision = isCollision;
+
+	auto colliderDataInvertedCylinder = std::static_pointer_cast<ColliderDataInvertedCylinder>(colliderData);
+	colliderDataInvertedCylinder->_startToEnd = desc.startToEnd;
+	colliderDataInvertedCylinder->_innerRadius = desc.innerRadius;
+	colliderDataInvertedCylinder->_outerRadius = desc.outerRadius;
+	colliderData = colliderDataInvertedCylinder;
 }

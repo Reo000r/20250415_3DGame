@@ -6,8 +6,8 @@ class Physics;
 
 class ColliderDataCapsule : public ColliderData {
 public:
-	ColliderDataCapsule(bool isTrigger, bool isCollision, float rad,
-		Vector3 angle = Vector3Up());
+	ColliderDataCapsule(bool isTrigger, bool isCollision, 
+		float rad, Vector3 startToEnd = Vector3Up());
 	
 	/// <summary>
 	/// 始点を返す(原点)
@@ -22,10 +22,10 @@ public:
 	/// <returns></returns>
 	Vector3 GetEndPos(Position3 pos);
 	float GetRad() { return _radius; }
-	Vector3 GetAngle() { return _offset.Normalize(); }
-	float GetDist() { return _offset.Magnitude(); }
+	Vector3 GetAngle() { return _startToEnd.Normalize(); }
+	float GetDist() { return _startToEnd.Magnitude(); }
 
-	void SetStartToEnd(const Vector3& offset) { _offset = offset; }
+	void SetStartToEnd(const Vector3& startToEnd) { _startToEnd = startToEnd; }
 
 	// 以降の変数のアクセス権を渡す
 	friend Collider;
@@ -34,6 +34,7 @@ public:
 private:
 	// 半径
 	float _radius;
-	// startからendまでのベクトル
-	Vector3 _offset;
+	// 純粋なstartからendまでのベクトル
+	// 位置情報は含まない
+	Vector3 _startToEnd;
 };

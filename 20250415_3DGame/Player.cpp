@@ -101,6 +101,16 @@ Player::Player() :
 {
 	rigidbody->Init(true);
 
+	// 当たり判定データ設定
+	CapsuleColliderDesc desc;
+	desc.radius = kColRadius;
+	desc.startToEnd = kColOffset;
+	colliderData = CreateColliderData(
+		desc,	// 種別
+		false,	// isTrigger
+		true	// isCollision
+	);
+
 	// 自身の武器とは当たり判定を行わない
 	colliderData->AddThroughTag(PhysicsData::GameObjectTag::PlayerAttack);
 
@@ -127,16 +137,6 @@ Player::Player() :
 	_animator->SetAnimData(kAnimNameAppeal,			kBaseAnimSpeed, false);
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameIdle);
-
-
-	// 当たり判定データ設定
-	SetColliderData(
-		PhysicsData::ColliderKind::Capsule,	// 種別
-		false,								// isTrigger
-		true,								// isCollision
-		kColRadius,							// 半径
-		kColOffset							// 始点から終点
-	);
 }
 
 Player::~Player()
@@ -200,7 +200,7 @@ void Player::Draw()
 
 #ifdef _DEBUG
 	int color = 0xffffff;
-	int y = 16 * 2;
+	int y = 16 * 7;
 	DrawFormatString(0, y, color, L"Player:Pos (%.3f,%.3f,%.3f)", GetPos().x, GetPos().y, GetPos().z);
 	y += 16;
 	DrawFormatString(0, y, color, L"Player:Vel (%.3f,%.3f,%.3f)", GetVel().x, GetVel().y, GetVel().z);

@@ -15,6 +15,7 @@ class Collider abstract : public std::enable_shared_from_this<Collider> {
 public:
 	/// <summary>
 	/// コンストラクタ
+	/// 球用
 	/// </summary>
 	/// <param name="priority">位置補正の優先度</param>
 	/// <param name="tag">タグ</param>
@@ -27,6 +28,7 @@ public:
 		PhysicsData::ColliderKind colliderKind, 
 		bool isTrigger,
 		bool isCollision);
+
 	virtual ~Collider();
 	void EntryPhysics(std::weak_ptr<Physics> physics_);
 	void ReleasePhysics();
@@ -45,21 +47,74 @@ public:
 	Vector3 GetVel() const;
 	Vector3 GetDir() const;
 
+	// 各当たり判定の詳細情報
+
+	/// <summary>
+	/// 球の当たり判定の詳細情報
+	/// </summary>
+	struct SphereColliderDesc {
+		float radius = 0.0f;
+	};
+	/// <summary>
+	/// カプセルの当たり判定の詳細情報
+	/// </summary>
+	struct CapsuleColliderDesc {
+		float radius = 0.0f;
+		Vector3 startToEnd = Vector3();
+	};
+	/// <summary>
+	/// 反転した円柱の当たり判定の詳細情報
+	/// </summary>
+	struct InvertedCylinderColliderDesc {
+		float innerRadius = 0.0f;
+		float outerRadius = 0.0f;
+		Vector3 startToEnd = Vector3();
+	};
+
 protected:
 	std::shared_ptr<Rigidbody> rigidbody;
 	std::shared_ptr<ColliderData> colliderData;
 
 	std::weak_ptr<Physics> physics;
 
-private:
+protected:
+	/// <summary>
+	/// 球用の当たり判定を作成する
+	/// </summary>
+	/// <returns></returns>
 	std::shared_ptr<ColliderData> CreateColliderData(
-		PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
-		float rad = 0.0f, Vector3 offset = Vector3Up());
+		SphereColliderDesc desc, bool isTrigger, bool isCollision);
+	/// <summary>
+	/// カプセル用の当たり判定を作成する
+	/// </summary>
+	/// <returns></returns>
+	std::shared_ptr<ColliderData> CreateColliderData(
+		CapsuleColliderDesc desc, bool isTrigger, bool isCollision);
+	/// <summary>
+	/// 反転した円柱用の当たり判定を作成する
+	/// </summary>
+	/// <returns></returns>
+	std::shared_ptr<ColliderData> CreateColliderData(
+		InvertedCylinderColliderDesc desc, bool isTrigger, bool isCollision);
 	
-protected:	// それぞれのオブジェクトから呼びたいため
+	/// <summary>
+	/// 球用の当たり判定を編集する
+	/// </summary>
+	/// <returns></returns>
 	void SetColliderData(
-		PhysicsData::ColliderKind kind, bool isTrigger, bool isCollision, 
-		float rad = 0.0f, Vector3 offset = Vector3Up());
+		SphereColliderDesc desc, bool isTrigger, bool isCollision);
+	/// <summary>
+	/// カプセル用の当たり判定を編集する
+	/// </summary>
+	/// <returns></returns>
+	void SetColliderData(
+		CapsuleColliderDesc desc, bool isTrigger, bool isCollision);
+	/// <summary>
+	/// 反転した円柱用の当たり判定を編集する
+	/// </summary>
+	/// <returns></returns>
+	void SetColliderData(
+		InvertedCylinderColliderDesc desc, bool isTrigger, bool isCollision);
 
 private:
 	PhysicsData::GameObjectTag	tag;

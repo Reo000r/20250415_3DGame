@@ -38,9 +38,13 @@ void Animator::Update()
 
 #ifdef _DEBUG
 	//int y = 16 * 9;
-	//DrawFormatString(0, y, 0xffffff, L"CurrentState = %s", _currentAnimName.c_str());
+	//
+	// (0, y, 0xffffff, L"CurrentState = %s", _currentAnimName.c_str());
 	//y += 16;
-	//DrawFormatString(0, y, 0xffffff, L"PrevState = %s", _prevAnimName.c_str());
+	//
+	// 
+	// 
+	// (0, y, 0xffffff, L"PrevState = %s", _prevAnimName.c_str());
 	//y += 16;
 	//DrawFormatString(0, y, 0xffffff, L"BlendRate = %.2f", _blendRate);
 	//y += 16;

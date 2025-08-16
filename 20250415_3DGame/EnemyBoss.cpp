@@ -51,7 +51,8 @@ namespace {
 }
 
 EnemyBoss::EnemyBoss(int modelHandle) :
-	EnemyBase(kHitPoint, kAttackRange),
+	EnemyBase(CapsuleColliderDesc(kColRadius, kColOffset), 
+		kHitPoint, kAttackRange),
 	_nowUpdateState(&EnemyBoss::UpdateSpawning),
 	_weapon(std::make_unique<WeaponEnemy>())
 
@@ -71,15 +72,6 @@ EnemyBoss::EnemyBoss(int modelHandle) :
 	_animator->SetStartAnim(kAnimNameSpawn);
 
 	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * kScaleMul);
-
-	// 当たり判定データ設定
-	SetColliderData(
-		PhysicsData::ColliderKind::Capsule,	// 種別
-		false,								// isTrigger
-		true,								// isCollision
-		kColRadius,							// 半径
-		kColOffset							// 始点から終点
-	);
 
 
 

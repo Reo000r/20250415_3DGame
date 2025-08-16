@@ -7,7 +7,7 @@
 class Physics;
 class Camera;
 class Player;
-class Ground;
+class Arena;
 class Skydome;
 class WaveManager;
 class EnemyManager;
@@ -45,7 +45,7 @@ private:
 
 	std::shared_ptr<Camera> _camera;
 	std::shared_ptr<Player> _player;
-	std::shared_ptr<Ground> _ground;
+	std::shared_ptr<Arena> _arena;
 	std::unique_ptr<Skydome> _skydome;
 	std::shared_ptr<WaveManager> _waveManager;
 	std::shared_ptr<EnemyManager> _enemyManager;

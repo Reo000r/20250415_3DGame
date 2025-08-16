@@ -10,7 +10,7 @@
 
 #include <DxLib.h>
 
-EnemyBase::EnemyBase(float hitPoint, float transferAttackRad) :
+EnemyBase::EnemyBase(CapsuleColliderDesc desc, float hitPoint, float transferAttackRad) :
 	Collider(PhysicsData::Priority::Middle,
 		PhysicsData::GameObjectTag::Enemy,
 		PhysicsData::ColliderKind::Capsule,
@@ -23,6 +23,12 @@ EnemyBase::EnemyBase(float hitPoint, float transferAttackRad) :
 	_transferAttackRad(transferAttackRad),
 	_state(State::Spawning)
 {
+	colliderData = CreateColliderData(
+		desc,	// 詳細情報
+		false,	// isTrigger
+		true	// isCollision
+	);
+
 	// 自身の武器やほかの敵の武器とは当たり判定を行わない
 	colliderData->AddThroughTag(PhysicsData::GameObjectTag::EnemyAttack);
 }
