@@ -15,7 +15,7 @@
 
 SceneResult::SceneResult() :
 	_frame(Statistics::kFadeInterval),
-	_nextSceneName(SceneName::Title),
+	_nextSceneName(NextSceneName::Title),
 	_nextScene(nullptr),
 	_nowUpdateState(&SceneResult::FadeinUpdate),
 	_nowDrawState(&SceneResult::FadeDraw),
@@ -56,23 +56,24 @@ void SceneResult::FadeinUpdate()
 
 void SceneResult::NormalUpdate()
 {
-	_resultDisplay->Update();
+	_resultDisplay->NormalUpdate();
 
-#ifdef _DEBUG
-	// 決定を押したら
-	if (Input::GetInstance().IsTrigger("next")) {
-		_nextSceneName = SceneName::GamePlay;
-		_nowUpdateState = &SceneResult::FadeoutUpdate;
-		_nowDrawState = &SceneResult::FadeDraw;
-		_frame = 0;
+	//　リザルトアニメーションが終わっている状態で
+	if (_resultDisplay->IsAnimationFinished()) {
+		// 決定を押したら
+		if (Input::GetInstance().IsTrigger("Result:ChangeGameScene")) {
+			_nextSceneName = NextSceneName::GamePlay;
+			_nowUpdateState = &SceneResult::FadeoutUpdate;
+			_nowDrawState = &SceneResult::FadeDraw;
+			_frame = 0;
+		}
+		else if (Input::GetInstance().IsTrigger("Result:ChangeTitleScene")) {
+			_nextSceneName = NextSceneName::Title;
+			_nowUpdateState = &SceneResult::FadeoutUpdate;
+			_nowDrawState = &SceneResult::FadeDraw;
+			_frame = 0;
+		}
 	}
-	else if (Input::GetInstance().IsTrigger("back")) {
-		_nextSceneName = SceneName::Title;
-		_nowUpdateState = &SceneResult::FadeoutUpdate;
-		_nowDrawState = &SceneResult::FadeDraw;
-		_frame = 0;
-	}
-#endif // _DEBUG
 }
 
 void SceneResult::FadeoutUpdate()
@@ -80,10 +81,10 @@ void SceneResult::FadeoutUpdate()
 	_frame++;
 
 	if (_frame >= Statistics::kFadeInterval) {
-		if (_nextSceneName == SceneName::GamePlay) {
+		if (_nextSceneName == NextSceneName::GamePlay) {
 			_nextScene = std::make_shared<SceneGamePlay>();
 		}
-		else if (_nextSceneName == SceneName::Title) {
+		else if (_nextSceneName == NextSceneName::Title) {
 			_nextScene = std::make_shared<SceneTitle>();
 		}
 		else {
@@ -97,6 +98,10 @@ void SceneResult::FadeoutUpdate()
 		return;  // 自分が死んでいるのでもし
 		// 余計な処理が入っているとまずいのでreturn;
 	}
+
+
+	// フェードアウト時の更新処理を呼ぶ
+	_resultDisplay->FadeoutUpdate();
 }
 
 void SceneResult::FadeDraw()

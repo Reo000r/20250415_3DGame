@@ -54,7 +54,7 @@ Arena::~Arena()
 void Arena::Init(std::weak_ptr<Physics> physics)
 {
 	// physicsに登録
-	EntryPhysics(physics);
+	//EntryPhysics(physics);
 }
 
 void Arena::Draw()

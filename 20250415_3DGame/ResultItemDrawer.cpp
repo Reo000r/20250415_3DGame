@@ -9,7 +9,7 @@ namespace {
     constexpr int kFontSize = 64;
     constexpr int kFontThickness = 3;
     constexpr int kScoreDigitCount = 5;      // 表示桁数
-    constexpr int kTimeDigitCount = 5;      // 表示桁数
+    constexpr int kTimeDigitCount = 6;       // 表示桁数
     constexpr int kDigitFinalizeDuration = 30;
 }
 

@@ -28,6 +28,12 @@ void GameManager::Update()
 	// 処理なし
 }
 
+void GameManager::ChangeFirstPlayState()
+{
+	// 呼ばれたら初回プレイ状態でなくなったとする
+	_isFirstPlay = false;
+}
+
 void GameManager::AddEnemyDefeatScore(int score)
 {
 	if (score > 0) {

@@ -11,42 +11,61 @@ namespace {
     const unsigned int kTextColor = GetColor(255, 255, 255);
     const std::wstring kFontName = L"Impact";
     constexpr int kResultFontSize = 128;     // 上部文字用サイズ
+    constexpr int kNextSceneFontSize = 96;   // 案内文字用サイズ
     constexpr int kFontThickness = 3;
     const std::wstring kResultText = L"RESULT";
     const std::wstring kScoreText = L"SCORE : ";
     const std::wstring kTimeText = L"TIME  : ";
     const std::wstring kTimeBonusText = L"TIME BONUS : ";
     const std::wstring kTotalScoreText = L"TOTAL SCORE : ";
+    const std::wstring kNextSceneText = L"Press A to Restart\n   Press B to Title";
     const std::wstring kScoreFormat = L"%05d";      // 5桁0埋め部分
 
     // アニメーション用の定数
     constexpr int kSlideInDuration = 45;            // スライドインにかかるフレーム
+    constexpr int kNextSceneFontThicknessIn = 40;	// 文字の出現期間(フレーム)
+    constexpr int kNextSceneFontThicknessOut = 20;	// 文字の消滅期間(フレーム)
+    constexpr int kNextSceneFontThicknessChange = 4;	// シーン切り替え中の文字の点滅切り替え時間(フレーム)
+
 
     // 描画レイアウト用の定数
-    constexpr int kResultTextY = 100;               // "RESULT"文字のY座標
-    constexpr int kItemStartY = kResultTextY + 200;
-    constexpr int kItemOffsetY = 80;
+    constexpr int kResultTextY = Statistics::kScreenHeight * 0.1f;  // "RESULT"文字のY座標
+    constexpr int kItemStartY = kResultTextY + Statistics::kScreenHeight * 0.2f;
+    constexpr int kItemOffsetY = Statistics::kScreenHeight * 0.08f;
+    constexpr int kNextSceneTextY = kResultTextY + Statistics::kScreenHeight * 0.6f;
+
+    constexpr float kLabelTargetDrawX = Statistics::kScreenWidth * 0.3f;
+    constexpr float kValueTargetDrawX = Statistics::kScreenWidth * 0.7f;
+    constexpr float kLabelStartDrawX = kLabelTargetDrawX + Statistics::kScreenWidth * 1.5f;
+    constexpr float kValueStartDrawX = kValueTargetDrawX + Statistics::kScreenWidth * 1.5f;
 }
 
 ResultDisplay::ResultDisplay() :
     _resultFontHandle(-1),
-    _animationState(AnimationState::SlidingIn),
+    _animationState(SlideAnimationState::SlidingIn),
     _animationTimer(0),
-    _labelDrawX(0.0f),
-    _labelTargetDrawX(0.0f),
-    _valueDrawX(0.0f),
-    _valueTargetDrawX(0.0f),
-    _resultItems()
+    _labelDrawX(kLabelStartDrawX),
+    _valueDrawX(kValueStartDrawX),
+    _resultItems(),
+    _nextSceneTextTickFrame(0),
+    _isNextSceneTextActive(false)
 {
     _resultFontHandle = CreateFontToHandle(kFontName.c_str(), kResultFontSize, kFontThickness,
         DX_FONTTYPE_ANTIALIASING_EDGE);
     assert(_resultFontHandle >= 0 && "フォントの作成に失敗");
+
+    _nextSceneFontHandle = CreateFontToHandle(kFontName.c_str(), kNextSceneFontSize, kFontThickness,
+        DX_FONTTYPE_ANTIALIASING_EDGE);
+    assert(_nextSceneFontHandle >= 0 && "フォントの作成に失敗");
 }
 
 ResultDisplay::~ResultDisplay()
 {
     if (_resultFontHandle != -1) {
         DeleteFontToHandle(_resultFontHandle);
+    }
+    if (_nextSceneFontHandle != -1) {
+        DeleteFontToHandle(_nextSceneFontHandle);
     }
 }
 
@@ -67,27 +86,21 @@ void ResultDisplay::Init()
         ResultItemDrawer::ValueType::Time, kTimeText, clearTime));
     _resultItems.push_back(std::make_unique<ResultItemDrawer>(
         ResultItemDrawer::ValueType::Number, kTotalScoreText, static_cast<float>(totalScore)));
-
-    // 描画レイアウトの計算
-    _labelTargetDrawX = Statistics::kScreenWidth * 0.3f;
-    _valueTargetDrawX = Statistics::kScreenWidth * 0.7f;
-    _labelDrawX = Statistics::kScreenWidth * 1.5f;
-    _valueDrawX = Statistics::kScreenWidth * 1.5f;
 }
 
-void ResultDisplay::Update()
+void ResultDisplay::NormalUpdate()
 {
     _animationTimer++;
 
     switch (_animationState)
     {
-    case AnimationState::SlidingIn:
+    case SlideAnimationState::SlidingIn:
     {
         UpdateSlidingIn();
     }
     break;
 
-    case AnimationState::AnimatingItems:
+    case SlideAnimationState::AnimatingItems:
     {
         bool allFinished = true;
         for (const auto& item : _resultItems) {
@@ -97,14 +110,44 @@ void ResultDisplay::Update()
             }
         }
         if (allFinished) {
-            _animationState = AnimationState::Finished;
+            _animationState = SlideAnimationState::Finished;
+            _isNextSceneTextActive = true;
         }
     }
     break;
 
-    case AnimationState::Finished:
-        // 何もしない
+    case SlideAnimationState::Finished:
+
+        _nextSceneTextTickFrame++;
+
+        // 文字描画状態切り替え
+        // 表示されている　　かつ　出現時間を超えている
+        // または
+        // 表示されていない　かつ　消滅時間を超えているなら
+        if ((_isNextSceneTextActive &&
+            _nextSceneTextTickFrame >= kNextSceneFontThicknessIn) ||
+            (!_isNextSceneTextActive &&
+                _nextSceneTextTickFrame >= kNextSceneFontThicknessOut)) {
+
+            // 時間をリセットし描画状態を反転させる
+            _nextSceneTextTickFrame = 0;
+            _isNextSceneTextActive = !_isNextSceneTextActive;
+        }
         break;
+    }
+}
+
+void ResultDisplay::FadeoutUpdate()
+{
+    // フェードアウト時は案内のアニメーションのみ行う
+    _nextSceneTextTickFrame++;
+
+    // 文字描画状態切り替え
+    // 点滅切り替え時間を超えているなら
+    if (_nextSceneTextTickFrame >= kNextSceneFontThicknessChange) {
+        // 時間をリセットし描画状態を反転させる
+        _nextSceneTextTickFrame = 0;
+        _isNextSceneTextActive = !_isNextSceneTextActive;
     }
 }
 
@@ -126,6 +169,20 @@ void ResultDisplay::Draw()
         float drawY = static_cast<float>(kItemStartY + (kItemOffsetY * i));
         _resultItems[i]->Draw(_labelDrawX, _valueDrawX, drawY);
     }
+
+    // 消滅中は描画を行わない
+    if (!_isNextSceneTextActive) return;
+
+    // 同様に描画する
+    int nextSceneTextWidth = GetDrawStringWidthToHandle(
+        kNextSceneText.c_str(),
+        kNextSceneText.length(),
+        _nextSceneFontHandle);
+    int NextSceneDrawX = (Statistics::kScreenWidth - nextSceneTextWidth) * 0.5f;
+    DrawStringToHandle(
+        NextSceneDrawX, kNextSceneTextY,
+        kNextSceneText.c_str(), kTextColor,
+        _nextSceneFontHandle);
 }
 
 void ResultDisplay::UpdateSlidingIn()
@@ -138,11 +195,11 @@ void ResultDisplay::UpdateSlidingIn()
 
     float startX = Statistics::kScreenWidth * 1.5f;
     
-    _labelDrawX = startX + (_labelTargetDrawX - startX) * easedProgress;
-    _valueDrawX = startX + (_valueTargetDrawX - startX) * easedProgress;
+    _labelDrawX = startX + (kLabelTargetDrawX - startX) * easedProgress;
+    _valueDrawX = startX + (kValueTargetDrawX - startX) * easedProgress;
 
     if (progress >= 1.0f) {
-        _animationState = AnimationState::AnimatingItems;
+        _animationState = SlideAnimationState::AnimatingItems;
         _animationTimer = 0;
     }
 }

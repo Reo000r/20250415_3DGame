@@ -12,7 +12,7 @@ class SceneController
 {
 private:
 
-	// シングルトンにした
+	// シングルトン
 	SceneController();
 	SceneController(const SceneController&) = delete;
 	void operator=(const SceneController&) = delete;

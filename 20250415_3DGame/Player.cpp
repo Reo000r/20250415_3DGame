@@ -30,7 +30,7 @@ namespace {
 	// 回転速度(ラジアン)
 	constexpr float kTurnSpeed = 0.2f;
 	
-	constexpr float kHitPoint = 1000.0f;
+	constexpr float kHitPoint = 100.0f;
 
 	const std::wstring kAnimName = L"Armature|Animation_";
 	const std::wstring kAnimNameIdle =			kAnimName + L"Idle";
@@ -96,6 +96,7 @@ Player::Player() :
 	_rotAngle(0.0f),
 	_hasDerivedAttackInput(false),
 	_hitPoint(kHitPoint),
+	_isAlive(true),
 	_attackPower(kAttackPower),
 	_reactCooltime(0)
 {
@@ -576,6 +577,9 @@ void Player::UpdateDeath()
 	if (_animator->IsEnd(kAnimNameDead)) {
 		// 物理判定から除外する
 		ReleasePhysics();
+
+		// 死亡アニメーションが終わったら死亡したことにする
+		_isAlive = false;
 	}
 }
 

@@ -28,7 +28,7 @@ public:
 
 	float GetHitPoint() const { return _hitPoint; }
 	float GetMaxHitPoint() const;
-	bool IsAlive() { return (_hitPoint > 0.0f); }
+	bool IsAlive() { return _isAlive; }
 	
 	/// <summary>
 	/// ダメージを受ける処理
@@ -86,6 +86,7 @@ private:
 	bool  _hasDerivedAttackInput;
 
 	float _hitPoint;
+	bool _isAlive;
 
 	// 攻撃力
 	float _attackPower;

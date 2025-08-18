@@ -1,11 +1,12 @@
 ﻿#include "SceneController.h"
-//#include "SceneTitle.h"
-#include "SceneGamePlay.h"
+#include "SceneTitle.h"
+//#include "SceneGamePlay.h"
+//#include "SceneResult.h"
 
 SceneController::SceneController()
 {
 	// 一番最初のシーンだけは割り当てておく
-	ChangeScene(std::make_shared<SceneGamePlay>());
+	ChangeScene(std::make_shared<SceneTitle>());
 }
 
 SceneController& SceneController::GetInstance()

@@ -1,13 +1,17 @@
 ﻿#pragma once
 #include "SceneBase.h"
-
 #include <memory>
+#include <string>
+#include <vector>
 
-class SceneTitle final : public SceneBase
+/// <summary>
+/// 操作説明を行うシーン
+/// </summary>
+class SceneOperationInstruction final : public SceneBase
 {
 public:
-	SceneTitle();
-	~SceneTitle();
+	SceneOperationInstruction();
+	~SceneOperationInstruction();
 
 	/// <summary>
 	/// 初期化
@@ -47,19 +51,19 @@ private:
 	/// 通常時の描画
 	/// </summary>
 	void NormalDraw();
-	
+
 
 	int _frame;
 
 	// _updateや_drawが変数であることを分かりやすくしている
-	using UpdateFunc_t = void (SceneTitle::*)();
-	using DrawFunc_t = void (SceneTitle::*)();
+	using UpdateFunc_t = void (SceneOperationInstruction::*)();
+	using DrawFunc_t = void (SceneOperationInstruction::*)();
 	UpdateFunc_t _nowUpdateState = nullptr;
 	DrawFunc_t _nowDrawState = nullptr;
 
 	enum class NextSceneName {
 		GamePlay,		// ゲームシーン
-		Instruction,	// 操作説明
+		Title,			// タイトル
 	};
 
 	NextSceneName _nextSceneName;
@@ -68,13 +72,19 @@ private:
 private:
 
 	/// <summary>
-	/// タイトルに描画する文字を描画
+	/// 操作説明を描画
 	/// </summary>
-	void DrawTitleString();
+	void DrawOperationInstructionString();
+
 
 	// 文字ハンドル
-	int _titleFontHandle;
-	int _nextSceneFontHandle;
+	int _headingFontHandle;			// 見出し文字ハンドル
+	int _subheadingFontHandle;		// 小見出し文字ハンドル
+	int _descriptionFontHandle;		// 詳細文字ハンドル
+	int _nextSceneFontHandle;		// シーン遷移案内文字ハンドル
+
+	std::vector<std::wstring> _subheadingString;	// 小見出し文字
+	std::vector<std::wstring> _descriptionString;	// 詳細文字
 
 	// 演出用変数
 	int _nextSceneTextTickFrame;	// 文字点滅時間を管理
@@ -82,3 +92,4 @@ private:
 
 
 };
+

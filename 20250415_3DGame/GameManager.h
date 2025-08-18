@@ -43,6 +43,12 @@ public:
 	void Update();
 
 	/// <summary>
+	/// 初回プレイ状態を更新
+	/// 操作説明を出した後に更新される想定
+	/// </summary>
+	void ChangeFirstPlayState();
+
+	/// <summary>
 	/// 敵撃破時のスコアを加算する
 	/// </summary>
 	/// <param name="score">加算するスコア</param>
@@ -67,6 +73,7 @@ public:
 	int GetCurrentWaveIndex() const;
 	int GetTotalWaves() const;
 	bool IsPlayerAlive() const;
+	bool IsFirstPlay() const { return _isFirstPlay; };
 
 private:
 	
@@ -78,5 +85,7 @@ private:
 	int _enemyDefeatScore;
 	float _clearTime;
 	int _timeBonusScore;
+
+	int _isFirstPlay = true;
 };
 

@@ -4,8 +4,8 @@
 #include <DxLib.h>
 
 namespace {
-    const char* kKeyConfigSignature = "kcfg";
-    const char* kKeyConfigFilename = "keyconfig.dat";
+    const std::string kKeyConfigSignature = "kcfg";
+    const std::string kKeyConfigFilename = "keyconfig.dat";
 }
 
 Input& Input::GetInstance() {
@@ -127,7 +127,7 @@ void Input::SetDefault()
                             {PeripheralType::pad1, PAD_INPUT_8}     // RStartボタン
     };
     _inputTable["back"] = { {PeripheralType::keybd, KEY_INPUT_ESCAPE},
-                            {PeripheralType::pad1, PAD_INPUT_2}     // Bボタン
+                            {PeripheralType::pad1, PAD_INPUT_7}     // LStartボタン
     };
 
     _inputTable["ok"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
@@ -137,7 +137,23 @@ void Input::SetDefault()
                             {PeripheralType::pad1, PAD_INPUT_7}     // LStartボタン
     };
 
-    //ゲーム中のボタンテーブル
+    // タイトルシーンで使用するボタンテーブル
+    _inputTable["Title:ChangeGameScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                        {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
+    };
+    _inputTable["Title:ChangeInstructionScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                        {PeripheralType::pad1, PAD_INPUT_2}         // Bボタン
+    };
+
+    // 操作説明シーンで使用するボタンテーブル
+    _inputTable["Instruction:ChangeGameScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                        {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
+    };
+    _inputTable["Instruction:ChangeTitleScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                        {PeripheralType::pad1, PAD_INPUT_2}         // Bボタン
+    };
+
+    // ゲームシーンで使用するボタンテーブル
     _inputTable["action"] = { {PeripheralType::keybd, KEY_INPUT_Z},
                             {PeripheralType::pad1, PAD_INPUT_4}     // Yボタン
     };
@@ -145,7 +161,7 @@ void Input::SetDefault()
                         {PeripheralType::pad1, PAD_INPUT_3}         // Xボタン
     };
     _inputTable["jump"] = { {PeripheralType::keybd, KEY_INPUT_C},
-                        {PeripheralType::pad1, PAD_INPUT_1}         // (多分)Aボタン
+                        {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
     };
     _inputTable["Rbutton"] = { {PeripheralType::keybd, KEY_INPUT_I},
                         {PeripheralType::pad1, PAD_INPUT_6}         // 右ボタン
@@ -167,6 +183,15 @@ void Input::SetDefault()
     _inputTable["right"] = { {PeripheralType::keybd, KEY_INPUT_RIGHT},
                             {PeripheralType::pad1, PAD_INPUT_RIGHT}
     };
+    
+    // リザルトシーンで使用するボタンテーブル
+    _inputTable["Result:ChangeGameScene"] = _inputTable["NextScene"];
+
+    _inputTable["Result:ChangeTitleScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                        {PeripheralType::pad1, PAD_INPUT_2}         // Bボタン
+    };
+    
+    
     _tempInputTable = _inputTable;  // 一時テーブルにコピー
 
     /*
@@ -269,10 +294,10 @@ int Input::GetPadState(int padno) const
 void Input::SaveInputTable()
 {
     FILE* fp = nullptr;
-    auto err = fopen_s(&fp, kKeyConfigFilename, "wb");//バイナリで「書き込み」
+    auto err = fopen_s(&fp, kKeyConfigFilename.c_str(), "wb");  //バイナリで「書き込み」
     //識別子書き込み(４バイト)
-    std::string signature = kKeyConfigSignature;//ファイルを識別するための識別子
-    fwrite(signature.data(), signature.size(), 1, fp);//識別子の書き込み
+    std::string signature = kKeyConfigSignature;                //ファイルを識別するための識別子
+    fwrite(signature.data(), signature.size(), 1, fp);          //識別子の書き込み
 
     //バージョンの書き込み
     const float version = 1.0f;

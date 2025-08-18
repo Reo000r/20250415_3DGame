@@ -40,14 +40,14 @@ private:
 	void NormalDraw();
 
 private:
-	enum class SceneName {
+	enum class NextSceneName {
 		Title,
 		GamePlay,
 	};
 
 	int _frame;
 
-	SceneName _nextSceneName;
+	NextSceneName _nextSceneName;
 	std::shared_ptr<SceneBase> _nextScene;
 
 	// _updateや_drawが変数であることを分かりやすくしている

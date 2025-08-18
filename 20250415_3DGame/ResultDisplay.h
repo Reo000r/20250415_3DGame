@@ -10,7 +10,7 @@ private:
 	/// <summary>
 	/// アニメーション状態
 	/// </summary>
-	enum class AnimationState {
+	enum class SlideAnimationState {
 		SlidingIn,  // スライドイン中
 		AnimatingItems,// アニメーション中
 		Finished    // アニメーション完了
@@ -26,29 +26,43 @@ public:
 	void Init();
 
 	/// <summary>
-	/// 更新
+	/// 通常の更新
 	/// </summary>
-	void Update();
+	void NormalUpdate();
+	/// <summary>
+	/// フェードアウト時の更新
+	/// </summary>
+	void FadeoutUpdate();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// アニメーション処理が終了しているか返す
+	/// </summary>
+	/// <returns></returns>
+	bool IsAnimationFinished() { return _animationState == SlideAnimationState::Finished; }
+
 private:
 
-	// 更新処理の補助関数
+	/// <summary>
+	/// 更新処理の補助関数
+	/// </summary>
 	void UpdateSlidingIn();
 
 	int _resultFontHandle;
+	int _nextSceneFontHandle;
 
-	AnimationState _animationState;	// 現在のアニメーション状態
+	SlideAnimationState _animationState;	// 現在のアニメーション状態
 	int _animationTimer;            // アニメーション進行度タイマー
 	
 	float _labelDrawX;
-	float _labelTargetDrawX;
 	float _valueDrawX;
-	float _valueTargetDrawX;
 
 	std::vector<std::unique_ptr<ResultItemDrawer>> _resultItems;
+
+	int _nextSceneTextTickFrame;
+	bool _isNextSceneTextActive;
 };

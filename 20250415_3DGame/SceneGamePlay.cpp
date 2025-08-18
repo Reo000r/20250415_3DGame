@@ -112,6 +112,17 @@ void SceneGamePlay::NormalUpdate()
 		_nowDrawState = &SceneGamePlay::FadeDraw;
 		_frame = 0;
 	}
+	// 失敗条件を満たしたら
+	else if (!_player->IsAlive()
+#ifdef _DEBUG
+		|| Input::GetInstance().IsTrigger("back")
+#endif // _DEBUG
+		) {
+		// (クリア時と同じシーンに飛ばしている)
+		_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
+		_nowDrawState = &SceneGamePlay::FadeDraw;
+		_frame = 0;
+	}
 }
 
 void SceneGamePlay::FadeoutUpdate()

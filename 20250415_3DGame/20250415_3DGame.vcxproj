@@ -49,6 +49,7 @@
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneController.cpp" />
     <ClCompile Include="SceneGamePlay.cpp" />
+    <ClCompile Include="SceneOperationInstruction.cpp" />
     <ClCompile Include="SceneResult.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Skydome.cpp" />
@@ -97,6 +98,7 @@
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneController.h" />
     <ClInclude Include="SceneGamePlay.h" />
+    <ClInclude Include="SceneOperationInstruction.h" />
     <ClInclude Include="SceneResult.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Skydome.h" />

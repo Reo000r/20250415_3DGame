@@ -620,8 +620,9 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 		Vector2 vecXZ(vecBetweenClosestPoints.x, vecBetweenClosestPoints.z);
 		float distXZ = vecXZ.Magnitude();
 
-		// 衝突していない場合 (単純な距離チェック)
-		if (distXZ > cylinderOuterRad + capsuleRad || distXZ < cylinderInnerRad - capsuleRad) {
+		// XZ平面上での距離を確認し、衝突していない場合
+		if (distXZ > cylinderOuterRad + capsuleRad || 
+			distXZ < cylinderInnerRad - capsuleRad) {
 			// 上面/下面のフチとの判定は
 			// 未実装
 			return;
