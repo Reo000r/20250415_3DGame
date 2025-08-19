@@ -94,6 +94,18 @@ Vector3 Vector3::operator-() const {
 	return Vector3(-x, -y, -z);
 }
 
+bool Vector3::operator==(const Vector3& v) const
+{
+	return ((this->x == v.x) &&
+			(this->y == v.y) &&
+			(this->z == v.z));
+}
+
+bool Vector3::operator!=(const Vector3& v) const
+{
+	return !(*this == v);
+}
+
 float Vector3::Magnitude() const {
 	return Magnitude(*this);
 }

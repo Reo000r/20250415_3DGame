@@ -28,6 +28,8 @@ public:
 
 	float GetHitPoint() const { return _hitPoint; }
 	float GetMaxHitPoint() const;
+	float GetStamina() const { return _stamina; }
+	float GetMaxStamina() const;
 	bool IsAlive() { return _isAlive; }
 	
 	/// <summary>
@@ -72,6 +74,39 @@ private:
 	/// </summary>
 	void Rotate();
 
+	/// <summary>
+	/// 攻撃可能な入力であるか
+	/// </summary>
+	/// <returns>可能であればtrue</returns>
+	bool CanAttackInput();
+	/// <summary>
+	/// 歩ける入力であるか
+	/// </summary>
+	/// <returns>スティック入力か移動キー入力があればtrue</returns>
+	bool CanWalkInput();
+	/// <summary>
+	/// 走れる入力であるか
+	/// </summary>
+	/// <returns>走れる程のスティック入力か移動キー入力があればtrue</returns>
+	bool CanRunInput();
+
+	/// <summary>
+	/// スタミナの回復待機時間を減らす
+	/// 待機時間がない場合は回復させる
+	/// </summary>
+	void StaminaRecovery();
+
+	/// <summary>
+	/// スタミナを減少量分減らす
+	/// </summary>
+	/// <returns>減らせたかどうか</returns>
+	void StaminaDecreace();
+	/// <summary>
+	/// スタミナを減少量分減らせるかどうか
+	/// </summary>
+	/// <returns>減らせるかどうか</returns>
+	bool CanStaminaDecreace();
+
 	std::unique_ptr<Animator> _animator;
 
 	std::weak_ptr<Camera> _camera;
@@ -85,7 +120,9 @@ private:
 	// 攻撃の派生入力があったかどうか
 	bool  _hasDerivedAttackInput;
 
-	float _hitPoint;
+	float _hitPoint;	// HP
+	float _stamina;		// スタミナ
+	int _staminaRecoveryStandbyFrame;		// スタミナ回復待機時間
 	bool _isAlive;
 
 	// 攻撃力

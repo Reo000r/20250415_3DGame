@@ -12,9 +12,12 @@
 #include <DxLib.h>
 
 namespace {
-	Vector3 kStartToEnd = Vector3(0.0f, 100.0f, 0.0f);
-	int kColInnerRadius = 700.0f;
-	int kColOuterRadius = 2000.0f;
+	const std::wstring kModelPath = L"data/model/field/Arena.mv1";
+	const Vector3 kModelScale = Vector3(1.5f, 1.5f, 1.5f) * 0.5f;
+
+	const Vector3 kStartToEnd = Vector3(0.0f, 1000.0f, 0.0f);
+	constexpr int kColInnerRadius = 300.0f;
+	constexpr int kColOuterRadius = 1000.0f;
 }
 
 Arena::Arena() :
@@ -41,9 +44,9 @@ Arena::Arena() :
 	colliderData->AddThroughTag(PhysicsData::GameObjectTag::EnemyAttack);
 
 	// モデルの読み込み
-	_modelHandle = MV1LoadModel(L"data/model/field/Arena.mv1");
+	_modelHandle = MV1LoadModel(kModelPath.c_str());
 	MV1SetPosition(_modelHandle, Vector3(0, 0, 0));
-	MV1SetScale(_modelHandle, Vector3(1, 1, 1) * 0.5f);
+	MV1SetScale(_modelHandle, kModelScale);
 }
 
 Arena::~Arena()

@@ -24,6 +24,18 @@ public:
 	/// </summary>
 	void Update();
 
+	// 周辺機器種別
+	enum class PeripheralType {
+		keybd,	// キーボード
+		pad1	// パッド１
+	};
+
+	/// <summary>
+	/// 最後に入力された機器を返す
+	/// </summary>
+	/// <returns></returns>
+	PeripheralType GetLastInputType();
+
 	/// <summary>
 	/// 押されているかどうかの取得
 	/// </summary>
@@ -47,7 +59,7 @@ public:
 	/// <summary>
 	/// 右スティックの入力情報をVector3型で返す
 	/// x、zに値を入れる
-	/// 最後にあった入力を返す
+	/// 直前にあった入力を返す
 	/// </summary>
 	/// <returns>右スティックの入力情報</returns>
 	Vector3 GetPadRightSitckLast() const;
@@ -61,21 +73,62 @@ public:
 	/// <summary>
 	/// 左スティックの入力情報をVector3型で返す
 	/// x、zに値を入れる
-	/// 最後にあった入力を返す
+	/// 直前にあった入力を返す
 	/// </summary>
 	/// <returns>左スティックの入力情報</returns>
 	Vector3 GetPadLeftSitckLast() const;
+
+	/// <summary>
+	/// 右クリックが行われているか取得
+	/// </summary>
+	/// <returns>押されていればtrue、でなければfalse</returns>
+	bool IsPressMouseRightClick() const;
+	/// <summary>
+	/// 左クリックが行われているか取得
+	/// </summary>
+	/// <returns>押されていればtrue、でなければfalse</returns>
+	bool IsPressMouseLeftClick() const;
+	/// <summary>
+	/// ホイールクリックが行われているか取得
+	/// </summary>
+	/// <returns>押されていればtrue、でなければfalse</returns>
+	bool IsPressMouseMiddleClick() const;
+
+	/// <summary>
+	/// 右クリックが行われた瞬間であるか取得
+	/// </summary>
+	/// <returns>押されていればtrue、でなければfalse</returns>
+	bool IsTriggerMouseRightClick() const;
+	/// <summary>
+	/// 左クリックが行われた瞬間であるか取得
+	/// </summary>
+	/// <returns>押されていればtrue、でなければfalse</returns>
+	bool IsTriggerMouseLeftClick() const;
+	/// <summary>
+	/// ホイールクリックが行われた瞬間であるか取得
+	/// </summary>
+	/// <returns>押されていればtrue、でなければfalse</returns>
+	bool IsTriggerMouseMiddleClick() const;
+
+	/// <summary>
+	/// マウスの位置情報をVector3型で返す
+	/// x、zに値を入れる
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetMousePosition() const;
+	/// <summary>
+	/// マウスの位置情報をVector3型で返す
+	/// x、zに値を入れる
+	/// 直前にあった入力を返す
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetMousePositionLast() const;
 
 private:
 	Input();
 	Input(const Input&) = delete;
 	void operator=(const Input&) = delete;
 
-	// 周辺機器種別
-	enum class PeripheralType {
-		keybd,	// キーボード
-		pad1	// パッド１
-	};
 	///入力情報定義用
 	struct InputState {
 		PeripheralType type;	// 周辺機器種別
@@ -108,6 +161,9 @@ private:
 
 	std::vector<std::string> _orderForDisplay;	// 表示用(mapの順序はコントロールできないため)
 
+	// 最後に入力された機器
+	PeripheralType _lastInputType;
+
 	// 入力保存
 	int _currentRawPadState;			// 今の生パッドステート
 	int _lastRawPadState;				// 直前の生パッドステート
@@ -115,11 +171,16 @@ private:
 	char _lastRawKeybdState[256];		// 直前のキーボード状態
 
 	// 左右スティック入力情報
-	Vector3 _rightStickInput;
-	Vector3 _leftStickInput;
-	// 左右スティックの最後の入力情報
-	Vector3 _rightStickLastInput;
-	Vector3 _leftStickLastInput;
+	Vector3 _currentRightStickInput;
+	Vector3 _lastRightStickInput;
+	Vector3 _currentLeftStickInput;
+	Vector3 _lastLeftStickInput;
+
+	// マウス入力情報
+	int _currentRawMouseState;
+	int _lastRawMouseState;
+	Vector3 _currentMousePosition;
+	Vector3 _lastMousePosition;
 
 	/// <summary>
 	/// 現在のキーボード状態を調べて最も

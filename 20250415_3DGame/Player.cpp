@@ -27,10 +27,15 @@ namespace {
 	constexpr float kGround = 0.0f;
 	constexpr int kReactCooltimeFrame = 60;	// 無敵時間
 
-	// 回転速度(ラジアン)
-	constexpr float kTurnSpeed = 0.2f;
+	constexpr float kTurnSpeed = 0.2f;	// 回転速度(ラジアン)
+	const float kStartPlayerRotAmount = Calc::ToRadian(180.0f);	// 初期の向き(ラジアン)
 	
-	constexpr float kHitPoint = 100.0f;
+	constexpr float kMaxHitPoint = 100.0f;
+	constexpr float kMaxStamina = 100.0f;
+	constexpr float kStaminaCooltimeFrame = 30.0f;		// スタミナが回復し始めるまでにかかる時間
+	constexpr float kStaminaRecoveryFrame = 60.0f;		// スタミナが最大回復までにかかる時間
+	constexpr float kStaminaRecoveryAmount = 1.0f / kStaminaRecoveryFrame * kMaxStamina;	// 1f当たりのスタミナ回復量
+	constexpr float kStaminaDecreaceAmount = 20.0f;		// スタミナ減少量
 
 	const std::wstring kAnimName = L"Armature|Animation_";
 	const std::wstring kAnimNameIdle =			kAnimName + L"Idle";
@@ -72,7 +77,7 @@ namespace {
 
 
 	// 武器データ
-	const Vector3 kWeaponOffsetPos = Vector3Up();					// 位置補正
+	const Vector3 kWeaponOffsetPos = Vector3Up();							// 位置補正
 	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f) * 1.2f;	// 拡縮補正
 
 	const float kWeaponRad = 50.0f * kWeaponOffsetScale.x;		// 武器半径
@@ -93,9 +98,11 @@ Player::Player() :
 	_nowUpdateState(&Player::UpdateIdle),
 	_animator(std::make_unique<Animator>()),
 	_weapon(std::make_unique<WeaponPlayer>()),
-	_rotAngle(0.0f),
+	_rotAngle(kStartPlayerRotAmount),
 	_hasDerivedAttackInput(false),
-	_hitPoint(kHitPoint),
+	_hitPoint(kMaxHitPoint),
+	_stamina(kMaxStamina),
+	_staminaRecoveryStandbyFrame(0),
 	_isAlive(true),
 	_attackPower(kAttackPower),
 	_reactCooltime(0)
@@ -168,6 +175,9 @@ void Player::Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics)
 
 	EntryPhysics(physics);
 	_weapon->EntryPhysics(physics);
+
+	// 武器位置更新
+	WeaponUpdate();
 }
 
 void Player::Update()
@@ -217,7 +227,12 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 
 float Player::GetMaxHitPoint() const
 {
-	return kHitPoint;
+	return kMaxHitPoint;
+}
+
+float Player::GetMaxStamina() const
+{
+	return kMaxStamina;
 }
 
 void Player::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
@@ -313,8 +328,11 @@ void Player::CheckStateTransition()
 	if (isAttack) {
 		// 攻撃アニメーションが終了した場合にのみ次の遷移を判断する
 		if (isEndAnim) {
-			// 派生入力があったか
-			if (_hasDerivedAttackInput) {
+			// 派生入力があったかつスタミナが減らせるか
+			if (_hasDerivedAttackInput &&
+				CanStaminaDecreace()) {
+				// スタミナを減らす
+				StaminaDecreace();
 				// どの攻撃からの派生か
 				if (_nowUpdateState == &Player::UpdateAttackFirst) {
 					_nowUpdateState = &Player::UpdateAttackSecond;
@@ -340,11 +358,11 @@ void Player::CheckStateTransition()
 			// 武器の当たり判定を無効化
 			_weapon->SetCollisionState(false);
 			// スティックが一定以上傾いているなら
-			if (stick.Magnitude() >= 1000 * 0.8f) {
+			if (CanRunInput()) {
 				_nowUpdateState = &Player::UpdateDash;
 				_animator->ChangeAnim(kAnimNameRun, true);
 			}
-			else if (stick.Magnitude() != 0.0f) {
+			else if (CanWalkInput()) {
 				_nowUpdateState = &Player::UpdateWalk;
 				_animator->ChangeAnim(kAnimNameWalk, true);
 			}
@@ -362,18 +380,21 @@ void Player::CheckStateTransition()
 
 
 	// 攻撃開始
-	// 攻撃入力があったなら
-	if (input.IsTrigger("action")) {
+	// 攻撃入力があったかつ
+	// スタミナが減らせるなら
+	if (CanAttackInput() &&
+		CanStaminaDecreace()) {
 		_nowUpdateState = &Player::UpdateAttackFirst;
 		_animator->ChangeAnim(kAnimNameAttackCombo1, false);
 		_hasDerivedAttackInput = false;
+		StaminaDecreace();
 		return;
 	}
 
 	// ダッシュ
 	// スティックが一定以上傾いているなら
 	if (GetPos().y <= kGround &&
-		(stick.Magnitude() >= 1000 * 0.8f)) {
+		CanRunInput()) {
 		if (_nowUpdateState != &Player::UpdateDash) {
 			_nowUpdateState = &Player::UpdateDash;
 			_animator->ChangeAnim(kAnimNameRun, true);
@@ -386,7 +407,7 @@ void Player::CheckStateTransition()
 	// 歩行
 	// スティックの入力があるなら
 	else if (GetPos().y <= kGround &&
-		(stick.Magnitude() != 0.0f)) {
+		CanWalkInput()) {
 		if (_nowUpdateState != &Player::UpdateWalk) {
 			_nowUpdateState = &Player::UpdateWalk;
 			_animator->ChangeAnim(kAnimNameWalk, true);
@@ -502,6 +523,9 @@ void Player::UpdateIdle()
 {
 	// 移動を停止する
 	rigidbody->SetVel(Vector3());
+
+	// スタミナ回復処理
+	StaminaRecovery();
 }
 
 void Player::UpdateWalk()
@@ -510,6 +534,9 @@ void Player::UpdateWalk()
 	Move(kWalkSpeed);
 	// 進行方向への方向転換処理
 	Rotate();
+
+	// スタミナ回復処理
+	StaminaRecovery();
 }
 
 void Player::UpdateDash()
@@ -518,6 +545,9 @@ void Player::UpdateDash()
 	Move(kDashSpeed);
 	// 進行方向への方向転換処理
 	Rotate();
+
+	// スタミナ回復処理
+	StaminaRecovery();
 }
 
 void Player::UpdateAttackFirst()
@@ -536,7 +566,7 @@ void Player::UpdateAttackFirst()
 		currentAnimData.frame != 0.0f &&
 		currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
 		currentFrame <= currentAnimData.inputAcceptanceEndFrame &&
-		Input::GetInstance().IsTrigger("action"))
+		CanAttackInput())
 	{
 		_hasDerivedAttackInput = true;
 	}
@@ -554,7 +584,7 @@ void Player::UpdateAttackSecond()
 	if (currentAnimData.animName == kAnimNameAttackCombo2 &&
 		currentFrame >= currentAnimData.inputAcceptanceStartFrame &&
 		currentFrame <= currentAnimData.inputAcceptanceEndFrame &&
-		Input::GetInstance().IsTrigger("action"))
+		CanAttackInput())
 	{
 		_hasDerivedAttackInput = true;
 	}
@@ -569,6 +599,9 @@ void Player::UpdateDamage()
 {
 	// 移動を停止する
 	rigidbody->SetVel(Vector3());
+
+	// スタミナ回復処理
+	StaminaRecovery();
 }
 
 void Player::UpdateDeath()
@@ -589,10 +622,32 @@ void Player::Move(const float speed)
 	Vector3 vel = GetVel();
 	Position3 pos = GetPos();	// 移動予定位置
 	Input& input = Input::GetInstance();
-	const float cameraRot = _camera.lock()->GetRotAngleY() * -1;
 
+	const float cameraRot = _camera.lock()->GetRotAngleY() * -1;
+	
 	// スティックによる平面移動
 	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
+
+	// スティック入力があるか
+	bool stickInputState = (stick.Magnitude() >= 0.005f);
+
+	// スティック入力がないかつ
+	// スティックではない入力があった場合、そちらを優先する
+	if (!stickInputState && (
+		input.IsPress("Gameplay:Up") ||
+		input.IsPress("Gameplay:Down") ||
+		input.IsPress("Gameplay:Left") ||
+		input.IsPress("Gameplay:Right")))
+	{
+		// xが横、zが縦
+		stick = Vector3();
+		if (input.IsPress("Gameplay:Up"))		stick += Vector3(0, 0, -1);
+		if (input.IsPress("Gameplay:Down"))		stick += Vector3(0, 0, +1);
+		if (input.IsPress("Gameplay:Left"))		stick += Vector3(-1, 0, 0);
+		if (input.IsPress("Gameplay:Right"))	stick += Vector3(1, 0, 0);
+
+		stick.Normalized();
+	}
 
 	// 入力が入っていない時でもxに-0.0fが入っている
 	dir.x = -stick.x;
@@ -618,8 +673,30 @@ void Player::Move(const float speed)
 }
 
 void Player::Rotate() {
+	Input& input = Input::GetInstance();
 	// スティックによる平面移動
-	Vector3 stick = Input::GetInstance().GetPadLeftSitck();
+	Vector3 stick = input.GetPadLeftSitck();
+	// スティック入力があるか
+	bool stickInputState = (stick.Magnitude() >= 0.005f);
+
+	// スティック入力がないかつ
+	// スティックではない入力があった場合、そちらを優先する
+	if (!stickInputState && (
+		input.IsPress("Gameplay:Up") ||
+		input.IsPress("Gameplay:Down") ||
+		input.IsPress("Gameplay:Left") ||
+		input.IsPress("Gameplay:Right")))
+	{
+		// xが横、zが縦
+		stick = Vector3();
+		if (input.IsPress("Gameplay:Up"))		stick += Vector3(0, 0, -1);
+		if (input.IsPress("Gameplay:Down"))		stick += Vector3(0, 0, +1);
+		if (input.IsPress("Gameplay:Left"))		stick += Vector3(-1, 0, 0);
+		if (input.IsPress("Gameplay:Right"))	stick += Vector3(+1, 0, 0);
+
+		stick.Normalized();
+	}
+
 	// 入力があった場合のみキャラクターの向きを変更
 	if (stick.x != 0.0f || stick.z != 0.0f) {
 		// カメラの向きを考慮しつつ目標の角度を計算
@@ -642,4 +719,74 @@ void Player::Rotate() {
 		// 適用
 		MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
 	}
+}
+
+bool Player::CanAttackInput()
+{
+	return (Input::GetInstance().IsPress("Gameplay:Attack") ||
+			Input::GetInstance().IsTriggerMouseLeftClick());
+}
+
+bool Player::CanWalkInput()
+{
+	auto& input = Input::GetInstance();
+
+	// スティック入力があるか
+	bool stickInputState = (input.GetPadLeftSitck().Magnitude() >= 0.005f);
+
+	// スティック入力か移動キー入力があればtrue
+	return (stickInputState ||
+		input.IsPress("Gameplay:Up") ||
+		input.IsPress("Gameplay:Down") ||
+		input.IsPress("Gameplay:Left") ||
+		input.IsPress("Gameplay:Right"));
+}
+
+bool Player::CanRunInput()
+{
+	auto& input = Input::GetInstance();
+
+	// 一定以上のスティック入力があるか
+	bool stickInputState = (input.GetPadLeftSitck().Magnitude() >= 1000 * 0.8f);
+
+	// スティック入力か移動キー入力があればtrue
+	return (stickInputState ||
+		input.IsPress("Gameplay:Up") ||
+		input.IsPress("Gameplay:Down") ||
+		input.IsPress("Gameplay:Left") ||
+		input.IsPress("Gameplay:Right"));
+}
+
+void Player::StaminaRecovery()
+{
+	// スタミナが最大の場合はreturn
+	if (_stamina >= kMaxStamina) return;
+
+	// 回復待機時間更新
+	if (_staminaRecoveryStandbyFrame > 0) _staminaRecoveryStandbyFrame--;
+
+	// 回復待機時間がない場合は回復
+	if (_staminaRecoveryStandbyFrame <= 0) {
+		// 回復量
+		float recoveryAmount = std::min<float>(
+			kStaminaRecoveryAmount, kMaxStamina - _stamina);
+		_stamina += recoveryAmount;
+	}
+}
+
+void Player::StaminaDecreace()
+{
+	// スタミナが減少量より少ない場合は減らさない
+	if (!CanStaminaDecreace()) {
+		return;
+	}
+
+	_stamina -= kStaminaDecreaceAmount;
+	_staminaRecoveryStandbyFrame = kStaminaCooltimeFrame;
+}
+
+bool Player::CanStaminaDecreace()
+{
+	// スタミナが減少量より少ない場合は減らさない
+	return (_stamina >= kStaminaDecreaceAmount);
 }

@@ -9,10 +9,10 @@
 namespace
 {
     // 定数
-    constexpr int kDisplayDuration = 90;       // 全体の表示フレーム
-    constexpr int kFadeInDuration = 20;         // フェードインにかかるフレーム
-    constexpr int kFadeOutDuration = 20;        // フェードアウトにかかるフレーム
-    constexpr int kFontSize = 64;               // フォントサイズ
+    constexpr int kDisplayDuration = 90;    // 全体の表示フレーム
+    constexpr int kFadeInDuration = 20;     // フェードインにかかるフレーム
+    constexpr int kFadeOutDuration = 20;    // フェードアウトにかかるフレーム
+    constexpr int kFontSize = Statistics::kScreenCenterWidth * 0.15f;   // フォントサイズ
     const unsigned int kFontColor = 0xffffff;   // 文字色
     const std::wstring kFontName = L"Impact";   // フォント名
 }

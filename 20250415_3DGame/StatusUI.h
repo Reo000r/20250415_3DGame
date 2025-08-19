@@ -21,6 +21,7 @@ public:
 private:
 
 	void DrawPlayerHp();
+	void DrawPlayerStamina();
 	void DrawEnemyHp(std::shared_ptr<EnemyBase> enemy);
 	void DrawScore();
 

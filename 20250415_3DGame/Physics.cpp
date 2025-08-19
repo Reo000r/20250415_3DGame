@@ -352,8 +352,8 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 		float cylinderInnerRad = cylinderData->GetInnerRadius();
 		float cylinderOuterRad = cylinderData->GetOuterRadius();
 		Vector3 cylinderHeightVec = cylinderData->_startToEnd;
-		Position3 cylinderStart = cylinderObj->nextPos - cylinderHeightVec * 0.5f;
-		Position3 cylinderEnd = cylinderObj->nextPos + cylinderHeightVec * 0.5f;
+		Position3 cylinderStart = cylinderObj->nextPos;
+		Position3 cylinderEnd = cylinderObj->nextPos + cylinderHeightVec;
 
 		// 最近接点の計算
 		// カプセルの中心線と、円柱の中心軸の最近接点を求める
@@ -369,16 +369,12 @@ bool Physics::IsCollide(const std::shared_ptr<Collider> objA, const std::shared_
 		Vector2 vecXZ(vecBetweenClosestPoints.x, vecBetweenClosestPoints.z);
 		float distXZ = vecXZ.Magnitude();
 
-		// 距離のみ確認し、衝突していない場合
-		if (distXZ > cylinderOuterRad + capsuleRad || 
-			distXZ < cylinderInnerRad - capsuleRad) {
-			// 上面/下面のフチとの判定は
-			// 未実装
-			return false;
-		}
+		bool isColideInner = distXZ < cylinderInnerRad - capsuleRad;
+		bool isColideOuter = distXZ > cylinderOuterRad + capsuleRad;
 
-		// 衝突している
-		return true;
+		// 内側は当たっていないが外側は当たっている場合は当たっている
+		// (上面/下面のフチとの判定は未実装)
+		isHit = (!isColideInner && isColideOuter);
 	}
 
 	return isHit;
@@ -620,13 +616,13 @@ void Physics::FixNextPosition(std::shared_ptr<Collider> primary, std::shared_ptr
 		Vector2 vecXZ(vecBetweenClosestPoints.x, vecBetweenClosestPoints.z);
 		float distXZ = vecXZ.Magnitude();
 
-		// XZ平面上での距離を確認し、衝突していない場合
-		if (distXZ > cylinderOuterRad + capsuleRad || 
-			distXZ < cylinderInnerRad - capsuleRad) {
-			// 上面/下面のフチとの判定は
-			// 未実装
-			return;
-		}
+		bool isColideInner = distXZ < cylinderInnerRad - capsuleRad;
+		bool isColideOuter = distXZ > cylinderOuterRad + capsuleRad;
+		// 内側は当たっていないが外側は当たっている状態(当たっている)
+		// 上記の状態でない場合(当たっていない場合)return
+		// (上面/下面のフチとの判定は未実装)
+		bool isHit = !isColideInner && isColideOuter;
+		if (!isHit) return;
 
 		// 衝突している場合
 		// 貫通深度と押し戻し方向を計算

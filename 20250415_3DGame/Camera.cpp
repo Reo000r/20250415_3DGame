@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Input.h"
 #include "Calculation.h"
+#include "Statistics.h"
 
 #include <DxLib.h>
 
@@ -65,7 +66,21 @@ void Camera::Update() {
 	auto& input = Input::GetInstance();
 
 	// スティックによる平面移動
-	Vector3 stick = Input::GetInstance().GetPadRightSitck();
+	Vector3 stick = input.GetPadRightSitck();
+	
+	Position3 mousePosCurrent = input.GetMousePosition();
+	Position3 mousePosLast = 
+		Position3(Statistics::kScreenCenterWidth, 0, Statistics::kScreenCenterHeight);
+
+	// 一定以上動いていればマウスの入力を優先する
+	if ((mousePosLast - mousePosCurrent).Magnitude() >= 20.0f) {
+		stick = (mousePosLast - mousePosCurrent).Normalize() * 1000.0f;
+	}
+
+	// マウスの位置を画面中央に設定
+	SetMousePoint(Statistics::kScreenCenterWidth, 
+		Statistics::kScreenCenterHeight);
+
 	// Y軸回転
 	_rotAngle.y += stick.x * 0.001f * kRotSpeedY;
 

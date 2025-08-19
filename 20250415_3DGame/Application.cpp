@@ -82,8 +82,8 @@ void Application::Run()
 
 		ScreenFlip();
 
-		// escが押されたら
-		if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+		// 終了キーが押されたら
+		if (input.IsPress("Debug::Exit1") && input.IsPress("Debug::Exit2")) {
 			break;	// 処理を抜ける
 		}
 

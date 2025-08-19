@@ -50,7 +50,7 @@ private:
 	NextSceneName _nextSceneName;
 	std::shared_ptr<SceneBase> _nextScene;
 
-	// _updateや_drawが変数であることを分かりやすくしている
+	// 変数であることを分かりやすくする
 	using UpdateFunc_t = void(SceneResult::*)();
 	using DrawFunc_t = void(SceneResult::*)();
 

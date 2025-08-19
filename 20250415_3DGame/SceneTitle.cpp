@@ -16,7 +16,8 @@ namespace {
 	constexpr int kNextSceneFontSize = 96;
 	constexpr int kFontThickness = 3;
 	const std::wstring kTitleText = L"(Title)";
-	const std::wstring kNextSceneText = L"       Press A to Start\nPress B to Instruction";
+	const std::wstring kPadNextSceneText = L"       Press A to Start\nPress B to Instruction";
+	const std::wstring kKeybdNextSceneText = L"      Press Enter to Start\nPress Esc to Instruction";
 
 	// アニメーション用の定数
 	constexpr int kNextSceneFontThicknessIn		= 40;	// 文字の出現期間(フレーム)
@@ -92,29 +93,23 @@ void SceneTitle::FadeinUpdate()
 void SceneTitle::NormalUpdate()
 {
 	// 決定を押したら
-	if (Input::GetInstance().IsTrigger("NextScene")) {
-		_nowUpdateState = &SceneTitle::FadeoutUpdate;
-		_nowDrawState = &SceneTitle::FadeDraw;
-		_frame = 0;
-
-		// FadeUpdateに移る前の処理を行う
-		_isNextSceneTextActive = false;
-		_nextSceneTextTickFrame = 0;
-		return;
-	}
-
-	// 決定を押したら
 	if (Input::GetInstance().IsTrigger("Title:ChangeGameScene")) {
 		_nextSceneName = NextSceneName::GamePlay;
 		_nowUpdateState = &SceneTitle::FadeoutUpdate;
 		_nowDrawState = &SceneTitle::FadeDraw;
 		_frame = 0;
+		// FadeUpdateに移る前の処理を行う
+		_isNextSceneTextActive = false;
+		_nextSceneTextTickFrame = 0;
 	}
 	else if (Input::GetInstance().IsTrigger("Title:ChangeInstructionScene")) {
 		_nextSceneName = NextSceneName::Instruction;
 		_nowUpdateState = &SceneTitle::FadeoutUpdate;
 		_nowDrawState = &SceneTitle::FadeDraw;
 		_frame = 0;
+		// FadeUpdateに移る前の処理を行う
+		_isNextSceneTextActive = false;
+		_nextSceneTextTickFrame = 0;
 	}
 
 
@@ -220,14 +215,20 @@ void SceneTitle::DrawTitleString()
 	// 消滅中は描画を行わない
 	if (!_isNextSceneTextActive) return;
 
+	// 最後の入力に応じて文字を変える
+	std::wstring drawString = kPadNextSceneText;
+	if (Input::GetInstance().GetLastInputType() == Input::PeripheralType::keybd) {
+		drawString = kKeybdNextSceneText;
+	}
+
 	// 同様に描画する
 	int nextSceneTextWidth = GetDrawStringWidthToHandle(
-		kNextSceneText.c_str(),
-		kNextSceneText.length(),
+		drawString.c_str(),
+		drawString.length(),
 		_nextSceneFontHandle);
 	int NextSceneDrawX = (Statistics::kScreenWidth - nextSceneTextWidth) * 0.5f;
 	DrawStringToHandle(
 		NextSceneDrawX, kNextSceneTextY,
-		kNextSceneText.c_str(), kTextColor,
+		drawString.c_str(), kTextColor,
 		_nextSceneFontHandle);
 }

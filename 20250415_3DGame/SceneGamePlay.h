@@ -35,22 +35,8 @@ public:
 	void Draw() override;
 
 private:
-	// 
+
 	int _frame;
-
-	// 次のシーン
-	std::shared_ptr<SceneBase> _nextScene;
-
-	std::shared_ptr<Physics> _physics;
-
-	std::shared_ptr<Camera> _camera;
-	std::shared_ptr<Player> _player;
-	std::shared_ptr<Arena> _arena;
-	std::unique_ptr<Skydome> _skydome;
-	std::shared_ptr<WaveManager> _waveManager;
-	std::shared_ptr<EnemyManager> _enemyManager;
-	std::shared_ptr<WaveAnnouncer> _waveAnnouncer;
-	std::unique_ptr<StatusUI> _statusUI;
 
 	// UpdateとDrawのStateパターン
 	// _updateや_drawが変数であることを分かりやすくしている
@@ -72,5 +58,51 @@ private:
 	void FadeDraw();
 	// 通常時の描画
 	void NormalDraw();
+
+	// 次のシーン
+	std::shared_ptr<SceneBase> _nextScene;
+
+private:
+
+	enum class Phase {
+		Starting,
+		InProgress,
+		Ending,
+	};
+
+	/// <summary>
+	/// フェードイン中/ゲーム中に呼ばれる更新関数
+	/// 条件を満たすまでフェーズを変更しない
+	/// </summary>
+	void StartingUpdate();
+	/// <summary>
+	/// ゲーム中に呼ばれる更新関数
+	/// 条件を満たすまでフェーズを変更しない
+	/// </summary>
+	void InProgressUpdate();
+	/// <summary>
+	/// フェードアウト中に呼ばれる更新関数
+	/// </summary>
+	void EndingUpdate();
+
+	/// <summary>
+	/// オブジェクトの描画を行う関数
+	/// </summary>
+	void DrawGame();
+
+	// ゲームが現在どのフェーズにあるか
+	Phase _nowPhase;
+
+	std::shared_ptr<Physics> _physics;
+
+	std::shared_ptr<Camera> _camera;
+	std::shared_ptr<Player> _player;
+	std::shared_ptr<Arena> _arena;
+	std::unique_ptr<Skydome> _skydome;
+	std::shared_ptr<WaveManager> _waveManager;
+	std::shared_ptr<EnemyManager> _enemyManager;
+	std::shared_ptr<WaveAnnouncer> _waveAnnouncer;
+	std::unique_ptr<StatusUI> _statusUI;
+
 };
 

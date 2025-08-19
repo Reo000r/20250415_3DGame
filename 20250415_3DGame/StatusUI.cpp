@@ -10,31 +10,41 @@
 
 namespace {
 	// プレイヤーHPバー
-	const int kPlayerHpBarPosX = 30;
-	constexpr int kPlayerHpBarPosY = 30;
-	constexpr int kPlayerHpBarWidth = 400;
-	constexpr int kPlayerHpBarHeight = 30;
+	const int kPlayerHpBarPosX = Statistics::kScreenWidth * 0.02f;
+	constexpr int kPlayerHpBarPosY = Statistics::kScreenHeight * 0.05f;
+	constexpr int kPlayerHpBarWidth = Statistics::kScreenWidth * 0.3f;
+	constexpr int kPlayerHpBarHeight = Statistics::kScreenHeight * 0.05f;
 
 	const unsigned int kPlayerHpBarBackColor = GetColor(50, 50, 50);
 	const unsigned int kPlayerHpBarFrontColor = GetColor(0, 200, 100);
 	const unsigned int kPlayerHpBarFrameColor = GetColor(255, 255, 255);
+	
+	// プレイヤースタミナバー
+	const int kPlayerStaminaBarPosX = Statistics::kScreenWidth * 0.02f;
+	constexpr int kPlayerStaminaBarPosY = kPlayerHpBarPosY + Statistics::kScreenHeight * (0.05f + 0.01f);
+	constexpr int kPlayerStaminaBarWidth = Statistics::kScreenWidth * 0.3f;
+	constexpr int kPlayerStaminaBarHeight = Statistics::kScreenHeight * 0.05f;
+
+	const unsigned int kPlayerStaminaBarBackColor = GetColor(50, 50, 50);
+	const unsigned int kPlayerStaminaBarFrontColor = GetColor(180, 180, 0);
+	const unsigned int kPlayerStaminaBarFrameColor = GetColor(255, 255, 255);
 
 
 	// 敵HPバー
-	constexpr int kEnemyHpBarWidth = 100;
-	constexpr int kEnemyHpBarHeight = 10;
+	constexpr int kEnemyHpBarWidth = Statistics::kScreenWidth * 0.1f;
+	constexpr int kEnemyHpBarHeight = Statistics::kScreenHeight * 0.02f;
 	const unsigned int kEnemyHpBarBackColor = GetColor(50, 50, 50);
 	const unsigned int kEnemyHpBarFrontColor = GetColor(220, 50, 50);
 	const unsigned int kEnemyHpBarFrameColor = GetColor(255, 255, 255);
-	const Position3 kEnemyBarOffset = Vector3(0,400,0);
+	const Position3 kEnemyBarOffset = Vector3(0, 400, 0);
 
 
 	// スコア表示
-	const int kScorePosX = Statistics::kScreenWidth - 32; // 画面右端から30ピクセル内側
-	const int kScorePosY = 32;
+	const int kScoreFontSize = Statistics::kScreenWidth * 0.025f;
+	const int kScorePosX = Statistics::kScreenWidth - kScoreFontSize;	// 描画位置
+	const int kScorePosY = kScoreFontSize;
 	const unsigned int kScoreColor = GetColor(255, 255, 255);
 	const std::wstring kScoreFontName = L"Impact"; // フォント名
-	const int kScoreFontSize = 48;
 }
 
 StatusUI::StatusUI():
@@ -73,6 +83,7 @@ void StatusUI::Draw()
 	DrawScore();
 
 	DrawPlayerHp();
+	DrawPlayerStamina();
 
 	// 敵HP描画
 	if (auto enemyManager = _enemyManager.lock()) {
@@ -109,6 +120,34 @@ void StatusUI::DrawPlayerHp()
 			DrawBox(kPlayerHpBarPosX, kPlayerHpBarPosY,
 				kPlayerHpBarPosX + kPlayerHpBarWidth, kPlayerHpBarPosY + kPlayerHpBarHeight,
 				kPlayerHpBarFrameColor, false);
+		}
+	}
+}
+
+void StatusUI::DrawPlayerStamina()
+{
+	if (auto player = _player.lock()) {
+		float maxStamina = player->GetMaxStamina();
+		if (maxStamina > 0.0f) {
+			float stamina = _player.lock()->GetStamina();
+			// 割合を計算
+			float ratio = stamina / maxStamina;
+
+			// 背景バー
+			DrawBox(kPlayerStaminaBarPosX, kPlayerStaminaBarPosY,
+				kPlayerStaminaBarPosX + kPlayerStaminaBarWidth, kPlayerStaminaBarPosY + kPlayerStaminaBarHeight,
+				kPlayerStaminaBarBackColor, true);
+
+			// 前景バー
+			DrawBox(kPlayerStaminaBarPosX, kPlayerStaminaBarPosY,
+				kPlayerStaminaBarPosX + static_cast<int>(kPlayerStaminaBarWidth * ratio),
+				kPlayerStaminaBarPosY + kPlayerStaminaBarHeight,
+				kPlayerStaminaBarFrontColor, true);
+
+			// 枠線
+			DrawBox(kPlayerStaminaBarPosX, kPlayerStaminaBarPosY,
+				kPlayerStaminaBarPosX + kPlayerStaminaBarWidth, kPlayerStaminaBarPosY + kPlayerStaminaBarHeight,
+				kPlayerStaminaBarFrameColor, false);
 		}
 	}
 }

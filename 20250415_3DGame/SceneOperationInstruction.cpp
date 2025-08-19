@@ -19,7 +19,8 @@ namespace {
 	constexpr int kNextSceneFontSize = 92;		// 案内文字サイズ
 	constexpr int kFontThickness = 3;
 	const std::wstring kHeadingText = L"操作方法";
-	const std::wstring kNextSceneText = L"Press A to GameStart\n      Press B to Title";
+	const std::wstring kPadNextSceneText = L"Press A to GameStart\n      Press B to Title";
+	const std::wstring kKeybdNextSceneText = L"Press Enter to GameStart\n        Press Esc to Title";
 
 	// アニメーション用の定数
 	constexpr int kNextSceneFontThicknessIn = 40;	// 文字の出現期間(フレーム)
@@ -70,6 +71,17 @@ SceneOperationInstruction::SceneOperationInstruction() :
 	_descriptionString.emplace_back	(L"右スティック");
 	_subheadingString.emplace_back	(L"攻撃");
 	_descriptionString.emplace_back	(L"Yボタン");
+
+	// 最後の入力に応じて文字を変える
+	if (Input::GetInstance().GetLastInputType() == Input::PeripheralType::keybd) {
+		_descriptionString.clear();
+		//_subheadingString.emplace_back(L"移動");
+		_descriptionString.emplace_back(L"WASD");
+		//_subheadingString.emplace_back(L"カメラ操作");
+		_descriptionString.emplace_back(L"マウス");
+		//_subheadingString.emplace_back(L"攻撃");
+		_descriptionString.emplace_back(L"左クリック");
+	}
 }
 
 SceneOperationInstruction::~SceneOperationInstruction()
@@ -257,16 +269,22 @@ void SceneOperationInstruction::DrawOperationInstructionString()
 	// 最後にシーン遷移案内を描画
 	y += kNextSceneTextYOffset;
 
+	// 最後の入力に応じて文字を変える
+	std::wstring drawString = kPadNextSceneText;
+	if (Input::GetInstance().GetLastInputType() == Input::PeripheralType::keybd) {
+		drawString = kKeybdNextSceneText;
+	}
+
 	// 文字の中央までの長さをはかり
 	// 描画開始位置を求め描画する
 	int nextSceneTextWidth = GetDrawStringWidthToHandle(
-		kNextSceneText.c_str(),
-		kNextSceneText.length(),
+		drawString.c_str(),
+		drawString.length(),
 		_nextSceneFontHandle);
 	int nextSceneDrawX = (Statistics::kScreenWidth - nextSceneTextWidth) * 0.5f;
 	DrawStringToHandle(
 		nextSceneDrawX, y,
-		kNextSceneText.c_str(), kTextColor,
+		drawString.c_str(), kTextColor,
 		_nextSceneFontHandle);
 
 }

@@ -46,6 +46,10 @@ public:
 	/// <returns></returns>
 	Vector3 operator-() const;
 
+	// 比較演算
+	bool operator==(const Vector3& v) const;
+	bool operator!=(const Vector3& v) const;
+
 	/// <summary>
 	/// ベクトルの長さを返す
 	/// </summary>

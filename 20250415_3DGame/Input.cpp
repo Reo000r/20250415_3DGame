@@ -2,6 +2,7 @@
 #include "StringUtility.h"
 
 #include <DxLib.h>
+#include <cassert>
 
 namespace {
     const std::string kKeyConfigSignature = "kcfg";
@@ -31,6 +32,8 @@ void Input::Update() {
         // 「押してる状態」の初期化
         _current[key] = false;
 
+        PeripheralType inputType = _lastInputType;
+
         // 入力定義vectorのループ
         for (const auto& hardInput : inputRow.second) {
             if (hardInput.type == PeripheralType::keybd) {
@@ -39,31 +42,43 @@ void Input::Update() {
             else if (hardInput.type == PeripheralType::pad1) {
                 _current[key] = hardInput.id & _currentRawPadState;
             }
+            inputType = hardInput.type;
             // どれか一つでも「押されている」状態ならもう調べない
             // 機器の情報が欲しいわけではない為、誰かが押されていればもうOK
             if (_current[key]) {
                 break;
             }
         }
+
+        inputType = _lastInputType;
     }
 
     // 左右スティック更新
     int xInput, zInput;
     GetJoypadAnalogInputRight(&xInput, &zInput, DX_INPUT_PAD1);
-    _rightStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
-    if (_rightStickInput.SqrMagnitude() != 0.0f) {  // 入力があった場合更新
-        _rightStickLastInput = _rightStickInput;
+    _currentRightStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
+    if (_currentRightStickInput.SqrMagnitude() != 0.0f) {  // 入力があった場合更新
+        _lastRightStickInput = _currentRightStickInput;
     }
     GetJoypadAnalogInput(&xInput, &zInput, DX_INPUT_PAD1);
-    _leftStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
-    if (_leftStickInput.SqrMagnitude() != 0.0f) {   // 入力があった場合更新
-        _leftStickLastInput = _leftStickInput;
+    _currentLeftStickInput = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
+    if (_currentLeftStickInput.SqrMagnitude() != 0.0f) {   // 入力があった場合更新
+        _lastLeftStickInput = _currentLeftStickInput;
     }
+
+    // マウスボタン更新
+    _lastRawMouseState = _currentRawMouseState;
+    _currentRawMouseState = GetMouseInput();
+    // マウス位置更新
+    _lastMousePosition = _currentMousePosition;
+    GetMousePoint(&xInput, &zInput);
+    _currentMousePosition = { static_cast<float>(xInput), 0, static_cast<float>(zInput) };
 }
 
 bool Input::IsPress(const char* key) const {
     // そもそも登録されていないキータイプならreturn
     if (!_current.contains(key)) {
+        assert(false && "不明な名前");
         return false;
     }
     // 押されているかどうかを返す
@@ -77,6 +92,7 @@ bool Input::IsPress(const char* key) const {
 bool Input::IsTrigger(const char* key) const {
     // そもそも登録されていないキータイプならreturn
     if (!_current.contains(key)) {
+        assert(false && "不明な名前");
         return false;
     }
     // 1f前は押されてない かつ 今押されている ならtrue
@@ -90,27 +106,75 @@ bool Input::IsTrigger(const char* key) const {
 }
 
 Vector3 Input::GetPadRightSitck() const {
-    return _rightStickInput;
+    return _currentRightStickInput;
 }
 
 Vector3 Input::GetPadRightSitckLast() const {
-    return _rightStickLastInput;
+    return _lastRightStickInput;
 }
 
 
 Vector3 Input::GetPadLeftSitck() const {
-    return _leftStickInput;
+    return _currentLeftStickInput;
 }
 
 Vector3 Input::GetPadLeftSitckLast() const {
-    return _leftStickLastInput;
+    return _lastLeftStickInput;
+}
+
+bool Input::IsPressMouseRightClick() const
+{
+    return _currentRawMouseState & MOUSE_INPUT_RIGHT;
+}
+
+bool Input::IsPressMouseLeftClick() const
+{
+    return _currentRawMouseState & MOUSE_INPUT_LEFT;
+}
+
+bool Input::IsPressMouseMiddleClick() const
+{
+    return _currentRawMouseState & MOUSE_INPUT_MIDDLE;
+}
+
+bool Input::IsTriggerMouseRightClick() const
+{
+    return (_currentRawMouseState & MOUSE_INPUT_RIGHT && 
+        !(_lastRawMouseState & MOUSE_INPUT_RIGHT));
+}
+
+bool Input::IsTriggerMouseLeftClick() const
+{
+    return (_currentRawMouseState & MOUSE_INPUT_LEFT &&
+        !(_lastRawMouseState & MOUSE_INPUT_LEFT));
+}
+
+bool Input::IsTriggerMouseMiddleClick() const
+{
+    return (_currentRawMouseState & MOUSE_INPUT_MIDDLE &&
+        !(_lastRawMouseState & MOUSE_INPUT_MIDDLE));
+}
+
+Vector3 Input::GetMousePosition() const
+{
+    return _currentMousePosition;
+}
+
+Vector3 Input::GetMousePositionLast() const
+{
+    return _lastMousePosition;
+}
+
+Input::PeripheralType Input::GetLastInputType()
+{
+    return _lastInputType;
 }
 
 Input::Input() :
-    _rightStickInput(),
-    _leftStickInput(),
-    _rightStickLastInput(),
-    _leftStickLastInput()
+    _currentRightStickInput(),
+    _currentLeftStickInput(),
+    _lastRightStickInput(),
+    _lastLeftStickInput()
 {
     SetDefault();
     LoadInputTable();
@@ -122,26 +186,11 @@ Input::Input() :
 
 void Input::SetDefault()
 {
-    //入力と名前の対応表を作る
-    _inputTable["next"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
-                            {PeripheralType::pad1, PAD_INPUT_8}     // RStartボタン
-    };
-    _inputTable["back"] = { {PeripheralType::keybd, KEY_INPUT_ESCAPE},
-                            {PeripheralType::pad1, PAD_INPUT_7}     // LStartボタン
-    };
-
-    _inputTable["ok"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
-                        {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
-    };
-    _inputTable["pause"] = { {PeripheralType::keybd, KEY_INPUT_P},
-                            {PeripheralType::pad1, PAD_INPUT_7}     // LStartボタン
-    };
-
     // タイトルシーンで使用するボタンテーブル
     _inputTable["Title:ChangeGameScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
                         {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
     };
-    _inputTable["Title:ChangeInstructionScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+    _inputTable["Title:ChangeInstructionScene"] = { {PeripheralType::keybd, KEY_INPUT_ESCAPE},
                         {PeripheralType::pad1, PAD_INPUT_2}         // Bボタン
     };
 
@@ -149,48 +198,56 @@ void Input::SetDefault()
     _inputTable["Instruction:ChangeGameScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
                         {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
     };
-    _inputTable["Instruction:ChangeTitleScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+    _inputTable["Instruction:ChangeTitleScene"] = { {PeripheralType::keybd, KEY_INPUT_ESCAPE},
                         {PeripheralType::pad1, PAD_INPUT_2}         // Bボタン
     };
 
     // ゲームシーンで使用するボタンテーブル
-    _inputTable["action"] = { {PeripheralType::keybd, KEY_INPUT_Z},
+    _inputTable["Gameplay:Attack"] = { {PeripheralType::keybd, KEY_INPUT_Z},
                             {PeripheralType::pad1, PAD_INPUT_4}     // Yボタン
     };
-    _inputTable["dash"] = { {PeripheralType::keybd, KEY_INPUT_X},
+    _inputTable["Gameplay:Dash"] = { {PeripheralType::keybd, KEY_INPUT_X},
                         {PeripheralType::pad1, PAD_INPUT_3}         // Xボタン
     };
-    _inputTable["jump"] = { {PeripheralType::keybd, KEY_INPUT_C},
+    _inputTable["Gameplay:Jump"] = { {PeripheralType::keybd, KEY_INPUT_C},
                         {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
     };
-    _inputTable["Rbutton"] = { {PeripheralType::keybd, KEY_INPUT_I},
-                        {PeripheralType::pad1, PAD_INPUT_6}         // 右ボタン
-    };
-    _inputTable["Lbutton"] = { {PeripheralType::keybd, KEY_INPUT_P},
-                        {PeripheralType::pad1, PAD_INPUT_5}         // 左ボタン
-    };
 
-    //上下左右
-    _inputTable["up"] = { {PeripheralType::keybd, KEY_INPUT_UP},
+    _inputTable["Gameplay:Up"] = { {PeripheralType::keybd, KEY_INPUT_W},
                             {PeripheralType::pad1, PAD_INPUT_UP}
     };
-    _inputTable["down"] = { {PeripheralType::keybd, KEY_INPUT_DOWN},
+    _inputTable["Gameplay:Down"] = { {PeripheralType::keybd, KEY_INPUT_S},
                             {PeripheralType::pad1, PAD_INPUT_DOWN}
     };
-    _inputTable["left"] = { {PeripheralType::keybd, KEY_INPUT_LEFT},
+    _inputTable["Gameplay:Left"] = { {PeripheralType::keybd, KEY_INPUT_A},
                             {PeripheralType::pad1, PAD_INPUT_LEFT}
     };
-    _inputTable["right"] = { {PeripheralType::keybd, KEY_INPUT_RIGHT},
+    _inputTable["Gameplay:Right"] = { {PeripheralType::keybd, KEY_INPUT_D},
                             {PeripheralType::pad1, PAD_INPUT_RIGHT}
     };
     
     // リザルトシーンで使用するボタンテーブル
-    _inputTable["Result:ChangeGameScene"] = _inputTable["NextScene"];
-
-    _inputTable["Result:ChangeTitleScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+    _inputTable["Result:ChangeGameScene"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                        {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
+    };
+    _inputTable["Result:ChangeTitleScene"] = { {PeripheralType::keybd, KEY_INPUT_ESCAPE},
                         {PeripheralType::pad1, PAD_INPUT_2}         // Bボタン
     };
     
+    // デバッグ用
+    _inputTable["Debug::Exit1"] = { {PeripheralType::keybd, KEY_INPUT_ESCAPE},
+                            {PeripheralType::pad1, PAD_INPUT_8}     // RStartボタン
+    };
+    _inputTable["Debug::Exit2"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                            {PeripheralType::pad1, PAD_INPUT_7}     // LStartボタン
+    };
+    _inputTable["Debug::NextScene1"] = { {PeripheralType::keybd, KEY_INPUT_P},
+                            {PeripheralType::pad1, PAD_INPUT_8}     // RStartボタン
+    };
+    _inputTable["Debug::NextScene2"] = { {PeripheralType::keybd, KEY_INPUT_O},
+                            {PeripheralType::pad1, PAD_INPUT_7}     // LStartボタン
+    };
+
     
     _tempInputTable = _inputTable;  // 一時テーブルにコピー
 

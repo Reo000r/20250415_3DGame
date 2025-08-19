@@ -13,17 +13,18 @@
 #include <algorithm>
 
 namespace {
-	constexpr float kScaleMul = 2.0f;		// 拡大倍率
-	constexpr float kHitPoint = 300.0f;		// HP
-	constexpr float kChaseSpeed = 4.0f * kScaleMul;		// 追いかける速度
-	constexpr float kTurnSpeed = 0.05f;		// 回転速度(ラジアン)
-	constexpr float kAttackRange = 175.0f * kScaleMul;	// 攻撃に移行する距離
-	constexpr float kGround = 0.0f;			// (地面の高さ)
-	constexpr int kReactCooltimeFrame = 30;	// 無敵時間
+	constexpr float kScaleMul = 2.0f;							// 拡大倍率
+	const Vector3 kModelScale = Vector3(1, 1, 1) * kScaleMul;	// モデル拡大倍率
+	constexpr float kHitPoint = 300.0f;							// HP
+	constexpr float kChaseSpeed = 4.0f * kScaleMul;				// 追いかける速度
+	constexpr float kTurnSpeed = 0.05f;							// 回転速度(ラジアン)
+	constexpr float kAttackRange = 175.0f * kScaleMul;			// 攻撃に移行する距離
+	constexpr float kGround = 0.0f;								// (地面の高さ)
+	constexpr int kReactCooltimeFrame = 30;						// 無敵時間
 
-	constexpr float kAttackPower = 50.0f;	// 攻撃力
+	constexpr float kAttackPower = 50.0f;						// 攻撃力
 	
-	constexpr int kAddScore = 100.0f;	// 加算スコア
+	constexpr int kAddScore = 100.0f;							// 加算スコア
 
 	// 当たり判定のパラメータ
 	constexpr float kColRadius = 50.0f * kScaleMul;		// 半径
@@ -40,6 +41,7 @@ namespace {
 	constexpr float kBaseAnimSpeed = 1.0f;
 	
 	// 武器データ
+	const std::wstring kHandFrameName = L"mixamorig:RightHandIndex1";
 	const std::wstring kWeaponModelPath = L"data/model/weapon/EnemyWeapon.mv1";
 
 	const Vector3 kWeaponOffsetPos = Vector3Up();					// 位置補正
@@ -80,7 +82,7 @@ EnemyNormal::EnemyNormal(int modelHandle) :
 	// 最初のアニメーションを設定する
 	_animator->SetStartAnim(kAnimNameSpawn);
 
-	MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * kScaleMul);
+	MV1SetScale(_animator->GetModelHandle(), kModelScale);
 
 	
 }
@@ -130,6 +132,9 @@ void EnemyNormal::Init(std::weak_ptr<Player> player, std::weak_ptr<Physics> phys
 	// physicsに登録
 	EntryPhysics(physics);
 	_weapon->EntryPhysics(physics);
+
+	// 武器位置更新
+	WeaponUpdate();
 }
 
 void EnemyNormal::Update()
@@ -306,7 +311,7 @@ void EnemyNormal::UpdateSpawning()
 		}
 		// スケールを線形補間
 		float scale = progress * kScaleMul;
-		//MV1SetScale(_animator->GetModelHandle(), Vector3(1, 1, 1) * scale);
+		//MV1SetScale(_animator->GetModelHandle(), kModelScale * scale);
 	}
 }
 
@@ -403,10 +408,8 @@ void EnemyNormal::RotateToPlayer()
 
 void EnemyNormal::WeaponUpdate()
 {
-	// 手の行列を武器のワールド行列とする
-	std::wstring handName = L"mixamorig:RightHandIndex1";
 	// 武器をアタッチするフレームの番号を検索
-	int frameIndex = MV1SearchFrame(_animator->GetModelHandle(), handName.c_str());
+	int frameIndex = MV1SearchFrame(_animator->GetModelHandle(), kHandFrameName.c_str());
 	// インデックスが有効かチェック
 	if (frameIndex < 0) {
 		assert(false && "指定されたフレームが見つからなかった");

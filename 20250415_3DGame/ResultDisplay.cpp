@@ -2,6 +2,7 @@
 #include "Statistics.h"
 #include "GameManager.h"
 #include "ResultItemDrawer.h"
+#include "Input.h"
 #include <DxLib.h>
 #include <cassert>
 #include <string>
@@ -18,7 +19,8 @@ namespace {
     const std::wstring kTimeText = L"TIME  : ";
     const std::wstring kTimeBonusText = L"TIME BONUS : ";
     const std::wstring kTotalScoreText = L"TOTAL SCORE : ";
-    const std::wstring kNextSceneText = L"Press A to Restart\n   Press B to Title";
+    const std::wstring kPadNextSceneText = L"Press A to Restart\n   Press B to Title";
+    const std::wstring kKeybdNextSceneText = L"Press Enter to Restart\n     Press Esc to Title";
     const std::wstring kScoreFormat = L"%05d";      // 5桁0埋め部分
 
     // アニメーション用の定数
@@ -173,15 +175,21 @@ void ResultDisplay::Draw()
     // 消滅中は描画を行わない
     if (!_isNextSceneTextActive) return;
 
+    // 最後の入力に応じて文字を変える
+    std::wstring drawString = kPadNextSceneText;
+    if (Input::GetInstance().GetLastInputType() == Input::PeripheralType::keybd) {
+        drawString = kKeybdNextSceneText;
+    }
+
     // 同様に描画する
     int nextSceneTextWidth = GetDrawStringWidthToHandle(
-        kNextSceneText.c_str(),
-        kNextSceneText.length(),
+        drawString.c_str(),
+        drawString.length(),
         _nextSceneFontHandle);
     int NextSceneDrawX = (Statistics::kScreenWidth - nextSceneTextWidth) * 0.5f;
     DrawStringToHandle(
         NextSceneDrawX, kNextSceneTextY,
-        kNextSceneText.c_str(), kTextColor,
+        drawString.c_str(), kTextColor,
         _nextSceneFontHandle);
 }
 

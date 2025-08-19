@@ -28,17 +28,23 @@
     <Filter Include="Object\Player">
       <UniqueIdentifier>{31614ffb-921c-4e76-a414-789c13cf9536}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Enemy">
+      <UniqueIdentifier>{3c7042a9-be9b-4cc9-b1cf-d3750dcff7c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{2969f62d-8171-44e1-9962-8d4dd2afee61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Weapon">
+      <UniqueIdentifier>{c3cfec2e-aaa3-480c-9f48-5062a95e6421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\SceneResult">
+      <UniqueIdentifier>{18967677-0c0f-491a-bd21-7fd37ae3eadb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\SceneGamePlay">
+      <UniqueIdentifier>{f19db1e2-d78d-4cc2-8efa-734912936295}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Matrix4x4.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
@@ -87,92 +93,95 @@
     <ClCompile Include="ColliderDataSphere.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Animator.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Ground.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyBase.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Object\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Weapon.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugDraw.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Skydome.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyNormal.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="WaveManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="WaveData.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyFactory.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="ColliderDataCapsule.cpp">
       <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="WeaponPlayer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="WeaponEnemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyBoss.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="StatusUI.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="WaveAnnouncer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ResultDisplay.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ResultItemDrawer.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="ColliderDataInvertedCylinder.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Arena.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="SceneOperationInstruction.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyBase.cpp">
+      <Filter>Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyBoss.cpp">
+      <Filter>Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyNormal.cpp">
+      <Filter>Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponEnemy.cpp">
+      <Filter>Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponPlayer.cpp">
+      <Filter>Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Arena.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugDraw.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyFactory.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultDisplay.cpp">
+      <Filter>System\SceneResult</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultItemDrawer.cpp">
+      <Filter>System\SceneResult</Filter>
+    </ClCompile>
+    <ClCompile Include="StatusUI.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveAnnouncer.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveData.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveManager.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="StringUtility.h">
       <Filter>Geometry</Filter>
     </ClInclude>
@@ -227,86 +236,92 @@
     <ClInclude Include="ColliderDataSphere.h">
       <Filter>Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Animator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Ground.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyBase.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Weapon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugDraw.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Skydome.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>Physics</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyNormal.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="ColliderDataCapsule.h">
       <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Calculation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="WeaponPlayer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="WeaponEnemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyBoss.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="StatusUI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveAnnouncer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ResultDisplay.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ResultItemDrawer.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="ColliderDataInvertedCylinder.h">
       <Filter>Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Arena.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="SceneOperationInstruction.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyBase.h">
+      <Filter>Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyBoss.h">
+      <Filter>Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyNormal.h">
+      <Filter>Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponPlayer.h">
+      <Filter>Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponEnemy.h">
+      <Filter>Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Arena.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugDraw.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyFactory.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultDisplay.h">
+      <Filter>System\SceneResult</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultItemDrawer.h">
+      <Filter>System\SceneResult</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusUI.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveAnnouncer.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveData.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveManager.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>System\SceneGamePlay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

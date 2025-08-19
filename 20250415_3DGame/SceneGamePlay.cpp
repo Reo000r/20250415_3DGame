@@ -24,6 +24,7 @@
 SceneGamePlay::SceneGamePlay() :
 	_frame(Statistics::kFadeInterval),
 	_nextScene(std::make_shared<SceneResult>()),
+	_nowPhase(Phase::Starting),
 	_physics(std::make_shared<Physics>()),
 	_camera(std::make_shared<Camera>()),
 	_player(std::make_shared<Player>()),
@@ -80,48 +81,53 @@ void SceneGamePlay::FadeinUpdate()
 	if (_frame <= 0) {
 		_nowUpdateState = &SceneGamePlay::NormalUpdate;
 		_nowDrawState = &SceneGamePlay::NormalDraw;
+		return;
 	}
+
+	// 開始前の更新
+	StartingUpdate();
 }
 
 void SceneGamePlay::NormalUpdate()
 {
-	// クリアタイムの加算
-	GameManager::GetInstance().UpdateClearTime();
+	switch (_nowPhase) {
+	case Phase::Starting:
+		StartingUpdate();
+		if (true) {	// 開始演出が終わったら
+			_nowPhase = Phase::InProgress;	// ゲーム中
+		}
+		break;
+	case Phase::InProgress:
+		InProgressUpdate();
+		break;
+	case Phase::Ending:
+	default:
+		assert(false);
+	}
 
-	// 更新
-	_camera->Update();
-	_skydome->Update();
-
-	_player->Update();
-
-	_statusUI->Update();
-	_enemyManager->Update();
-	_waveAnnouncer->Update();
-	_waveManager->Update();
-
-	// 物理演算更新
-	_physics->Update();
 
 	// クリア条件を満たしたら
 	if (_waveManager->IsClear()
 #ifdef _DEBUG
-		|| Input::GetInstance().IsTrigger("next")	// 決定を押したら
+		|| Input::GetInstance().IsTrigger("Debug::NextScene1")	// 決定を押したら
 #endif // _DEBUG
 		) {
 		_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
 		_nowDrawState = &SceneGamePlay::FadeDraw;
 		_frame = 0;
+		_nowPhase = Phase::Ending;	// 終了中
 	}
 	// 失敗条件を満たしたら
 	else if (!_player->IsAlive()
 #ifdef _DEBUG
-		|| Input::GetInstance().IsTrigger("back")
+		|| Input::GetInstance().IsTrigger("Debug::NextScene2")
 #endif // _DEBUG
 		) {
 		// (クリア時と同じシーンに飛ばしている)
 		_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
 		_nowDrawState = &SceneGamePlay::FadeDraw;
 		_frame = 0;
+		_nowPhase = Phase::Ending;	// 終了中
 	}
 }
 
@@ -129,24 +135,23 @@ void SceneGamePlay::FadeoutUpdate()
 {
 	_frame++;
 
-	if (_frame >= Statistics::kFadeInterval) {
+	// 遷移条件を満たしたら
+	if (_frame >= Statistics::kFadeInterval &&
+		true) {
 		SceneController::GetInstance().ChangeScene(_nextScene);
 		return;  // 自分が死んでいるのでもし
 		// 余計な処理が入っているとまずいのでreturn;
 	}
+
+	// 終了後の更新を行う
+	EndingUpdate();
 }
 
 void SceneGamePlay::FadeDraw()
 {
-	_skydome->Draw();
-	_arena->Draw();
+	// ゲーム内容を描画する
+	DrawGame();
 
-	_camera->Draw();
-	_player->Draw();
-
-	_enemyManager->Draw();
-	_statusUI->Draw();
-	_waveAnnouncer->Draw();
 
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();
@@ -166,15 +171,9 @@ void SceneGamePlay::FadeDraw()
 
 void SceneGamePlay::NormalDraw()
 {
-	_skydome->Draw();
-	_arena->Draw();
-	
-	_camera->Draw();
-	_player->Draw();
+	// ゲーム内容を描画する
+	DrawGame();
 
-	_enemyManager->Draw();
-	_statusUI->Draw();
-	_waveAnnouncer->Draw();
 
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();
@@ -183,3 +182,51 @@ void SceneGamePlay::NormalDraw()
 	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");
 #endif
 }
+
+void SceneGamePlay::StartingUpdate()
+{
+	// 開始時の更新を行う
+	// カメラ演出、ビルボードアニメーション
+}
+
+void SceneGamePlay::InProgressUpdate()
+{
+	// ゲーム中の更新を行う
+
+	// クリアタイムの加算
+	GameManager::GetInstance().UpdateClearTime();
+
+	// 更新
+	_camera->Update();
+	_skydome->Update();
+
+	_player->Update();
+
+	_statusUI->Update();
+	_enemyManager->Update();
+	_waveAnnouncer->Update();
+	_waveManager->Update();
+
+	// 物理演算更新
+	_physics->Update();
+}
+
+void SceneGamePlay::EndingUpdate()
+{
+	// 終了後の更新を行う
+	// カメラ演出、ビルボードアニメーション
+}
+
+void SceneGamePlay::DrawGame()
+{
+	_skydome->Draw();
+	_arena->Draw();
+
+	_camera->Draw();
+	_player->Draw();
+
+	_enemyManager->Draw();
+	_statusUI->Draw();
+	_waveAnnouncer->Draw();
+}
+
