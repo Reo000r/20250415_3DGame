@@ -10,6 +10,7 @@
 #include "WaveManager.h"
 #include "EnemyManager.h"
 #include "ItemManager.h"
+#include "PlayerBuffManager.h"
 #include "WaveAnnouncer.h"
 #include "EnemyFactory.h"
 #include "ItemFactory.h"
@@ -35,6 +36,7 @@ SceneGamePlay::SceneGamePlay() :
 	_waveManager(std::make_shared<WaveManager>()),
 	_enemyManager(std::make_shared<EnemyManager>()),
 	_itemManager(std::make_shared<ItemManager>()),
+	_playerBuffManager(std::make_shared<PlayerBuffManager>()),
 	_waveAnnouncer(std::make_shared<WaveAnnouncer>()),
 	_statusUI(std::make_unique<StatusUI>()),
 	_nowUpdateState(&SceneGamePlay::FadeinUpdate),
@@ -59,12 +61,13 @@ void SceneGamePlay::Init()
 
 	// 初期化処理
 	_camera->Init(_player);
-	_player->Init(_camera, _physics);
+	_player->Init(_camera, _physics, _playerBuffManager);
 	_skydome->Init(_camera);
 	_arena->Init(_physics);
 
 	_enemyManager->Init(_player, _physics);
-	_itemManager->Init(_physics);
+	_playerBuffManager->Init(_player);
+	_itemManager->Init(_physics, _playerBuffManager);
 	_waveManager->Init(_enemyManager, _itemManager, _waveAnnouncer);
 	_statusUI->Init(_player, _waveManager, _enemyManager);
 
@@ -213,6 +216,7 @@ void SceneGamePlay::InProgressUpdate()
 	_statusUI->Update();
 	_enemyManager->Update();
 	_itemManager->Update();
+	_playerBuffManager->Update();
 	_waveAnnouncer->Update();
 	_waveManager->Update();
 

@@ -1,19 +1,11 @@
 ﻿#pragma once
 #include "Geometry.h"
 #include "Collider.h"
-#include "BuffData.h"
+#include "PlayerBuffManager.h"
 #include <list>
+#include <memory>
 
-class Player;
-
-/// <summary>
-/// アイテム種別
-/// </summary>
-enum class ItemType {
-	Heal,			// 回復
-	ScoreBoost,		// スコア増加
-	Strength,		// 攻撃力増加
-};
+class PlayerBuffManager;
 
 /// <summary>
 /// アイテムの基底クラス
@@ -21,7 +13,8 @@ enum class ItemType {
 class ItemBase abstract : public Collider
 {
 public:
-	ItemBase(ItemType type, int modelHandle);
+	ItemBase(BuffData data, int modelHandle, 
+		std::weak_ptr<PlayerBuffManager> manager);
 	virtual ~ItemBase();
 
 	/// <summary>
@@ -54,11 +47,6 @@ public:
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
 	/// <summary>
-	/// プレイヤーが触れた場合
-	/// </summary>
-	virtual void PlayerCatched(const std::shared_ptr<Player> player) abstract;
-
-	/// <summary>
 	/// 生成を開始する
 	/// </summary>
 	/// <param name="pos">生成位置</param>
@@ -84,7 +72,7 @@ public:
 	/// どのようなアイテムか返す
 	/// </summary>
 	/// <returns></returns>
-	ItemType GetType() { return _itemType; }
+	BuffType GetType() const { return _data.type; }
 
 	/// <summary>
 	/// 消滅しているか
@@ -129,8 +117,8 @@ protected:
 	float _depthY;			// 生成時の深さ
 	float _modelRotSpeed;	// 回転速度
 
-	ItemType _itemType;
-	BuffData::BuffStats _stats;
+	std::weak_ptr<PlayerBuffManager> _playerBuffManager;
+	BuffData _data;
 	bool _isAlive;
 
 	int _animFrame;

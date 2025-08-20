@@ -7,7 +7,8 @@
 #include <DxLib.h>
 #include <cassert>
 
-ItemBase::ItemBase(ItemType type, int modelHandle) :
+ItemBase::ItemBase(BuffData data, int modelHandle, 
+	std::weak_ptr<PlayerBuffManager> manager) :
 	Collider(PhysicsData::Priority::Static,
 		PhysicsData::GameObjectTag::Item,
 		PhysicsData::ColliderKind::Sphere,
@@ -19,7 +20,8 @@ ItemBase::ItemBase(ItemType type, int modelHandle) :
 	_rotAngle(),
 	_modelOffset(),
 	_depthY(0.0f),
-	_itemType(type),
+	_playerBuffManager(manager),
+	_data(data),
 	_isAlive(true),
 	_animFrame(0),
 	_totalAnimFrame(0)
@@ -193,9 +195,8 @@ void ItemBase::OnCollide(const std::weak_ptr<Collider> collider)
         return;
     }
 
-	// プレイヤーが触れたことを伝える
-    auto player = std::static_pointer_cast<Player>(other);
-	PlayerCatched(player);
+	// 触れたことを伝える
+	_playerBuffManager.lock()->AttachBuff(_data);
 
 	// 消滅中にする
 	_nowUpdateState = &ItemBase::UpdateDestroying;

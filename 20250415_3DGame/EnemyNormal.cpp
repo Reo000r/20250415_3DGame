@@ -181,7 +181,7 @@ void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)
 }
 
 void EnemyNormal::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
-{
+ {
 	// 出現中と死亡状態ではダメージを受けない
 	if (_nowUpdateState == &EnemyNormal::UpdateSpawning ||
 		_nowUpdateState == &EnemyNormal::UpdateDeath) return;

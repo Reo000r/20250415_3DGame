@@ -1,8 +1,9 @@
 ﻿#include "ItemHeal.h"
-#include "Player.h"
+#include "PlayerBuffManager.h"
 
-ItemHeal::ItemHeal(int modelHandle) :
-	ItemBase(ItemType::Heal, modelHandle)
+ItemHeal::ItemHeal(BuffData data, int modelHandle,
+	std::weak_ptr<PlayerBuffManager> manager) :
+	ItemBase(data, modelHandle, manager)
 {
 	// 処理なし
 }
@@ -12,14 +13,7 @@ ItemHeal::~ItemHeal()
 	// 処理なし
 }
 
-void ItemHeal::Init(Vector3 modelTransOffset, BuffData::BuffStats stats)
+void ItemHeal::Init(Vector3 modelTransOffset)
 {
-	_stats = stats;
 	_modelOffset = modelTransOffset;
-}
-
-void ItemHeal::PlayerCatched(const std::shared_ptr<Player> player)
-{
-	// 回復量分だけ回復させる
-	player->AttachBuff(Buff::Heal, _stats);
 }

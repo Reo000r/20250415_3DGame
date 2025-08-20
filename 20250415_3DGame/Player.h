@@ -7,7 +7,7 @@
 class Camera;
 class Animator;
 class WeaponPlayer;
-class BuffData;
+class PlayerBuffManager;
 class Physics;
 
 /// <summary>
@@ -18,7 +18,8 @@ public:
 	Player();
 	~Player();
 
-	void Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics);
+	void Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics, 
+		std::weak_ptr<PlayerBuffManager> playerBuffManager);
 	void Update();
 	void Draw();
 
@@ -33,7 +34,7 @@ public:
 	float GetStamina() const { return _stamina; }
 	float GetMaxStamina() const;
 	bool IsAlive() { return _isAlive; }
-	bool GetAttackPower()const;
+	float GetAttackPower()const;
 	
 	/// <summary>
 	/// ダメージを受ける処理
@@ -117,7 +118,7 @@ private:
 	std::weak_ptr<Camera> _camera;
 
 	std::shared_ptr<WeaponPlayer> _weapon;
-	std::shared_ptr<BuffData> _buffData;
+	std::weak_ptr<PlayerBuffManager> _buffManager;
 
 	float _rotAngle;
 	//Matrix4x4 _rotMtx;

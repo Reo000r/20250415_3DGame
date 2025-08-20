@@ -59,7 +59,9 @@ void WaveManager::Update()
 	{
 		const auto& spawnInfo = _waveSettings[_currentWaveIndex].spawnGroups;
 		_enemyManager.lock()->SpawnEnemies(spawnInfo);
-		_itemManager.lock()->SpawnItem(ItemType::Heal);
+		_itemManager.lock()->SpawnItem(BuffType::Heal);
+		_itemManager.lock()->SpawnItem(BuffType::ScoreBoost);
+		_itemManager.lock()->SpawnItem(BuffType::Strength);
 		_state = State::InProgress;
 
 	}

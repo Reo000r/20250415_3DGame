@@ -1,18 +1,18 @@
 ﻿#include "ItemScoreBoost.h"
 
-ItemScoreBoost::ItemScoreBoost(int modelHandle) :
-	ItemBase(ItemType::ScoreBoost, modelHandle)
+ItemScoreBoost::ItemScoreBoost(BuffData data, int modelHandle,
+	std::weak_ptr<PlayerBuffManager> manager) :
+	ItemBase(data, modelHandle, manager)
 {
+	// 処理なし
 }
 
 ItemScoreBoost::~ItemScoreBoost()
 {
+	// 処理なし
 }
 
 void ItemScoreBoost::Init(Vector3 modelTransOffset)
 {
-}
-
-void ItemScoreBoost::PlayerCatched(const std::shared_ptr<Player> player)
-{
+	_modelOffset = modelTransOffset;
 }

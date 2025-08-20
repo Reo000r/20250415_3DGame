@@ -198,7 +198,10 @@
     <ClCompile Include="ItemScoreBoost.cpp">
       <Filter>Object\Item</Filter>
     </ClCompile>
-    <ClCompile Include="BuffData.cpp">
+    <ClCompile Include="PlayerBuffManager.cpp">
+      <Filter>Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemStrength.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -347,19 +350,22 @@
     <ClInclude Include="ItemHeal.h">
       <Filter>Object\Item</Filter>
     </ClInclude>
-    <ClInclude Include="ItemManager.h">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
     <ClInclude Include="ItemFactory.h">
       <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyBoss.h">
-      <Filter>Object\Item</Filter>
     </ClInclude>
     <ClInclude Include="ItemScoreBoost.h">
       <Filter>Object\Item</Filter>
     </ClInclude>
-    <ClInclude Include="BuffData.h">
+    <ClInclude Include="EnemyBoss.h">
+      <Filter>Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBuffManager.h">
+      <Filter>Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemStrength.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

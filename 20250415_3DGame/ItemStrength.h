@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "ItemBase.h"
 
-class ItemScoreBoost : public ItemBase
+class ItemStrength : public ItemBase
 {
 public:
-	ItemScoreBoost(BuffData data, int modelHandle,
+	ItemStrength(BuffData data, int modelHandle,
 		std::weak_ptr<PlayerBuffManager> manager);
-	~ItemScoreBoost();
+	~ItemStrength();
 
 	/// <summary>
 	/// 初期化

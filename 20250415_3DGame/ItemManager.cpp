@@ -21,9 +21,11 @@ ItemManager::~ItemManager()
 	// 処理なし
 }
 
-void ItemManager::Init(std::weak_ptr<Physics> physics)
+void ItemManager::Init(std::weak_ptr<Physics> physics,
+	std::weak_ptr<PlayerBuffManager> manager)
 {
 	_physics = physics;
+	_manager = manager;
 }
 
 void ItemManager::Update()
@@ -43,7 +45,7 @@ void ItemManager::Draw()
 	}
 }
 
-void ItemManager::SpawnItem(const ItemType type)
+void ItemManager::SpawnItem(const BuffType type)
 {
 	// spawnRadius内にランダムな位置を計算
 	float angle = static_cast<float>(Calc::ToRadian(GetRand(360)));
@@ -54,7 +56,7 @@ void ItemManager::SpawnItem(const ItemType type)
 
 	// アイテムを生成し、リストに追加
 	std::shared_ptr<ItemBase> newItem = 
-		ItemFactory::CreateAndRegister(type, spawnPos, _physics);
+		ItemFactory::CreateAndRegister(type, spawnPos, _manager, _physics);
 	_items.emplace_back(newItem);
 }
 

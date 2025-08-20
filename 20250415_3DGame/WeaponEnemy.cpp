@@ -24,7 +24,7 @@ void WeaponEnemy::OnCollide(const std::weak_ptr<Collider> collider)
     }
 
     auto player = std::static_pointer_cast<Player>(other);
-    auto enemy = std::static_pointer_cast<EnemyBase>(other);
+    auto enemy = std::static_pointer_cast<EnemyBase>(owner);
     
     // 相手にダメージ処理を依頼する
     player->TakeDamage(enemy->GetAttackPower(), owner);

@@ -1,12 +1,12 @@
 #pragma once
 #include "Vector3.h"
+#include "PlayerBuffManager.h"
 
 #include <memory>
 #include <unordered_map>
 
 class ItemBase;
 class Physics;
-enum class ItemType;
 
 /// <summary>
 /// 指定されたアイテムの生成やモデルハンドルを管理している
@@ -28,8 +28,9 @@ public:
 	/// 初期化とphysicsへの登録を行う
 	/// </summary>
 	static std::shared_ptr<ItemBase> CreateAndRegister(
-		ItemType type,
+		BuffType type,
 		const Vector3& position,
+		std::weak_ptr<PlayerBuffManager> manager,
 		std::weak_ptr<Physics> physics
 	);
 
@@ -38,6 +39,6 @@ public:
 private:
 	// モデルハンドルを管理するためのコンテナ
 	// キー:敵の種類, 値:モデルハンドル
-	static std::unordered_map<ItemType, int> _modelHandles;
+	static std::unordered_map<BuffType, int> _modelHandles;
 };
 

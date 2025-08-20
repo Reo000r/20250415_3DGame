@@ -8,7 +8,7 @@
 #include "Rigidbody.h"
 #include "Calculation.h"
 #include "ItemFactory.h"
-#include "BuffData.h"
+#include "PlayerBuffManager.h"
 #include "Physics.h"
 #include <cassert>
 #include <algorithm>
@@ -154,9 +154,11 @@ Player::~Player()
 	// modelはanimator側で消している
 }
 
-void Player::Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics)
+void Player::Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics, 
+	std::weak_ptr<PlayerBuffManager> playerBuffManager)
 {
 	_camera = camera;
+	_buffManager = playerBuffManager;
 	MV1SetRotationXYZ(_animator->GetModelHandle(), Vector3(0, _rotAngle, 0));
 
 
@@ -237,11 +239,11 @@ float Player::GetMaxStamina() const
 	return kMaxStamina;
 }
 
-bool Player::GetAttackPower() const
+float Player::GetAttackPower() const
 {
 	float power = kAttackPower;
-	if (_buffData->GetBuffAmount(BuffDataBuffType::Strength)) {
-		power *= GetBuffAmount(Buff::Strength);
+	if (_buffManager.lock()->GetData(BuffType::Strength).isActive) {
+		power *= _buffManager.lock()->GetData(BuffType::Strength).amount;
 	}
 	return power;
 }

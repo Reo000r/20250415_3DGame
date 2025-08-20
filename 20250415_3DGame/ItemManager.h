@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "PlayerBuffManager.h"
 
 #include <memory>
 #include <vector>
@@ -16,7 +17,8 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Init(std::weak_ptr<Physics> physics);
+	void Init(std::weak_ptr<Physics> physics, 
+		std::weak_ptr<PlayerBuffManager> _manager);
 
 	/// <summary>
 	/// 更新
@@ -32,7 +34,7 @@ public:
 	/// 指定されたアイテムを生成する
 	/// </summary>
 	/// <param name="type"></param>
-	void SpawnItem(const ItemType type);
+	void SpawnItem(const BuffType type);
 
 private:
 	/// <summary>
@@ -49,6 +51,7 @@ private:
 	std::vector<std::shared_ptr<ItemBase>> _items;
 
 	// 生成する際に必要な情報
+	std::weak_ptr<PlayerBuffManager> _manager;
 	std::weak_ptr<Physics> _physics;
 
 };

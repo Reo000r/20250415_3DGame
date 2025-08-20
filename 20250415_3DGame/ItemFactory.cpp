@@ -1,7 +1,10 @@
 #include "ItemFactory.h"
 #include "ItemBase.h"
 #include "ItemHeal.h"
+#include "ItemScoreBoost.h"
+#include "ItemStrength.h"
 #include "Player.h"
+#include "PlayerBuffManager.h"
 #include "Calculation.h"
 
 #include <DxLib.h>
@@ -10,10 +13,10 @@
 
 namespace {
 	// モデルファイルのパスをここで管理
-	const std::unordered_map<ItemType, std::wstring> kModelPaths = {
-		{ ItemType::Heal,		L"data/model/item/Item_BottleA.mv1" },
-		{ ItemType::ScoreBoost, L"data/model/item/Item_Coin.mv1" },
-		{ ItemType::Strength,	L"data/model/item/Item_Food.mv1" },
+	const std::unordered_map<BuffType, std::wstring> kModelPaths = {
+		{ BuffType::Heal,		L"data/model/item/Item_BottleA.mv1" },
+		{ BuffType::ScoreBoost, L"data/model/item/Item_Coin.mv1" },
+		{ BuffType::Strength,	L"data/model/item/Item_Food.mv1" },
 	};
 	
 	// 共通定数
@@ -29,22 +32,27 @@ namespace {
 	// ヒール用
 	const Vector3 kModelHealTransOffset = Vector3(0, -kColRadius, 0);
 	const float kHealTotalFrame = 60.0f * 1.0f;					// 効果時間
-	const float kHealAmount = (Player::GetMaxHitPoint() * 0.4f) / kHealTotalFrame;	// f当たりの回復量
+	const float kHealAmount = (Player::GetMaxHitPoint() * 0.4f) / kHealTotalFrame;	// 1f当たりの回復量
+	
+	// スコア増加用
+	const Vector3 kModelScoreBoostTransOffset = Vector3(0, -kColRadius, 0);
+	const float kScoreBoostTotalFrame = 60.0f * 10.0f;	// 効果時間
+	const float kScoreBoostMulAmount = 1.5f;			// スコア増加倍率
 
 	// 攻撃力増加用
 	const Vector3 kModelStrengthTransOffset = Vector3(0, -kColRadius, 0);
-	const float kStrengthTotalFrame = 60.0f * 10.0f;		// 効果時間
+	const float kStrengthTotalFrame = 60.0f * 10.0f;	// 効果時間
 	constexpr float kStrengthMulAmount = 1.5f;			// 攻撃力増加倍率
 }
 
 // staticメンバー変数の実体を定義
-std::unordered_map<ItemType, int> ItemFactory::_modelHandles;
+std::unordered_map<BuffType, int> ItemFactory::_modelHandles;
 
 void ItemFactory::LoadResources()
 {
 	// 全てのモデルを読み込み、ハンドルを保存する
 	for (const auto& pair : kModelPaths) {
-		const ItemType& type = pair.first;
+		const BuffType& type = pair.first;
 		const std::wstring& path = pair.second;
 		int handle = MV1LoadModel(path.c_str());
 		assert(handle >= 0 && "モデルの読み込みに失敗");
@@ -62,8 +70,9 @@ void ItemFactory::ReleaseResources()
 }
 
 std::shared_ptr<ItemBase> ItemFactory::CreateAndRegister(
-	ItemType type, 
+	BuffType type,
 	const Vector3& position, 
+	std::weak_ptr<PlayerBuffManager> manager,
 	std::weak_ptr<Physics> physics)
 {
 	std::shared_ptr<ItemBase> newItem = nullptr;
@@ -79,17 +88,18 @@ std::shared_ptr<ItemBase> ItemFactory::CreateAndRegister(
 
 	// 種類に応じて生成する
 	switch (type) {
-	case ItemType::Heal:
+	case BuffType::Heal:
 	{
-		auto itemHeal = std::make_shared<ItemHeal>(duplicatedHandle);
 		// ステータス設定
-		BuffStats stats;
-		stats.activeFrame = kHealTotalFrame;
-		stats.amount = kHealAmount;
-		stats.isActive = true;
-
+		BuffData data;
+		data.type = type;
+		data.activeFrame = kHealTotalFrame;
+		data.amount = kHealAmount;
+		data.isActive = true;
+		auto itemHeal = std::make_shared<ItemHeal>(data, duplicatedHandle, manager);
+		
 		// 派生先のInitを呼び出す
-		itemHeal->Init(kModelHealTransOffset, stats);
+		itemHeal->Init(kModelHealTransOffset);
 		newItem = itemHeal;
 		newItem->Init(
 			kColRadius,			// 当たり判定半径
@@ -98,14 +108,44 @@ std::shared_ptr<ItemBase> ItemFactory::CreateAndRegister(
 			kModelAngle);		// 角度補正
 		break;
 	}
-	case ItemType::ScoreBoost:
+	case BuffType::ScoreBoost:
 	{
-		//newItem = std::make_shared<ItemScoreBoost>(duplicatedHandle);
+		// ステータス設定
+		BuffData data;
+		data.type = type;
+		data.activeFrame = kScoreBoostTotalFrame;
+		data.amount = kScoreBoostMulAmount;
+		data.isActive = true;
+		auto itemScoreBoost = std::make_shared<ItemScoreBoost>(data, duplicatedHandle, manager);
+
+		// 派生先のInitを呼び出す
+		itemScoreBoost->Init(kModelScoreBoostTransOffset);
+		newItem = itemScoreBoost;
+		newItem->Init(
+			kColRadius,			// 当たり判定半径
+			kColTransOffset,	// 位置補正
+			kModelSize,			// 拡縮補正
+			kModelAngle);		// 角度補正
 		break;
 	}
-	case ItemType::Strength:
+	case BuffType::Strength:
 	{
-		//newItem = std::make_shared<ItemStrength>(duplicatedHandle);
+		// ステータス設定
+		BuffData data;
+		data.type = type;
+		data.activeFrame = kStrengthTotalFrame;
+		data.amount = kStrengthMulAmount;
+		data.isActive = true;
+		auto itemStrength = std::make_shared<ItemStrength>(data, duplicatedHandle, manager);
+
+		// 派生先のInitを呼び出す
+		itemStrength->Init(kModelStrengthTransOffset);
+		newItem = itemStrength;
+		newItem->Init(
+			kColRadius,			// 当たり判定半径
+			kColTransOffset,	// 位置補正
+			kModelSize,			// 拡縮補正
+			kModelAngle);		// 角度補正
 		break;
 	}
 	default:
