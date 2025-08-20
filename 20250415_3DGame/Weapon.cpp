@@ -8,12 +8,12 @@
 #include <DxLib.h>
 
 Weapon::Weapon(PhysicsData::GameObjectTag tag) :
-        Collider(PhysicsData::Priority::Static,
+    Collider(PhysicsData::Priority::Static,
         tag,
         PhysicsData::ColliderKind::Capsule,
         true, false),
     _modelHandle(-1),
-    _attackPower(0)
+    _isHit(false)
 {
     rigidbody->Init(false);
 }
@@ -30,8 +30,6 @@ void Weapon::Init(int modelHandle, float colRad, float colHeight,
     assert(modelHandle >= 0 && "モデルハンドルが正しくない");
     _modelHandle = modelHandle;
     _scale = scale;
-
-    Matrix4x4 scaleMatrix = MatGetScale(scale);
 
     _transOffset = transOffset;
     _rotAngle = angle;
@@ -102,10 +100,9 @@ void Weapon::Draw()
     MV1DrawModel(_modelHandle);
 }
 
-void Weapon::SetOwnerStatus(std::weak_ptr<Collider> owner, float attackPower)
+void Weapon::SetOwnerStatus(std::weak_ptr<Collider> owner)
 {
     _owner = owner;
-    _attackPower = attackPower;
 }
 
 void Weapon::SetCollisionState(bool isCollision)

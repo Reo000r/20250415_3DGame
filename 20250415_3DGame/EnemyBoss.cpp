@@ -94,7 +94,7 @@ EnemyBoss::EnemyBoss(int modelHandle) :
 	_weapon->SetCollisionState(false);
 
 	// 武器に自分自身と自分の攻撃力を設定
-	_weapon->SetOwnerStatus(shared_from_this(), kAttackPower);
+	_weapon->SetOwnerStatus(shared_from_this());
 }
 
 EnemyBoss::~EnemyBoss()
@@ -150,6 +150,11 @@ void EnemyBoss::Draw()
 float EnemyBoss::GetMaxHitPoint() const
 {
 	return kHitPoint;
+}
+
+float EnemyBoss::GetAttackPower() const
+{
+	return kAttackPower;
 }
 
 void EnemyBoss::OnCollide(const std::weak_ptr<Collider> collider)

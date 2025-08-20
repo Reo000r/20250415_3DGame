@@ -8,12 +8,17 @@
 #include <algorithm>
 #include <DxLib.h>
 
-EnemyManager::EnemyManager()
+EnemyManager::EnemyManager() :
+    _enemies(),
+    _player(),
+    _physics()
 {
+    // 処理なし
 }
 
 EnemyManager::~EnemyManager()
 {
+    // 処理なし
 }
 
 void EnemyManager::Init(std::weak_ptr<Player> player, std::weak_ptr<Physics> physics)
@@ -56,7 +61,7 @@ void EnemyManager::SpawnEnemies(const std::vector<SpawnInfo>& spawnInfoList)
             // Factoryを使って敵を生成し、リストに追加
             auto newEnemy = EnemyFactory::CreateAndRegister(info.type, spawnPos, _player,
                 _physics);
-            _enemies.push_back(newEnemy);
+            _enemies.emplace_back(newEnemy);
         }
     }
 }

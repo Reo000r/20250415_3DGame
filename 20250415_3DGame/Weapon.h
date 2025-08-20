@@ -41,7 +41,7 @@ public:
 	/// <summary>
 	/// 武器の所有者と攻撃力を設定する
 	/// </summary>
-	void SetOwnerStatus(std::weak_ptr<Collider> owner, float attackPower);
+	void SetOwnerStatus(std::weak_ptr<Collider> owner);
 
 	/// <summary>
 	/// 当たり判定を行うか切り替える
@@ -63,7 +63,6 @@ protected:
 	Vector3 _scale;
 
 	std::weak_ptr<Collider> _owner;
-	float _attackPower;
 
 	// 攻撃がヒットした相手のリスト
 	std::list<std::weak_ptr<Collider>> _attackedColliders;

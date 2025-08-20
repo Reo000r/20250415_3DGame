@@ -2,6 +2,8 @@
 #include "EnemyFactory.h"
 #include "EnemyBase.h"
 #include "EnemyManager.h"
+#include "ItemBase.h"
+#include "ItemManager.h"
 #include "WaveAnnouncer.h"
 #include "Calculation.h"
 
@@ -26,15 +28,19 @@ WaveManager::WaveManager() :
 	_currentWaveIndex(0),
 	_waveTransitionFrameCount(0),
 	_enemyManager(),
+	_itemManager(),
 	_waveAnnouncer()
 {
 }
 
 WaveManager::~WaveManager() {}
 
-void WaveManager::Init(std::weak_ptr<EnemyManager> enemyManager, std::weak_ptr<WaveAnnouncer> waveAnnouncer)
+void WaveManager::Init(std::weak_ptr<EnemyManager> enemyManager, 
+	std::weak_ptr<ItemManager> itemManager, 
+	std::weak_ptr<WaveAnnouncer> waveAnnouncer)
 {
 	_enemyManager = enemyManager;
+	_itemManager = itemManager;
 	_waveAnnouncer = waveAnnouncer;
 
 	InitWaveSettings();
@@ -53,7 +59,9 @@ void WaveManager::Update()
 	{
 		const auto& spawnInfo = _waveSettings[_currentWaveIndex].spawnGroups;
 		_enemyManager.lock()->SpawnEnemies(spawnInfo);
+		_itemManager.lock()->SpawnItem(ItemType::Heal);
 		_state = State::InProgress;
+
 	}
 	break;
 	case State::InProgress:

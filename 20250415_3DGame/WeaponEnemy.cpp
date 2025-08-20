@@ -1,9 +1,11 @@
 ﻿#include "WeaponEnemy.h"
 #include "Player.h"
+#include "EnemyBase.h"
 
 WeaponEnemy::WeaponEnemy() :
 	Weapon(PhysicsData::GameObjectTag::EnemyAttack)
 {
+    // 処理なし
 }
 
 void WeaponEnemy::OnCollide(const std::weak_ptr<Collider> collider)
@@ -22,9 +24,10 @@ void WeaponEnemy::OnCollide(const std::weak_ptr<Collider> collider)
     }
 
     auto player = std::static_pointer_cast<Player>(other);
+    auto enemy = std::static_pointer_cast<EnemyBase>(other);
     
     // 相手にダメージ処理を依頼する
-    player->TakeDamage(_attackPower, owner);
+    player->TakeDamage(enemy->GetAttackPower(), owner);
     _isHit = true;
 
     // 所有者がPlayerでない場合は

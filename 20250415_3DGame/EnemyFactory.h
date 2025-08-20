@@ -8,11 +8,11 @@ class EnemyBase;
 class Player;
 class Physics;
 
-enum EnemyType {
+enum class EnemyType {
 	Normal,
 };
 
-class EnemyFactory {
+class EnemyFactory final {
 public:
 	/// <summary>
 	/// 必要なモデルをすべて読み込む

@@ -4,7 +4,7 @@
 class Application final {
 	// シングルトン化
 private:
-	Application() {}
+	Application() : _in(), _out() {}
 	Application(const Application&) = delete;
 	void operator=(const Application&) = delete;
 

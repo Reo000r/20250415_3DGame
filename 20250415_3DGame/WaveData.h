@@ -3,7 +3,7 @@
 #include <vector>
 #include "Vector3.h"
 
-enum EnemyType;
+enum class EnemyType;
 
 // 1グループの敵の生成情報
 struct SpawnInfo {

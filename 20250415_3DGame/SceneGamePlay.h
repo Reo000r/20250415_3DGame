@@ -11,6 +11,7 @@ class Arena;
 class Skydome;
 class WaveManager;
 class EnemyManager;
+class ItemManager;
 class WaveAnnouncer;
 class StatusUI;
 
@@ -101,6 +102,7 @@ private:
 	std::unique_ptr<Skydome> _skydome;
 	std::shared_ptr<WaveManager> _waveManager;
 	std::shared_ptr<EnemyManager> _enemyManager;
+	std::shared_ptr<ItemManager> _itemManager;
 	std::shared_ptr<WaveAnnouncer> _waveAnnouncer;
 	std::unique_ptr<StatusUI> _statusUI;
 

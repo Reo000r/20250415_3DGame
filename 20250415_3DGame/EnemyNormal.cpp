@@ -127,7 +127,7 @@ void EnemyNormal::Init(std::weak_ptr<Player> player, std::weak_ptr<Physics> phys
 	_weapon->SetCollisionState(false);
 
 	// 武器に自分自身と自分の攻撃力を設定
-	_weapon->SetOwnerStatus(shared_from_this(), kAttackPower);
+	_weapon->SetOwnerStatus(shared_from_this());
 
 	// physicsに登録
 	EntryPhysics(physics);
@@ -168,6 +168,11 @@ void EnemyNormal::Draw()
 float EnemyNormal::GetMaxHitPoint() const
 {
 	return kHitPoint;
+}
+
+float EnemyNormal::GetAttackPower() const
+{
+	return kAttackPower;
 }
 
 void EnemyNormal::OnCollide(const std::weak_ptr<Collider> collider)

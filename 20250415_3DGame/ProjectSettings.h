@@ -12,6 +12,7 @@ namespace PhysicsData {
 		PlayerAttack,
 		Enemy,			// 敵
 		EnemyAttack,
+		Item,			// アイテム
 		SystemWall,		// システム壁
 		StepGround,		// 足場の地面
 	};
@@ -49,7 +50,7 @@ namespace PhysicsData {
 	const float sleepThreshold = 0.005f;
 
 	// 当たり判定回数の最大数
-	constexpr int kCheckCollideMaxCount = 1000;
+	constexpr int kCheckCollideMaxCount = 16;
 
 	// ゼロと見なす許容範囲
 	constexpr float kZeroTolerance = 0.00001f;

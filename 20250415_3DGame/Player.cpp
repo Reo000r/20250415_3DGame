@@ -7,6 +7,8 @@
 #include "ColliderData.h"
 #include "Rigidbody.h"
 #include "Calculation.h"
+#include "ItemFactory.h"
+#include "BuffData.h"
 #include "Physics.h"
 #include <cassert>
 #include <algorithm>
@@ -30,7 +32,7 @@ namespace {
 	constexpr float kTurnSpeed = 0.2f;	// 回転速度(ラジアン)
 	const float kStartPlayerRotAmount = Calc::ToRadian(180.0f);	// 初期の向き(ラジアン)
 	
-	constexpr float kMaxHitPoint = 100.0f;
+	constexpr float kMaxHitPoint = 300.0f;
 	constexpr float kMaxStamina = 100.0f;
 	constexpr float kStaminaCooltimeFrame = 30.0f;		// スタミナが回復し始めるまでにかかる時間
 	constexpr float kStaminaRecoveryFrame = 60.0f;		// スタミナが最大回復までにかかる時間
@@ -171,7 +173,7 @@ void Player::Init(std::weak_ptr<Camera> camera, std::weak_ptr<Physics> physics)
 	);
 
 	// 武器に自分自身と自分の攻撃力を設定
-	_weapon->SetOwnerStatus(shared_from_this(), _attackPower);
+	_weapon->SetOwnerStatus(shared_from_this());
 
 	EntryPhysics(physics);
 	_weapon->EntryPhysics(physics);
@@ -225,7 +227,7 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 	// coliderと衝突
 }
 
-float Player::GetMaxHitPoint() const
+float Player::GetMaxHitPoint()
 {
 	return kMaxHitPoint;
 }
@@ -233,6 +235,15 @@ float Player::GetMaxHitPoint() const
 float Player::GetMaxStamina() const
 {
 	return kMaxStamina;
+}
+
+bool Player::GetAttackPower() const
+{
+	float power = kAttackPower;
+	if (_buffData->GetBuffAmount(BuffDataBuffType::Strength)) {
+		power *= GetBuffAmount(Buff::Strength);
+	}
+	return power;
 }
 
 void Player::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
@@ -286,6 +297,11 @@ void Player::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
 			_hasDerivedAttackInput = false;		// 攻撃コンボをリセット
 		}
 	}
+}
+
+void Player::Heal(float amount)
+{
+	_hitPoint += std::min<float>(amount, kMaxHitPoint - _hitPoint);
 }
 
 void Player::CheckStateTransition()
@@ -790,3 +806,4 @@ bool Player::CanStaminaDecreace()
 	// スタミナが減少量より少ない場合は減らさない
 	return (_stamina >= kStaminaDecreaceAmount);
 }
+

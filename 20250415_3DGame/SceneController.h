@@ -8,7 +8,7 @@ class SceneBase;
 /// 各シーンを管理する
 /// シングルトン化する
 /// </summary>
-class SceneController
+class SceneController final
 {
 private:
 

@@ -44,6 +44,7 @@ public:
 
 	float GetHitPoint() const { return _hitPoint; }
 	virtual float GetMaxHitPoint() const abstract;
+	virtual float GetAttackPower() const abstract;
 
 	void SetPos(const Vector3& pos);
 

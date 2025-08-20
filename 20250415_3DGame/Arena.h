@@ -16,6 +16,12 @@ public:
 	/// <param name="colider"></param>
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
+	/// <summary>
+	/// アリーナの半径を返す
+	/// (当たり判定の内側のサイズ)
+	/// </summary>
+	/// <returns></returns>
+	static float GetArenaRadius();
 
 private:
 

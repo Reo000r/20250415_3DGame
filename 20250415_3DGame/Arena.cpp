@@ -16,8 +16,8 @@ namespace {
 	const Vector3 kModelScale = Vector3(1.5f, 1.5f, 1.5f) * 0.5f;
 
 	const Vector3 kStartToEnd = Vector3(0.0f, 1000.0f, 0.0f);
-	constexpr int kColInnerRadius = 300.0f;
-	constexpr int kColOuterRadius = 1000.0f;
+	constexpr int kColInnerRadius = 700.0f;		// 内側の半径
+	constexpr int kColOuterRadius = 1000.0f;	// 外側の半径
 }
 
 Arena::Arena() :
@@ -67,4 +67,9 @@ void Arena::Draw()
 
 void Arena::OnCollide(const std::weak_ptr<Collider> collider)
 {
+}
+
+float Arena::GetArenaRadius()
+{
+	return kColInnerRadius;
 }

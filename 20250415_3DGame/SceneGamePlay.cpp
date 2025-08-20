@@ -9,8 +9,10 @@
 #include "DebugDraw.h"
 #include "WaveManager.h"
 #include "EnemyManager.h"
+#include "ItemManager.h"
 #include "WaveAnnouncer.h"
 #include "EnemyFactory.h"
+#include "ItemFactory.h"
 #include "StatusUI.h"
 #include "GameManager.h"
 
@@ -32,6 +34,7 @@ SceneGamePlay::SceneGamePlay() :
 	_skydome(std::make_unique<Skydome>()),
 	_waveManager(std::make_shared<WaveManager>()),
 	_enemyManager(std::make_shared<EnemyManager>()),
+	_itemManager(std::make_shared<ItemManager>()),
 	_waveAnnouncer(std::make_shared<WaveAnnouncer>()),
 	_statusUI(std::make_unique<StatusUI>()),
 	_nowUpdateState(&SceneGamePlay::FadeinUpdate),
@@ -43,12 +46,16 @@ SceneGamePlay::~SceneGamePlay()
 {
 	// 敵のモデルを解放する
 	EnemyFactory::ReleaseResources();
+	// アイテムのモデルを解放する
+	ItemFactory::ReleaseResources();
 }
 
 void SceneGamePlay::Init()
 {
 	// 敵のモデルを読み込む
 	EnemyFactory::LoadResources();
+	// アイテムのモデルを読み込む
+	ItemFactory::LoadResources();
 
 	// 初期化処理
 	_camera->Init(_player);
@@ -57,7 +64,8 @@ void SceneGamePlay::Init()
 	_arena->Init(_physics);
 
 	_enemyManager->Init(_player, _physics);
-	_waveManager->Init(_enemyManager, _waveAnnouncer);
+	_itemManager->Init(_physics);
+	_waveManager->Init(_enemyManager, _itemManager, _waveAnnouncer);
 	_statusUI->Init(_player, _waveManager, _enemyManager);
 
 	GameManager::GetInstance().Init(_player, _waveManager);
@@ -204,6 +212,7 @@ void SceneGamePlay::InProgressUpdate()
 
 	_statusUI->Update();
 	_enemyManager->Update();
+	_itemManager->Update();
 	_waveAnnouncer->Update();
 	_waveManager->Update();
 
@@ -226,6 +235,7 @@ void SceneGamePlay::DrawGame()
 	_player->Draw();
 
 	_enemyManager->Draw();
+	_itemManager->Draw();
 	_statusUI->Draw();
 	_waveAnnouncer->Draw();
 }

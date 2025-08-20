@@ -43,6 +43,9 @@
     <Filter Include="System\SceneGamePlay">
       <UniqueIdentifier>{f19db1e2-d78d-4cc2-8efa-734912936295}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Item">
+      <UniqueIdentifier>{cfb1adcd-8b01-45ae-b6c5-225604afc128}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Matrix4x4.cpp">
@@ -180,6 +183,24 @@
     <ClCompile Include="main.cpp">
       <Filter>System</Filter>
     </ClCompile>
+    <ClCompile Include="ItemBase.cpp">
+      <Filter>Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemHeal.cpp">
+      <Filter>Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemManager.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemFactory.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemScoreBoost.cpp">
+      <Filter>Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="BuffData.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StringUtility.h">
@@ -260,9 +281,6 @@
     <ClInclude Include="EnemyBase.h">
       <Filter>Object\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyBoss.h">
-      <Filter>Object\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="EnemyNormal.h">
       <Filter>Object\Enemy</Filter>
     </ClInclude>
@@ -322,6 +340,27 @@
     </ClInclude>
     <ClInclude Include="Animator.h">
       <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemBase.h">
+      <Filter>Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemHeal.h">
+      <Filter>Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemFactory.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyBoss.h">
+      <Filter>Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemScoreBoost.h">
+      <Filter>Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="BuffData.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

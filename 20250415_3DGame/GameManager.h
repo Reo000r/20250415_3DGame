@@ -5,7 +5,7 @@ class Player;
 class WaveManager;
 
 // シングルトンとして実装
-class GameManager {
+class GameManager final {
 	// シングルトン化
 private:
 	GameManager() : 

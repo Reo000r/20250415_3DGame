@@ -15,6 +15,7 @@ public:
 	void Draw() override;
 
 	float GetMaxHitPoint() const override;
+	float GetAttackPower() const override;
 
 	/// <summary>
 	/// 衝突したときに呼ばれる

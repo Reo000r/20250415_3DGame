@@ -22,6 +22,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="BuffData.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderData.cpp" />
@@ -38,6 +39,11 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="ItemBase.cpp" />
+    <ClCompile Include="ItemFactory.cpp" />
+    <ClCompile Include="ItemHeal.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
+    <ClCompile Include="ItemScoreBoost.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Physics.cpp" />
@@ -69,6 +75,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Arena.h" />
+    <ClInclude Include="BuffData.h" />
     <ClInclude Include="Calculation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
@@ -87,6 +94,11 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="ItemBase.h" />
+    <ClInclude Include="ItemFactory.h" />
+    <ClInclude Include="ItemHeal.h" />
+    <ClInclude Include="ItemManager.h" />
+    <ClInclude Include="ItemScoreBoost.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="ProjectSettings.h" />

@@ -2,10 +2,12 @@
 #include "Geometry.h"
 #include "Collider.h"
 #include <memory>
+#include <unordered_map>
 
 class Camera;
 class Animator;
 class WeaponPlayer;
+class BuffData;
 class Physics;
 
 /// <summary>
@@ -27,10 +29,11 @@ public:
 	void OnCollide(const std::weak_ptr<Collider> collider) override;
 
 	float GetHitPoint() const { return _hitPoint; }
-	float GetMaxHitPoint() const;
+	static float GetMaxHitPoint();
 	float GetStamina() const { return _stamina; }
 	float GetMaxStamina() const;
 	bool IsAlive() { return _isAlive; }
+	bool GetAttackPower()const;
 	
 	/// <summary>
 	/// ダメージを受ける処理
@@ -38,6 +41,8 @@ public:
 	/// <param name="damage">受けるダメージ量</param>
 	/// <param name="attacker">攻撃してきた相手</param>
 	void TakeDamage(float damage, std::shared_ptr<Collider> attacker);
+
+	void Heal(float amount);
 
 private:
 	// UpdateのStateパターン
@@ -112,6 +117,7 @@ private:
 	std::weak_ptr<Camera> _camera;
 
 	std::shared_ptr<WeaponPlayer> _weapon;
+	std::shared_ptr<BuffData> _buffData;
 
 	float _rotAngle;
 	//Matrix4x4 _rotMtx;

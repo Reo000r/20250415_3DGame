@@ -4,6 +4,7 @@
 #include <memory>
 
 class EnemyManager;
+class ItemManager;
 class WaveAnnouncer;
 
 class WaveManager {
@@ -20,7 +21,9 @@ public:
 	WaveManager();
 	~WaveManager();
 
-	void Init(std::weak_ptr<EnemyManager> enemyManager, std::weak_ptr<WaveAnnouncer> waveAnnouncer);
+	void Init(std::weak_ptr<EnemyManager> enemyManager, 
+		std::weak_ptr<ItemManager> itemManager, 
+		std::weak_ptr<WaveAnnouncer> waveAnnouncer);
 	void Update();
 
 	bool IsClear() const { return _state == State::AllWavesComplete; }
@@ -40,5 +43,6 @@ private:
 
 	
 	std::weak_ptr<EnemyManager> _enemyManager;
+	std::weak_ptr<ItemManager> _itemManager;
 	std::weak_ptr<WaveAnnouncer> _waveAnnouncer;
 };
