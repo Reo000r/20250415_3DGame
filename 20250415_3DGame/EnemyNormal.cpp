@@ -6,29 +6,28 @@
 #include "Collider.h"
 #include "Rigidbody.h"
 #include "Calculation.h"
-#include "GameManager.h"
 #include <cassert>
 
 #include <DxLib.h>
 #include <algorithm>
 
 namespace {
-	constexpr float kScaleMul = 2.0f;							// 拡大倍率
-	const Vector3 kModelScale = Vector3(1, 1, 1) * kScaleMul;	// モデル拡大倍率
+	constexpr float kScaleMul = 2.75f;							// 拡大倍率
+	const Vector3 kModelScale = Vector3(1.2f, 1, 1.2f) * kScaleMul;	// モデル拡大倍率
 	constexpr float kHitPoint = 300.0f;							// HP
-	constexpr float kChaseSpeed = 4.0f * kScaleMul;				// 追いかける速度
-	constexpr float kTurnSpeed = 0.05f;							// 回転速度(ラジアン)
+	constexpr float kChaseSpeed = 8.0f * kScaleMul;				// 追いかける速度
+	constexpr float kTurnSpeed = 0.06f;							// 回転速度(ラジアン)
 	constexpr float kAttackRange = 175.0f * kScaleMul;			// 攻撃に移行する距離
 	constexpr float kGround = 0.0f;								// (地面の高さ)
 	constexpr int kReactCooltimeFrame = 30;						// 無敵時間
 
-	constexpr float kAttackPower = 50.0f;						// 攻撃力
+	constexpr float kAttackPower = 100.0f;						// 攻撃力
 	
-	constexpr int kAddScore = 100.0f;							// 加算スコア
+	constexpr int kAddScore = 1000.0f;							// 加算スコア
 
 	// 当たり判定のパラメータ
-	constexpr float kColRadius = 50.0f * kScaleMul;		// 半径
-	constexpr float kColHeight = 200.0f * kScaleMul;	// 身長
+	const float kColRadius = 60.0f * kModelScale.x;		// 半径
+	const float kColHeight = 200.0f * kModelScale.y;	// 身長
 	const Vector3 kColOffset = Vector3Up() * (kColHeight - kColRadius);
 
 	const std::wstring kAnimName = L"Armature|Animation_";
@@ -39,6 +38,7 @@ namespace {
 	const std::wstring kAnimNameDeath = kAnimName + L"Dying";
 
 	constexpr float kBaseAnimSpeed = 1.0f;
+	constexpr float kSpawnAnimEndRatio = 0.5f;		// 開始時のスケーリングを終わらせるタイミング
 	
 	// 武器データ
 	const std::wstring kHandFrameName = L"mixamorig:RightHandIndex1";
@@ -47,8 +47,8 @@ namespace {
 	const Vector3 kWeaponOffsetPos = Vector3Up();					// 位置補正
 	const Vector3 kWeaponOffsetScale = Vector3(1.0f, 1.3f, 2.0f) * 1.2f;	// 拡縮補正
 
-	const float kWeaponRad = 50.0f * kWeaponOffsetScale.x;		// 武器半径
-	const float kWeaponDist = 200.0f * kWeaponOffsetScale.y;	// 武器長さ
+	const float kWeaponRad = 70.0f * kWeaponOffsetScale.x;		// 武器半径
+	const float kWeaponDist = 300.0f * kWeaponOffsetScale.y;	// 武器長さ
 
 	// 角度補正
 	const Vector3 kWeaponOffsetDir = Vector3(
@@ -195,7 +195,7 @@ void EnemyNormal::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
 		_state = State::Dying;
 		_nowUpdateState = &EnemyNormal::UpdateDeath;
 		_animator->ChangeAnim(kAnimNameDeath, false);
-		GameManager::GetInstance().AddEnemyDefeatScore(kAddScore);	// スコア加算
+		_player.lock()->AddScore(kAddScore);		//スコア加算
 		// 物理判定から除外する
 		ReleasePhysics();
 		_weapon->ReleasePhysics();
@@ -311,12 +311,12 @@ void EnemyNormal::UpdateSpawning()
 		// 進行度を計算 (0.0 ~ 1.0)
 		float progress = 0.0f;
 		// (0除算回避)
-		if (std::min<float>(animData.frame, animData.totalFrame)) {
-			progress = std::min<float>(animData.frame / animData.totalFrame, 1.0f);
+		float totalFrame = animData.totalFrame * kSpawnAnimEndRatio;
+		if (std::min<float>(animData.frame, totalFrame)) {
+			progress = std::min<float>(animData.frame / totalFrame, 1.0f);
 		}
 		// スケールを線形補間
-		float scale = progress * kScaleMul;
-		//MV1SetScale(_animator->GetModelHandle(), kModelScale * scale);
+		MV1SetScale(_animator->GetModelHandle(), kModelScale * progress);
 	}
 }
 

@@ -34,7 +34,7 @@ public:
 	/// 最後に入力された機器を返す
 	/// </summary>
 	/// <returns></returns>
-	PeripheralType GetLastInputType();
+	PeripheralType GetLastInputType() const;
 
 	/// <summary>
 	/// 押されているかどうかの取得

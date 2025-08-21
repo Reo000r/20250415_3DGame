@@ -46,6 +46,18 @@
     <Filter Include="Object\Item">
       <UniqueIdentifier>{cfb1adcd-8b01-45ae-b6c5-225604afc128}</UniqueIdentifier>
     </Filter>
+    <Filter Include="System\SceneGamePlay\Enemy">
+      <UniqueIdentifier>{ccf3e4f1-7213-4f49-a2f9-bc506804e982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\SceneGamePlay\Wave">
+      <UniqueIdentifier>{2ec54d7d-c5fb-4a9b-949c-5d18069af08d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\SceneGamePlay\Item">
+      <UniqueIdentifier>{a442ae4f-cae2-42fb-92b3-928fa8a2ff59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Billboard">
+      <UniqueIdentifier>{4e1ad404-4188-45e4-8a9f-674bf21b7e8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Matrix4x4.cpp">
@@ -147,12 +159,6 @@
     <ClCompile Include="DebugDraw.cpp">
       <Filter>System</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyFactory.cpp">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyManager.cpp">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClCompile>
     <ClCompile Include="ResultDisplay.cpp">
       <Filter>System\SceneResult</Filter>
     </ClCompile>
@@ -160,15 +166,6 @@
       <Filter>System\SceneResult</Filter>
     </ClCompile>
     <ClCompile Include="StatusUI.cpp">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClCompile>
-    <ClCompile Include="WaveAnnouncer.cpp">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClCompile>
-    <ClCompile Include="WaveData.cpp">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClCompile>
-    <ClCompile Include="WaveManager.cpp">
       <Filter>System\SceneGamePlay</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
@@ -189,19 +186,43 @@
     <ClCompile Include="ItemHeal.cpp">
       <Filter>Object\Item</Filter>
     </ClCompile>
-    <ClCompile Include="ItemManager.cpp">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemFactory.cpp">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClCompile>
     <ClCompile Include="ItemScoreBoost.cpp">
       <Filter>Object\Item</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerBuffManager.cpp">
-      <Filter>Object\Player</Filter>
-    </ClCompile>
     <ClCompile Include="ItemStrength.cpp">
+      <Filter>Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyFactory.cpp">
+      <Filter>System\SceneGamePlay\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>System\SceneGamePlay\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveAnnouncer.cpp">
+      <Filter>System\SceneGamePlay\Wave</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveData.cpp">
+      <Filter>System\SceneGamePlay\Wave</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveManager.cpp">
+      <Filter>System\SceneGamePlay\Wave</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemFactory.cpp">
+      <Filter>System\SceneGamePlay\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemManager.cpp">
+      <Filter>System\SceneGamePlay\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBuffManager.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="BillboardAudience.cpp">
+      <Filter>Object\Billboard</Filter>
+    </ClCompile>
+    <ClCompile Include="BillboardManager.cpp">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="PopupManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -308,12 +329,6 @@
     <ClInclude Include="Input.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyFactory.h">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyManager.h">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
     <ClInclude Include="ResultDisplay.h">
       <Filter>System\SceneResult</Filter>
     </ClInclude>
@@ -321,15 +336,6 @@
       <Filter>System\SceneResult</Filter>
     </ClInclude>
     <ClInclude Include="StatusUI.h">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveAnnouncer.h">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveData.h">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveManager.h">
       <Filter>System\SceneGamePlay</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
@@ -350,22 +356,46 @@
     <ClInclude Include="ItemHeal.h">
       <Filter>Object\Item</Filter>
     </ClInclude>
-    <ClInclude Include="ItemFactory.h">
-      <Filter>System\SceneGamePlay</Filter>
-    </ClInclude>
     <ClInclude Include="ItemScoreBoost.h">
       <Filter>Object\Item</Filter>
     </ClInclude>
     <ClInclude Include="EnemyBoss.h">
       <Filter>Object\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerBuffManager.h">
-      <Filter>Object\Player</Filter>
+    <ClInclude Include="ItemStrength.h">
+      <Filter>Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyFactory.h">
+      <Filter>System\SceneGamePlay\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>System\SceneGamePlay\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveAnnouncer.h">
+      <Filter>System\SceneGamePlay\Wave</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveData.h">
+      <Filter>System\SceneGamePlay\Wave</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveManager.h">
+      <Filter>System\SceneGamePlay\Wave</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemFactory.h">
+      <Filter>System\SceneGamePlay\Item</Filter>
     </ClInclude>
     <ClInclude Include="ItemManager.h">
+      <Filter>System\SceneGamePlay\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBuffManager.h">
       <Filter>System\SceneGamePlay</Filter>
     </ClInclude>
-    <ClInclude Include="ItemStrength.h">
+    <ClInclude Include="BillboardAudience.h">
+      <Filter>Object\Billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="BillboardManager.h">
+      <Filter>System\SceneGamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="PopupManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@
 #include <DxLib.h>
 
 namespace {
-	const float kSpawnRadius = Arena::GetArenaRadius() - 100.0f;
+	const float kSpawnRadius = Arena::GetArenaRadius() - 500.0f;
 }
 
 ItemManager::ItemManager() :

@@ -9,6 +9,7 @@
 #include "Calculation.h"
 #include "ItemFactory.h"
 #include "PlayerBuffManager.h"
+#include "GameManager.h"
 #include "Physics.h"
 #include <cassert>
 #include <algorithm>
@@ -24,12 +25,12 @@ namespace {
 	
 	constexpr float kAttackPower = 100.0f;
 	constexpr float kWalkSpeed = 7.0f;
-	constexpr float kDashSpeed = 14.0f;
-	constexpr float kJumpForce = 20.0f;
+	constexpr float kDashSpeed = 20.0f;
+	//constexpr float kJumpForce = 20.0f;
 	constexpr float kGround = 0.0f;
 	constexpr int kReactCooltimeFrame = 60;	// 無敵時間
 
-	constexpr float kTurnSpeed = 0.2f;	// 回転速度(ラジアン)
+	constexpr float kTurnSpeed = 0.20f;	// 回転速度(ラジアン)
 	const float kStartPlayerRotAmount = Calc::ToRadian(180.0f);	// 初期の向き(ラジアン)
 	
 	constexpr float kMaxHitPoint = 300.0f;
@@ -299,6 +300,15 @@ void Player::TakeDamage(float damage, std::shared_ptr<Collider> attacker)
 			_hasDerivedAttackInput = false;		// 攻撃コンボをリセット
 		}
 	}
+}
+
+void Player::AddScore(int addScore)
+{
+	int finalAddScore = addScore;
+	if (_buffManager.lock()->GetData(BuffType::ScoreBoost).isActive) {
+		finalAddScore *= _buffManager.lock()->GetData(BuffType::ScoreBoost).amount;
+	}
+	GameManager::GetInstance().AddEnemyDefeatScore(finalAddScore);	// スコア加算
 }
 
 void Player::Heal(float amount)

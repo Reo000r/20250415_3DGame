@@ -59,9 +59,10 @@ void WaveManager::Update()
 	{
 		const auto& spawnInfo = _waveSettings[_currentWaveIndex].spawnGroups;
 		_enemyManager.lock()->SpawnEnemies(spawnInfo);
-		_itemManager.lock()->SpawnItem(BuffType::Heal);
-		_itemManager.lock()->SpawnItem(BuffType::ScoreBoost);
-		_itemManager.lock()->SpawnItem(BuffType::Strength);
+		for (int i = 0; i < 20; ++i) {
+			BuffType spawnType = static_cast<BuffType>(GetRand(static_cast<int>(BuffType::TypeNum)-1));
+			_itemManager.lock()->SpawnItem(spawnType);
+		}
 		_state = State::InProgress;
 
 	}

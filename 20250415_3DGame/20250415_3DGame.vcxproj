@@ -22,6 +22,8 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="BillboardAudience.cpp" />
+    <ClCompile Include="BillboardManager.cpp" />
     <ClCompile Include="ItemStrength.cpp" />
     <ClCompile Include="PlayerBuffManager.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -49,6 +51,7 @@
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PopupManager.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="ResultDisplay.cpp" />
     <ClCompile Include="ResultItemDrawer.cpp" />
@@ -76,6 +79,8 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Arena.h" />
+    <ClInclude Include="BillboardAudience.h" />
+    <ClInclude Include="BillboardManager.h" />
     <ClInclude Include="ItemStrength.h" />
     <ClInclude Include="PlayerBuffManager.h" />
     <ClInclude Include="Calculation.h" />
@@ -103,6 +108,7 @@
     <ClInclude Include="ItemScoreBoost.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="PopupManager.h" />
     <ClInclude Include="ProjectSettings.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quaternion.h" />
@@ -194,6 +200,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../DxLib_VC;$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);DxLib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -214,6 +221,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../DxLib_VC;$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);DxLib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -230,6 +238,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../DxLib_VC;$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);DxLib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -250,6 +259,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../DxLib_VC;$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);DxLib.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

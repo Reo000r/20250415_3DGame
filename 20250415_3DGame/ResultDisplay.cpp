@@ -21,7 +21,7 @@ namespace {
     const std::wstring kTotalScoreText = L"TOTAL SCORE : ";
     const std::wstring kPadNextSceneText = L"Press A to Restart\n   Press B to Title";
     const std::wstring kKeybdNextSceneText = L"Press Enter to Restart\n     Press Esc to Title";
-    const std::wstring kScoreFormat = L"%05d";      // 5桁0埋め部分
+    
 
     // アニメーション用の定数
     constexpr int kSlideInDuration = 45;            // スライドインにかかるフレーム

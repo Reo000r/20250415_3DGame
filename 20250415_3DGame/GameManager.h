@@ -22,7 +22,7 @@ public:
 	// タイムボーナス計算用の定数
 	static constexpr float kMaxBonusTime = (0 * 60.0f + 0.0f);	// 最大ボーナスがもらえるタイム（秒）
 	static constexpr float kMinBonusTime = (2 * 60.0f + 0.0f);	// 最小ボーナスがもらえるタイム（秒）
-	static constexpr int kMaxTimeBonusScore = 10000;	// 最大ボーナススコア
+	static constexpr int kMaxTimeBonusScore = 100000;	// 最大ボーナススコア
 	static constexpr int kMinTimeBonusScore = 500;		// 最小ボーナススコア
 
 public:

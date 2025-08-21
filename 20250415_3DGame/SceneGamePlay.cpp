@@ -14,6 +14,7 @@
 #include "WaveAnnouncer.h"
 #include "EnemyFactory.h"
 #include "ItemFactory.h"
+#include "BillboardManager.h"
 #include "StatusUI.h"
 #include "GameManager.h"
 
@@ -28,6 +29,7 @@ SceneGamePlay::SceneGamePlay() :
 	_frame(Statistics::kFadeInterval),
 	_nextScene(std::make_shared<SceneResult>()),
 	_nowPhase(Phase::Starting),
+	_clearState(ClearState::InProgress),
 	_physics(std::make_shared<Physics>()),
 	_camera(std::make_shared<Camera>()),
 	_player(std::make_shared<Player>()),
@@ -38,9 +40,11 @@ SceneGamePlay::SceneGamePlay() :
 	_itemManager(std::make_shared<ItemManager>()),
 	_playerBuffManager(std::make_shared<PlayerBuffManager>()),
 	_waveAnnouncer(std::make_shared<WaveAnnouncer>()),
+	_billboardManager(std::make_shared<BillboardManager>()),
 	_statusUI(std::make_unique<StatusUI>()),
 	_nowUpdateState(&SceneGamePlay::FadeinUpdate),
-	_nowDrawState(&SceneGamePlay::FadeDraw)
+	_nowDrawState(&SceneGamePlay::FadeinDraw),
+	_nowGameDrawState(&SceneGamePlay::StartingGameDraw)
 {
 }
 
@@ -69,6 +73,7 @@ void SceneGamePlay::Init()
 	_playerBuffManager->Init(_player);
 	_itemManager->Init(_physics, _playerBuffManager);
 	_waveManager->Init(_enemyManager, _itemManager, _waveAnnouncer);
+	_billboardManager->Init();
 	_statusUI->Init(_player, _waveManager, _enemyManager);
 
 	GameManager::GetInstance().Init(_player, _waveManager);
@@ -76,12 +81,32 @@ void SceneGamePlay::Init()
 
 void SceneGamePlay::Update()
 {
-	(this->*_nowUpdateState)();
+	// ゲームが進行中なら
+	if (_isProgress) {
+
+		(this->*_nowUpdateState)();
+
+	}
+	// でなければ(ゲームが停止していれば)
+	else {
+	}
 }
 
 void SceneGamePlay::Draw()
 {
 	(this->*_nowDrawState)();
+
+	// ゲームが停止していたら
+	if (!_isProgress) {
+
+		// 背景を暗くしポップアップを表示する
+		SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(0.5f));
+		DrawBox(0, 0, Statistics::kScreenWidth, Statistics::kScreenHeight, 0x000000, true);
+		// BlendModeを使った後はNOBLENDにしておくことを忘れず
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+
+	}
 }
 
 void SceneGamePlay::FadeinUpdate()
@@ -104,42 +129,70 @@ void SceneGamePlay::NormalUpdate()
 	switch (_nowPhase) {
 	case Phase::Starting:
 		StartingUpdate();
-		if (true) {	// 開始演出が終わったら
+		if (_camera->IsCompleteStartAnimation()) {	// 開始演出が終わったら
 			_nowPhase = Phase::InProgress;	// ゲーム中
+			_nowGameDrawState = &SceneGamePlay::NormalGameDraw;
+			_camera->AdvanceState();		// カメラのステートを進める
 		}
 		break;
 	case Phase::InProgress:
 		InProgressUpdate();
 		break;
 	case Phase::Ending:
+		// 終了後の更新を行う
+		EndingUpdate();
+		break;
 	default:
 		assert(false);
 	}
 
-
-	// クリア条件を満たしたら
-	if (_waveManager->IsClear()
-#ifdef _DEBUG
-		|| Input::GetInstance().IsTrigger("Debug::NextScene1")	// 決定を押したら
-#endif // _DEBUG
-		) {
-		_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
-		_nowDrawState = &SceneGamePlay::FadeDraw;
-		_frame = 0;
-		_nowPhase = Phase::Ending;	// 終了中
+	// アニメーション中なら
+	if (_camera->IsAnimationInProgress()) {
+		// フェードアウトが可能な場合は
+		if (_camera->CanFadeout()) {
+			// フェードアウト準備
+			if (_clearState == ClearState::Complete) {
+				_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
+				_nowDrawState = &SceneGamePlay::FadeoutDraw;
+				_frame = 0;
+			}
+			else if (_clearState == ClearState::Failed) {
+				// (クリア時と同じシーンに飛ばしている)
+				_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
+				_nowDrawState = &SceneGamePlay::FadeoutDraw;
+				_frame = 0;
+			}
+			else {
+				assert(false && "不明なステート");
+			}
+		}
 	}
-	// 失敗条件を満たしたら
-	else if (!_player->IsAlive()
+	// でなければ
+	else {
+		// クリア条件を満たしたら
+		if (_waveManager->IsClear()
 #ifdef _DEBUG
-		|| Input::GetInstance().IsTrigger("Debug::NextScene2")
+			|| Input::GetInstance().IsTrigger("Debug::NextScene1")	// 決定を押したら
 #endif // _DEBUG
-		) {
-		// (クリア時と同じシーンに飛ばしている)
-		_nowUpdateState = &SceneGamePlay::FadeoutUpdate;
-		_nowDrawState = &SceneGamePlay::FadeDraw;
-		_frame = 0;
-		_nowPhase = Phase::Ending;	// 終了中
+			) {
+			_clearState = ClearState::Complete;
+			_nowPhase = Phase::Ending;	// 終了中
+			_nowGameDrawState = &SceneGamePlay::EndingGameDraw;
+			_camera->AdvanceState();	// カメラのステートを進める
+		}
+		// 失敗条件を満たしたら
+		else if (!_player->IsAlive()
+#ifdef _DEBUG
+			|| Input::GetInstance().IsTrigger("Debug::NextScene2")
+#endif // _DEBUG
+			) {
+			_clearState = ClearState::Failed;
+			_nowPhase = Phase::Ending;	// 終了中
+			_nowGameDrawState = &SceneGamePlay::EndingGameDraw;
+			_camera->AdvanceState();	// カメラのステートを進める
+		}
 	}
+	
 }
 
 void SceneGamePlay::FadeoutUpdate()
@@ -158,11 +211,31 @@ void SceneGamePlay::FadeoutUpdate()
 	EndingUpdate();
 }
 
-void SceneGamePlay::FadeDraw()
+void SceneGamePlay::FadeinDraw()
 {
 	// ゲーム内容を描画する
-	DrawGame();
+	(this->*_nowGameDrawState)();
 
+#ifdef _DEBUG
+	DebugDraw::GetInstance().Draw();
+	DebugDraw::GetInstance().Clear();
+
+	DrawFormatString(0, 0, 0xffffff, L"Scene GamePlay");
+#endif
+
+	// フェードイン/アウトの処理
+	// フェード割合の計算(0.0-1.0)
+	float rate = static_cast<float>(_frame) / static_cast<float>(Statistics::kFadeInterval);
+	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(255 * rate));
+	DrawBox(0, 0, Statistics::kScreenWidth, Statistics::kScreenHeight, 0x000000, true);
+	// BlendModeを使った後はNOBLENDにしておくことを忘れず
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
+void SceneGamePlay::FadeoutDraw()
+{
+	// ゲーム内容を描画する
+	(this->*_nowGameDrawState)();
 
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();
@@ -183,8 +256,7 @@ void SceneGamePlay::FadeDraw()
 void SceneGamePlay::NormalDraw()
 {
 	// ゲーム内容を描画する
-	DrawGame();
-
+	(this->*_nowGameDrawState)();
 
 #ifdef _DEBUG
 	DebugDraw::GetInstance().Draw();
@@ -198,6 +270,9 @@ void SceneGamePlay::StartingUpdate()
 {
 	// 開始時の更新を行う
 	// カメラ演出、ビルボードアニメーション
+	_camera->Update();
+	_skydome->Update();
+	_billboardManager->Update();
 }
 
 void SceneGamePlay::InProgressUpdate()
@@ -228,9 +303,38 @@ void SceneGamePlay::EndingUpdate()
 {
 	// 終了後の更新を行う
 	// カメラ演出、ビルボードアニメーション
+	_camera->Update();
+	_skydome->Update();
+	_billboardManager->Update();
 }
 
-void SceneGamePlay::DrawGame()
+void SceneGamePlay::StartingGameDraw()
+{
+	_skydome->Draw();
+	_arena->Draw();
+	_billboardManager->Draw();
+
+	_camera->Draw();
+	_player->Draw();
+
+	_enemyManager->Draw();
+	_itemManager->Draw();
+}
+
+void SceneGamePlay::EndingGameDraw()
+{
+	_skydome->Draw();
+	_arena->Draw();
+	_billboardManager->Draw();
+
+	_camera->Draw();
+	_player->Draw();
+
+	_enemyManager->Draw();
+	_itemManager->Draw();
+}
+
+void SceneGamePlay::NormalGameDraw()
 {
 	_skydome->Draw();
 	_arena->Draw();

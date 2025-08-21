@@ -5,10 +5,11 @@
 class Player;
 
 enum class BuffType {
-	None,
 	Heal,		// 継続回復
 	ScoreBoost,	// 取得スコア増加
 	Strength,	// 攻撃力増加
+	TypeNum,	// タイプの数
+	None,
 };
 
 struct BuffData {

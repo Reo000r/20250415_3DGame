@@ -14,6 +14,7 @@ class EnemyManager;
 class ItemManager;
 class PlayerBuffManager;
 class WaveAnnouncer;
+class BillboardManager;
 class StatusUI;
 
 class SceneGamePlay final : public SceneBase {
@@ -39,13 +40,14 @@ public:
 private:
 
 	int _frame;
+	bool _isProgress;
 
 	// UpdateとDrawのStateパターン
 	// _updateや_drawが変数であることを分かりやすくしている
 	using UpdateFunc_t = void(SceneGamePlay::*)();
 	using DrawFunc_t = void(SceneGamePlay::*)();
 	UpdateFunc_t _nowUpdateState = nullptr;
-	DrawFunc_t _nowDrawState = nullptr;
+	DrawFunc_t _nowDrawState = nullptr;			// シーンの演出描画
 
 	/// <summary>
 	/// フェードイン時の更新処理
@@ -56,8 +58,10 @@ private:
 	// フェードアウト時の更新処理
 	void FadeoutUpdate();
 
-	// フェード時の描画
-	void FadeDraw();
+	// フェードイン時の描画
+	void FadeinDraw();
+	// フェードアウト時の描画
+	void FadeoutDraw();
 	// 通常時の描画
 	void NormalDraw();
 
@@ -66,10 +70,17 @@ private:
 
 private:
 
+	DrawFunc_t _nowGameDrawState = nullptr;		// ゲーム内容描画
 	enum class Phase {
 		Starting,
 		InProgress,
 		Ending,
+	};
+	// クリアしたかどうか
+	enum class ClearState {
+		InProgress,
+		Complete,
+		Failed,
 	};
 
 	/// <summary>
@@ -88,12 +99,22 @@ private:
 	void EndingUpdate();
 
 	/// <summary>
+	/// 開始時のオブジェクトの描画を行う関数
+	/// </summary>
+	void StartingGameDraw();
+	/// <summary>
+	/// 終了時のオブジェクトの描画を行う関数
+	/// </summary>
+	void EndingGameDraw();
+	/// <summary>
 	/// オブジェクトの描画を行う関数
 	/// </summary>
-	void DrawGame();
+	void NormalGameDraw();
 
 	// ゲームが現在どのフェーズにあるか
 	Phase _nowPhase;
+	// クリアしたかどうか
+	ClearState _clearState;
 
 	std::shared_ptr<Physics> _physics;
 
@@ -106,6 +127,7 @@ private:
 	std::shared_ptr<ItemManager> _itemManager;
 	std::shared_ptr<PlayerBuffManager> _playerBuffManager;
 	std::shared_ptr<WaveAnnouncer> _waveAnnouncer;
+	std::shared_ptr<BillboardManager> _billboardManager;
 	std::unique_ptr<StatusUI> _statusUI;
 
 };

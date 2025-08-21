@@ -28,7 +28,7 @@ bool Application::Init()
 	// スクリーン初期化処理
 	SetGraphMode(Statistics::kScreenWidth, Statistics::kScreenHeight, 32);
 	ChangeWindowMode(true);
-	SetWindowText(L"Window");
+	SetWindowText(L"GameWindow");
 
 	// DxLibの初期化処理
 	if (DxLib_Init()) {

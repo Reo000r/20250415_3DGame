@@ -20,7 +20,7 @@ namespace {
 	};
 	
 	// 共通定数
-	constexpr float kItemScale = 4.0f;
+	constexpr float kItemScale = 2.0f;
 	const float kColRadius = 50.0f * kItemScale;				// 当たり判定の半径
 	const float kSpawnDepthY = -kColRadius - (10.0f * kItemScale);// 生成時の深さ
 	const float kTotalAnimFrame = 60.0f * 0.5f;					// 生成/消滅アニメーションフレーム

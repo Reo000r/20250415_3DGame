@@ -8,8 +8,9 @@ namespace {
     const std::wstring kFontName = L"Impact";
     constexpr int kFontSize = 64;
     constexpr int kFontThickness = 3;
-    constexpr int kScoreDigitCount = 5;      // 表示桁数
+    constexpr int kScoreDigitCount = 7;      // 表示桁数
     constexpr int kTimeDigitCount = 6;       // 表示桁数
+    const std::wstring kScoreFormat = L"%07d";      // 0埋め部分
     constexpr int kDigitFinalizeDuration = 30;
 }
 
@@ -155,7 +156,7 @@ void ResultItemDrawer::DrawNumber(float valueX, float baseY) const
 {
     // 表示用の数値を、5桁・ゼロ埋めのワイド文字列に変換する
     wchar_t buffer[16]; // "00000" と終端文字が入るのに十分なサイズを確保
-    swprintf_s(buffer, L"%05d", static_cast<int>(_displayValue));
+    swprintf_s(buffer, kScoreFormat.c_str(), static_cast<int>(_displayValue));
 
     // 生成した文字列の描画幅（ピクセル数）を取得する
     int numWidth = GetDrawStringWidthToHandle(buffer, wcslen(buffer), _fontHandle);

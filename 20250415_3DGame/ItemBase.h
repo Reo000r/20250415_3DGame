@@ -82,6 +82,11 @@ public:
 
 private:
 
+	// UpdateのStateパターン
+	// _nowUpdateStateが変数であることを分かりやすくしている
+	using UpdateFunc_t = void(ItemBase::*)();
+	UpdateFunc_t _nowUpdateState;
+
 	/// <summary>
 	/// 生成中
 	/// 1 -> 0
@@ -99,11 +104,6 @@ private:
 	void UpdateDestroying();
 
 	void SetMatrix(Position3 pos, float rotSpeed);
-
-	// UpdateのStateパターン
-	// _nowUpdateStateが変数であることを分かりやすくしている
-	using UpdateFunc_t = void(ItemBase::*)();
-	UpdateFunc_t _nowUpdateState;
 
 protected:
 	// モデルハンドル

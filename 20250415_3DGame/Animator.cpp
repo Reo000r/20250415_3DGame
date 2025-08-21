@@ -7,14 +7,14 @@ namespace {
 	// アニメーションのブレンド時間(frame)
 	constexpr float kAnimBlendFrame = 15.0f;
 	// 全てにかかるアニメーションの再生速度(60fなら1.0、30fなら0.5が等速)
-	constexpr float kAnimSpeed = 1.0f;
+	constexpr float kAnimSpeed = 1.3f;
 }
 
 Animator::Animator() :
 	_model(-1),
 	_animDataList(),
-	_currentAnimName(),
-	_prevAnimName(),
+	_currentAnimName(L""),
+	_prevAnimName(L""),
 	_blendRate(1.0f) // 最初はブレンドしていないので1.0
 {
 }

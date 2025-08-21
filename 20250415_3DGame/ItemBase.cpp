@@ -164,8 +164,6 @@ void ItemBase::SetMatrix(Position3 pos, float rotSpeed)
 	// 平行移動 -> 回転 -> 拡縮の順
 	Matrix4x4 worldMatrix = MatMultiple(scaleMatrix, MatMultiple(rotationMatrix,
 		MatMultiple(translationMatrix, positionMatrix)));
-	//Matrix4x4 worldMatrix = MatMultiple(positionMatrix, MatMultiple(
-	//	scaleMatrix, MatMultiple(rotationMatrix, translationMatrix)));
 
 	// モデルに最終的なワールド行列を適用
 	MV1SetMatrix(_modelHandle, worldMatrix);

@@ -42,15 +42,15 @@ void Input::Update() {
             else if (hardInput.type == PeripheralType::pad1) {
                 _current[key] = hardInput.id & _currentRawPadState;
             }
-            inputType = hardInput.type;
             // どれか一つでも「押されている」状態ならもう調べない
             // 機器の情報が欲しいわけではない為、誰かが押されていればもうOK
             if (_current[key]) {
+                inputType = hardInput.type;
                 break;
             }
         }
 
-        inputType = _lastInputType;
+        _lastInputType = inputType;
     }
 
     // 左右スティック更新
@@ -165,7 +165,7 @@ Vector3 Input::GetMousePositionLast() const
     return _lastMousePosition;
 }
 
-Input::PeripheralType Input::GetLastInputType()
+Input::PeripheralType Input::GetLastInputType() const
 {
     return _lastInputType;
 }

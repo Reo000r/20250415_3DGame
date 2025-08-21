@@ -43,6 +43,12 @@ public:
 	/// <param name="attacker">攻撃してきた相手</param>
 	void TakeDamage(float damage, std::shared_ptr<Collider> attacker);
 
+	/// <summary>
+	/// バフを加味したスコアを追加する
+	/// </summary>
+	/// <param name="addScore"></param>
+	void AddScore(int addScore);
+
 	void Heal(float amount);
 
 private:

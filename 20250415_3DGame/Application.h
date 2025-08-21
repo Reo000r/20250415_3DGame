@@ -4,7 +4,11 @@
 class Application final {
 	// シングルトン化
 private:
-	Application() : _in(), _out() {}
+	Application()
+#ifdef _DEBUG	// Debug用変数初期化
+		: _in(), _out()
+#endif	// _DEBUG
+		{}
 	Application(const Application&) = delete;
 	void operator=(const Application&) = delete;
 
