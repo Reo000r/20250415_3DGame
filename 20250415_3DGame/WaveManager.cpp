@@ -59,7 +59,7 @@ void WaveManager::Update()
 	{
 		const auto& spawnInfo = _waveSettings[_currentWaveIndex].spawnGroups;
 		_enemyManager.lock()->SpawnEnemies(spawnInfo);
-		for (int i = 0; i < 20; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			BuffType spawnType = static_cast<BuffType>(GetRand(static_cast<int>(BuffType::TypeNum)-1));
 			_itemManager.lock()->SpawnItem(spawnType);
 		}
@@ -70,6 +70,9 @@ void WaveManager::Update()
 	case State::InProgress:
 		CheckWaveCompletion();
 		break;
+	//case State::ReinforcementSelect:
+	//	// 処理なし
+	//	break;
 	case State::WaitingForCleanup:
 		_waveTransitionFrameCount++;
 		if (_waveTransitionFrameCount >= kWaveTransitionIntervalFrame) {
@@ -86,6 +89,7 @@ void WaveManager::CheckWaveCompletion()
 {
 	if (_enemyManager.lock()->AreAllEnemiesDefeated()) {
 		_state = State::WaitingForCleanup;
+		//_state = State::ReinforcementSelect;
 		_waveTransitionFrameCount = 0;
 	}
 }
@@ -100,6 +104,10 @@ void WaveManager::TransitionToNextWave()
 	else {
 		_state = State::AllWavesComplete;
 	}
+}
+
+void WaveManager::StartCleanup()
+{
 }
 
 void WaveManager::InitWaveSettings()

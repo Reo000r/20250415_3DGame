@@ -51,8 +51,12 @@
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerReinforcementManager.cpp" />
+    <ClCompile Include="PopupBase.cpp" />
     <ClCompile Include="PopupManager.cpp" />
+    <ClCompile Include="PopupPlayerReinforcement.cpp" />
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="ReinforcementCard.cpp" />
     <ClCompile Include="ResultDisplay.cpp" />
     <ClCompile Include="ResultItemDrawer.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
@@ -108,10 +112,14 @@
     <ClInclude Include="ItemScoreBoost.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="PlayerReinforcementManager.h" />
+    <ClInclude Include="PopupBase.h" />
     <ClInclude Include="PopupManager.h" />
+    <ClInclude Include="PopupPlayerReinforcement.h" />
     <ClInclude Include="ProjectSettings.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="ReinforcementCard.h" />
     <ClInclude Include="ResultDisplay.h" />
     <ClInclude Include="ResultItemDrawer.h" />
     <ClInclude Include="Rigidbody.h" />

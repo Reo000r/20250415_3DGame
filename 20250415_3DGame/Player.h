@@ -2,7 +2,6 @@
 #include "Geometry.h"
 #include "Collider.h"
 #include <memory>
-#include <unordered_map>
 
 class Camera;
 class Animator;
@@ -137,9 +136,6 @@ private:
 	float _stamina;		// スタミナ
 	int _staminaRecoveryStandbyFrame;		// スタミナ回復待機時間
 	bool _isAlive;
-
-	// 攻撃力
-	float _attackPower;
 
 	int _reactCooltime;
 };

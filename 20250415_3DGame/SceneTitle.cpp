@@ -15,7 +15,7 @@ namespace {
 	constexpr int kTitleFontSize = 128;				// タイトル文字サイズ
 	constexpr int kNextSceneFontSize = 96;
 	constexpr int kFontThickness = 3;
-	const std::wstring kTitleText = L"(Title)";
+	const std::wstring kTitleText = L"Fatal Arena";
 	const std::wstring kPadNextSceneText = L"       Press A to Start\nPress B to Instruction";
 	const std::wstring kKeybdNextSceneText = L"      Press Enter to Start\nPress Esc to Instruction";
 

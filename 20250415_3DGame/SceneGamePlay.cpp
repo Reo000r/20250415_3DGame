@@ -89,6 +89,7 @@ void SceneGamePlay::Update()
 	}
 	// でなければ(ゲームが停止していれば)
 	else {
+
 	}
 }
 

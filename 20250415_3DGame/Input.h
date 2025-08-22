@@ -31,6 +31,12 @@ public:
 	};
 
 	/// <summary>
+	/// ゲーム起動時にデフォルトにする入力種別を設定
+	/// </summary>
+	/// <param name="type"></param>
+	void SetInputType(PeripheralType type);
+
+	/// <summary>
 	/// 最後に入力された機器を返す
 	/// </summary>
 	/// <returns></returns>

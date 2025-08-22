@@ -31,8 +31,8 @@ namespace {
 	constexpr int kStartAnimationStopFrame = 60 * 3.0f;		// 開始アニメーション前の停止フレーム数
 	constexpr int kStartAnimationTotalFrame = 60 * 1.0f + kStartAnimationStopFrame;	// 開始アニメーションの総フレーム
 	constexpr int kEndAnimationTotalFrame = 60 * 4.0f;		// 終了アニメーションの総フレーム
-	const Position3 kStartAnimationPos		= Position3(0.0f, 1500.0f, -1000.0f);
-	const Vector3 kStartAnimationTargetPos	= Vector3(0.0f, 2000.0f, 1000.0f);
+	const Position3 kStartAnimationPos		= Position3(0.0f, 1000.0f, -0000.0f);
+	const Vector3 kStartAnimationTargetPos	= Vector3(0.0f, 1700.0f, 1000.0f);
 	const Position3 kEndAnimationPos		= kStartAnimationPos;
 	const Vector3 kEndAnimationTargetPos	= kStartAnimationTargetPos;
 

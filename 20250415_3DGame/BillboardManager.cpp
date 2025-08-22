@@ -6,14 +6,14 @@
 #include <string>
 
 namespace {
-	// モデルファイルのパスをここで管理
+	// 画像ファイルのパスをここで管理
 	const std::vector<std::wstring> kGraphPaths = {
-		{ L"data/billboard/Audience1.png" },
-		{ L"data/billboard/Audience2.png" },
-		{ L"data/billboard/Audience3.png" },
-		{ L"data/billboard/Audience4.png" },
-		{ L"data/billboard/Audience5.png" },
-		{ L"data/billboard/Audience6.png" },
+		{ L"data/graph/billboard/Audience1.png" },
+		{ L"data/graph/billboard/Audience2.png" },
+		{ L"data/graph/billboard/Audience3.png" },
+		{ L"data/graph/billboard/Audience4.png" },
+		{ L"data/graph/billboard/Audience5.png" },
+		{ L"data/graph/billboard/Audience6.png" },
 	};
 
 	const std::vector<int> kDrawAmount = {

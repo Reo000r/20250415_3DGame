@@ -165,6 +165,11 @@ Vector3 Input::GetMousePositionLast() const
     return _lastMousePosition;
 }
 
+void Input::SetInputType(PeripheralType type)
+{
+    _lastInputType = type;
+}
+
 Input::PeripheralType Input::GetLastInputType() const
 {
     return _lastInputType;
@@ -224,6 +229,9 @@ void Input::SetDefault()
     };
     _inputTable["Gameplay:Right"] = { {PeripheralType::keybd, KEY_INPUT_D},
                             {PeripheralType::pad1, PAD_INPUT_RIGHT}
+    };
+    _inputTable["Gameplay:Enter"] = { {PeripheralType::keybd, KEY_INPUT_RETURN},
+                            {PeripheralType::pad1, PAD_INPUT_1}         // Aボタン
     };
     
     // リザルトシーンで使用するボタンテーブル

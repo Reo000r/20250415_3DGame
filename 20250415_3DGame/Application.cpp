@@ -43,6 +43,9 @@ bool Application::Init()
 	SetWriteZBuffer3D(true);	// Zバッファへの書き込みを行う
 	SetUseBackCulling(true);	// バックカリングを有効にする
 
+	// デフォルトの入力種別を設定
+	Input::GetInstance().SetInputType(Input::PeripheralType::pad1);
+
 	// GetRandシード設定
 	auto t = static_cast<unsigned int>(time(nullptr));
 	SRand(t);

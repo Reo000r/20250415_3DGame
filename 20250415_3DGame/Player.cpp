@@ -9,6 +9,7 @@
 #include "Calculation.h"
 #include "ItemFactory.h"
 #include "PlayerBuffManager.h"
+#include "PlayerReinforcementManager.h"
 #include "GameManager.h"
 #include "Physics.h"
 #include <cassert>
@@ -107,9 +108,15 @@ Player::Player() :
 	_stamina(kMaxStamina),
 	_staminaRecoveryStandbyFrame(0),
 	_isAlive(true),
-	_attackPower(kAttackPower),
 	_reactCooltime(0)
 {
+	// データ設定
+	StatsData data;
+	data.maxHealth = kMaxHitPoint;
+	data.maxStamina = kMaxStamina;
+	data.maxStrength = kAttackPower;
+	PlayerReinforcementManager::SetStatsData(data);
+
 	rigidbody->Init(true);
 
 	// 当たり判定データ設定
@@ -232,17 +239,20 @@ void Player::OnCollide(const std::weak_ptr<Collider> collider)
 
 float Player::GetMaxHitPoint()
 {
-	return kMaxHitPoint;
+	auto data = PlayerReinforcementManager::GetStatsData();
+	return (data.maxHealth * data.maxHealthMag);
 }
 
 float Player::GetMaxStamina() const
 {
-	return kMaxStamina;
+	auto data = PlayerReinforcementManager::GetStatsData();
+	return (data.maxStamina * data.maxStaminaMag);
 }
 
 float Player::GetAttackPower() const
 {
-	float power = kAttackPower;
+	auto data = PlayerReinforcementManager::GetStatsData();
+	float power = data.maxStrength * data.maxStrengthMag;
 	if (_buffManager.lock()->GetData(BuffType::Strength).isActive) {
 		power *= _buffManager.lock()->GetData(BuffType::Strength).amount;
 	}
@@ -313,7 +323,8 @@ void Player::AddScore(int addScore)
 
 void Player::Heal(float amount)
 {
-	_hitPoint += std::min<float>(amount, kMaxHitPoint - _hitPoint);
+	float healAmount = std::min<float>(amount, GetMaxHitPoint() - _hitPoint);
+	_hitPoint += healAmount;
 }
 
 void Player::CheckStateTransition()
@@ -787,8 +798,10 @@ bool Player::CanRunInput()
 
 void Player::StaminaRecovery()
 {
+	const float maxStamina = GetMaxStamina();
+
 	// スタミナが最大の場合はreturn
-	if (_stamina >= kMaxStamina) return;
+	if (_stamina >= maxStamina) return;
 
 	// 回復待機時間更新
 	if (_staminaRecoveryStandbyFrame > 0) _staminaRecoveryStandbyFrame--;
@@ -797,7 +810,7 @@ void Player::StaminaRecovery()
 	if (_staminaRecoveryStandbyFrame <= 0) {
 		// 回復量
 		float recoveryAmount = std::min<float>(
-			kStaminaRecoveryAmount, kMaxStamina - _stamina);
+			kStaminaRecoveryAmount, maxStamina - _stamina);
 		_stamina += recoveryAmount;
 	}
 }

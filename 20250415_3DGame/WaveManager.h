@@ -13,6 +13,7 @@ private:
 		Announcing,
 		Spawning,
 		InProgress,
+		//ReinforcementSelect,
 		WaitingForCleanup,
 		AllWavesComplete
 	};
@@ -29,6 +30,11 @@ public:
 	bool IsClear() const { return _state == State::AllWavesComplete; }
 	int GetCurrentWaveIndex() const { return _currentWaveIndex; }
 	int GetTotalWaveCount() const { return static_cast<int>(_waveSettings.size()); }
+
+	/// <summary>
+	/// 強化が終わったら呼ばれる
+	/// </summary>
+	void StartCleanup();
 
 private:
 	void InitWaveSettings();
